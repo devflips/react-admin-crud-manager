@@ -5,11 +5,14 @@ import {
   Search,
   EllipsisVertical,
   Filter,
+  User,
 } from "lucide-react";
 import { createPortal } from "react-dom";
-import { searchLocalData } from "../lib/utils";
-import Button from "./Button";
-import FilterDrawer from "./Filter/FilterDrawer";
+import { formatDate, searchLocalData } from "../../lib/utils";
+import Button from "../Button/Button";
+import FilterDrawer from "../Filter/FilterDrawer";
+import Chip from "../Chip/Chip";
+import TableSkeleton from "./components/TableSkeleton";
 
 const Table = ({ config }) => {
   const {
@@ -105,6 +108,71 @@ const Table = ({ config }) => {
     setActiveMenu(activeMenu === itemId ? null : itemId);
   };
 
+  const calculateRowNumber = (index) => {
+    return (currentPage - 1) * pageSize + index + 1;
+  };
+
+  const renderUserProfileCell = (userInfo) => {
+    return (
+      <div className="flex items-center space-x-4">
+        {userInfo?.image ? (
+          <img
+            src={userInfo.image}
+            alt={userInfo?.name || "User"}
+            className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700"
+          />
+        ) : (
+          <div className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600">
+            <User className="w-6 h-6 text-gray-400 dark:text-gray-400" />
+          </div>
+        )}
+        <div>
+          <p className="font-medium text-gray-900 dark:text-white">
+            {userInfo?.first_name + " " + userInfo?.last_name}
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {userInfo.email || "N/A"}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
+  const handleRenderCellValue = (col, row, index) => {
+    const value = row[col.key];
+    if (col.type === "index") {
+      return (
+        <div className="text-gray-500 dark:text-gray-400">
+          {calculateRowNumber(index)}
+        </div>
+      );
+    } else if (col.type === "user_profile") {
+      return renderUserProfileCell(row);
+    } else if (col.type === "chip") {
+      const label =
+        typeof col.label === "function" ? col.label(row) : String(value);
+      const variant = col.variant || "contained";
+      const color =
+        value === true
+          ? "green"
+          : typeof col?.color === "function"
+            ? col?.color(row)
+            : "red";
+
+      return (
+        <Chip
+          label={label}
+          variant={variant}
+          color={color}
+          className={col.className || ""}
+        />
+      );
+    } else if (col.type === "date") {
+      return <span>{formatDate(value, col.format || "DD MMM YYYY")}</span>;
+    } else {
+      return <span>{value || "N/A"}</span>;
+    }
+  };
   // Close menu on scroll -------------------
   useEffect(() => {
     const handleScroll = () => {
@@ -127,22 +195,7 @@ const Table = ({ config }) => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  // --- Table Skeleton Loader ---
-  const renderSkeleton = () => (
-    <div className="flex justify-center items-center h-64">
-      <div className="animate-pulse flex space-x-4">
-        {/* Circle loader */}
-        <div className="rounded-full bg-gray-300 dark:bg-gray-700 h-12 w-12"></div>
-        {/* Bars loader */}
-        <div className="flex-1 space-y-2 py-1">
-          <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-48"></div>
-          <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-32"></div>
-        </div>
-      </div>
-    </div>
-  );
-
-  if (loading) return renderSkeleton();
+  if (loading) return <TableSkeleton rows={6} columns={6} />;
 
   return (
     <div className="">
@@ -235,7 +288,9 @@ const Table = ({ config }) => {
                         className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100 min-w-max max-w-[300px] truncate"
                         title={String(row[col.key] ?? "")}
                       >
-                        {col.render ? col.render(row, index) : row[col.key]}
+                        {col.render
+                          ? col.render(row, index)
+                          : handleRenderCellValue(col, row, index)}
                       </td>
                     ))}
 
@@ -349,7 +404,7 @@ const Table = ({ config }) => {
                   handleActionClick(
                     action,
                     data.find((d) => d.id === activeMenu),
-                    e
+                    e,
                   )
                 }
                 className={`w-full flex items-center gap-2 px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-600 ${
@@ -363,7 +418,7 @@ const Table = ({ config }) => {
               </button>
             ))}
           </div>,
-          document.body
+          document.body,
         )}
 
       {/* Filter Drawer */}

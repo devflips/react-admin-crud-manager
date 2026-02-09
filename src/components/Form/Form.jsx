@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Input } from "./Input";
-import Select from "./Select";
-import Switch from "./Switch";
-import PhoneInput from "./PhoneInput";
-import ImagePicker from "./ImagePicker";
+import { Input } from "./components/Input";
+import Select from "./components/Select";
+import Switch from "./components/Switch";
+import PhoneInput from "./components/PhoneInput";
+import ImagePicker from "./components/ImagePicker";
+import { TextArea } from "./components/TextArea";
 
 const Form = ({ config, onSubmit, initialData = {} }) => {
   const {
@@ -50,7 +51,8 @@ const Form = ({ config, onSubmit, initialData = {} }) => {
       showFlag,
       required,
       minLength,
-      dragDrop
+      dragDrop,
+      parentClass,
     } = field;
     const value = formData[key] || "";
 
@@ -70,37 +72,45 @@ const Form = ({ config, onSubmit, initialData = {} }) => {
             placeholder={finalPlaceholder}
             className={`${inputClass || ""}`}
             search={search}
+            required={required}
+            label={label}
             name={key}
+            parentClass={parentClass}
           />
         );
 
       case "switch":
         return (
           <Switch
-            value={formData[key]}
+            value={value}
             onChange={(val) => handleChange(key, val)}
             text={text}
-            colClass={field.colClass}
             options={options || []}
+            label={label}
+            required={required}
+            name={key}
+            parentClass={parentClass}
           />
         );
 
       case "phone":
         return (
           <PhoneInput
-            value={formData[key] || ""}
+            value={value || ""}
             onChange={(val) => handleChange(key, val)}
             showFlag={showFlag}
             required={required}
             placeholder={finalPlaceholder}
-            name={key}
             search={search}
+            label={label}
+            name={key}
+            parentClass={parentClass}
           />
         );
 
       case "textarea":
         return (
-          <textarea
+          <TextArea
             value={value}
             onChange={(e) => handleChange(key, e.target.value)}
             placeholder={finalPlaceholder}
@@ -108,18 +118,23 @@ const Form = ({ config, onSubmit, initialData = {} }) => {
             className={`${baseClass} ${inputClass || ""}`}
             required={required}
             name={key}
+            label={label}
+            parentClass={parentClass}
           />
         );
 
       case "image":
         return (
           <ImagePicker
-            value={formData[key]}
+            value={value}
             onChange={(imgObj) => handleChange(key, imgObj)}
             required={required}
             accept={accept || "image/*"}
             id={`file-${key}`}
             dragDrop={dragDrop}
+            label={label}
+            name={key}
+            parentClass={parentClass}
           />
         );
 
@@ -134,6 +149,8 @@ const Form = ({ config, onSubmit, initialData = {} }) => {
             required={required}
             name={key}
             minLength={minLength}
+            label={label}
+            parentClass={parentClass}
           />
         );
     }
@@ -147,13 +164,7 @@ const Form = ({ config, onSubmit, initialData = {} }) => {
       noValidate={false} // enables native validation
     >
       {fields.map((field) => (
-        <div key={field.key} className={field.colClass || "col-span-12"}>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            {field.label}
-            {field.required && <span className="ml-1">*</span>}
-          </label>
-          {renderField(field)}
-        </div>
+        <>{renderField(field)}</>
       ))}
     </form>
   );

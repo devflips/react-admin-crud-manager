@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import Button from "../Button";
+import Button from "../Button/Button";
 
 const FilterDrawer = ({ isOpen, onClose, config, onApply }) => {
   const [filters, setFilters] = useState({});

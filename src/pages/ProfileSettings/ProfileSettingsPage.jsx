@@ -3,8 +3,8 @@ import { useAppContext } from "../../contexts/AppContext";
 import { useSnackbar } from "notistack";
 import { Camera, User, Mail, Phone, Save, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import Button from "../../components/Button";
-import { Input } from "../../components/Input";
+import Button from "../../components/Button/Button";
+import { Input } from "../../components/Form/components/Input";
 
 const ProfileSettingsPage = () => {
   const { user, setUser } = useAppContext();

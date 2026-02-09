@@ -24,8 +24,8 @@ const TeamsPage = () => {
         // Update existing item
         setData((prev) =>
           prev.map((item) =>
-            item.id === selectedItem.id ? { ...item, ...formData } : item
-          )
+            item.id === selectedItem.id ? { ...item, ...formData } : item,
+          ),
         );
         enqueueSnackbar("User updated successfully", { variant: "success" });
       } else {
@@ -72,7 +72,7 @@ const TeamsPage = () => {
       result = result.filter((item) =>
         item.department
           ?.toLowerCase()
-          .includes(filters.department.toLowerCase())
+          .includes(filters.department.toLowerCase()),
       );
     return result;
   }, [data, filters]);
@@ -84,93 +84,60 @@ const TeamsPage = () => {
   const tableConfig = {
     table_head: [
       {
-        key: "counting",
+        key: "index",
         title: "#",
-        render: (row, index) => (
-          <div className="text-gray-500 dark:text-gray-400">{index + 1}</div>
-        ),
+        type: "index",
       },
       {
-        key: "user",
+        key: "user_profile",
         title: "Info",
-        render: (row) => (
-          <div className="flex items-center space-x-4">
-            {row?.image ? (
-              <img
-                src={row.image}
-                alt={row?.name || "User"}
-                className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700"
-              />
-            ) : (
-              <div className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600">
-                <User className="w-6 h-6 text-gray-400 dark:text-gray-400" />
-              </div>
-            )}
-            <div>
-              <p className="font-medium text-gray-900 dark:text-white">
-                {row?.first_name + " " + row?.last_name}
-              </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {row.email || "N/A"}
-              </p>
-            </div>
-          </div>
-        ),
+        type: "user_profile",
       },
-
       {
         key: "phone",
         title: "Phone Number",
-        render: (row) => <span>{row.phone || "N/A"}</span>,
       },
       {
         key: "role",
         title: "Role",
-        render: (row) => (
-          <span
-            className={`inline-flex items-center px-3 py-1 rounded-sm text-xs font-medium ${
-              row.role === "admin"
-                ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
-                : row.role === "moderator"
-                ? "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300"
-                : row.role === "editor"
-                ? "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300"
-                : row.role === "viewer"
-                ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
-                : "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300"
-            }`}
-          >
-            {row.role === "admin"
-              ? "Super Admin"
-              : row.role === "moderator"
+        type: "chip",
+        variant: "contained",
+        label: (row) => {
+          return row.role === "admin"
+            ? "Super Admin"
+            : row.role === "moderator"
               ? "Moderator"
               : row.role === "editor"
-              ? "Editor"
-              : row.role === "viewer"
-              ? "Viewer"
-              : "No Role"}
-          </span>
-        ),
+                ? "Editor"
+                : row.role === "viewer"
+                  ? "Viewer"
+                  : "No Role";
+        },
+        color: (row) => {
+          return row.role === "admin"
+            ? "blue"
+            : row.role === "moderator"
+              ? "teal"
+              : row.role === "editor"
+                ? "purple"
+                : row.role === "viewer"
+                  ? "yellow"
+                  : "gray";
+        },
       },
       {
         key: "status",
         title: "Status",
-        render: (row) => (
-          <span
-            className={`inline-flex items-center justify-center px-3 py-1 rounded-sm text-xs font-semibold border uppercase max-h-[24px] min-w-[78px] ${
-              row.status === true
-                ? "border-green-400 text-green-500 dark:border-green-600 dark:text-green-500"
-                : "border-red-400 text-red-500 dark:border-red-600 dark:text-red-500"
-            }`}
-          >
-            {row.status === true ? "Active" : "Inactive"}
-          </span>
-        ),
+        type: "chip",
+        variant: "outline",
+        label: (row) => (row.status === true ? "Active" : "Inactive"),
+        className: "uppercase",
       },
       {
         key: "createdAt",
         title: "Created Date",
-        render: (row) => <span>{formatDate(row.createdAt)}</span>,
+        type: "date",
+        format: "DD MMM YYYY",
       },
     ],
     actions: [
@@ -238,7 +205,7 @@ const TeamsPage = () => {
             type: "text",
             required: true,
             minLength: 3,
-            colClass: "col-span-12 sm:col-span-6",
+            parentClass: "col-span-12 sm:col-span-6",
           },
           {
             key: "last_name",
@@ -246,14 +213,14 @@ const TeamsPage = () => {
             type: "text",
             minLength: 3,
             required: true,
-            colClass: "col-span-12 sm:col-span-6",
+            parentClass: "col-span-12 sm:col-span-6",
           },
           {
             key: "email",
             label: "Email",
             type: "email",
             required: true,
-            colClass: "col-span-12 sm:col-span-6",
+            parentClass: "col-span-12 sm:col-span-6",
           },
           {
             key: "password",
@@ -261,7 +228,7 @@ const TeamsPage = () => {
             type: "password",
             minLength: 6,
             required: true,
-            colClass: "col-span-12 sm:col-span-6",
+            parentClass: "col-span-12 sm:col-span-6",
           },
 
           {
@@ -272,14 +239,14 @@ const TeamsPage = () => {
             search: true,
             showFlag: true,
             placeholder: "Enter Phone Number",
-            colClass: "col-span-12 sm:col-span-6",
+            parentClass: "col-span-12 sm:col-span-6",
           },
           {
             key: "role",
             label: "Role",
             type: "select",
             search: true,
-            colClass: "col-span-12 sm:col-span-6",
+            parentClass: "col-span-12 sm:col-span-6",
             options: [
               { value: "admin", label: "Super Administrator" },
               { value: "moderator", label: "Moderator" },
@@ -292,7 +259,7 @@ const TeamsPage = () => {
             label: "Bio",
             type: "textarea",
             rows: 3,
-            colClass: "col-span-12",
+            parentClass: "col-span-12",
           },
         ],
       },
@@ -305,7 +272,6 @@ const TeamsPage = () => {
     },
 
     editModal: {
-      // icon: <Icon icon="circum:edit" className="w-6 h-6" />,
       title: "Edit Member",
       size: "lg",
       formFields: {
@@ -317,7 +283,7 @@ const TeamsPage = () => {
             type: "image",
             required: false,
             dragDrop: true,
-            colClass: "col-span-12",
+            parentClass: "col-span-12",
           },
           {
             key: "first_name",
@@ -325,30 +291,28 @@ const TeamsPage = () => {
             type: "text",
             required: true,
             minLength: 3,
-
-            colClass: "col-span-12 sm:col-span-6",
+            parentClass: "col-span-12 sm:col-span-6",
           },
           {
             key: "last_name",
             label: "Last Name",
             type: "text",
             minLength: 3,
-
             required: true,
-            colClass: "col-span-12 sm:col-span-6",
+            parentClass: "col-span-12 sm:col-span-6",
           },
           {
             key: "email",
             label: "Email Address",
             type: "email",
             required: true,
-            colClass: "col-span-12 sm:col-span-6",
+            parentClass: "col-span-12 sm:col-span-6",
           },
           {
             key: "status",
             label: "Status",
             type: "select",
-            colClass: "col-span-12 sm:col-span-6",
+            parentClass: "col-span-12 sm:col-span-6",
             options: [
               { value: true, label: "Active" },
               { value: false, label: "Inactive" },
@@ -363,14 +327,14 @@ const TeamsPage = () => {
               { value: true, label: "Yes" },
               { value: false, label: "No" },
             ],
-            colClass: "col-span-12 sm:col-span-6",
+            parentClass: "col-span-12 sm:col-span-6",
           },
           {
             key: "role",
             label: "Role",
             type: "select",
             search: true,
-            colClass: "col-span-12 sm:col-span-6",
+            parentClass: "col-span-12 sm:col-span-6",
             options: [
               { value: "admin", label: "Super Administrator" },
               { value: "moderator", label: "Moderator" },
@@ -386,7 +350,7 @@ const TeamsPage = () => {
             search: true,
             showFlag: true,
             placeholder: "Enter Phone Number",
-            colClass: "col-span-12 sm:col-span-6",
+            parentClass: "col-span-12 sm:col-span-6",
           },
           {
             key: "bio",
@@ -394,7 +358,7 @@ const TeamsPage = () => {
             type: "textarea",
             rows: 3,
             placeholder: "Additional information about this member...",
-            colClass: "col-span-12",
+            parentClass: "col-span-12",
           },
         ],
       },
@@ -406,7 +370,6 @@ const TeamsPage = () => {
       },
     },
     deleteModal: {
-      icon: <Icon icon="ph:warning-bold" className="w-6 h-6 text-red-500" />,
       title: "Confirm Delete",
       size: "md",
       confirmText: "Are you sure you want to delete this member?",
@@ -419,7 +382,6 @@ const TeamsPage = () => {
       },
     },
     viewModal: {
-      icon: <Eye className="w-6 h-6" />,
       title: "Team Member Details",
       size: "lg",
       component: TeamMemberDetail,

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
-import Table from "./Table";
-import Modal from "./Modal";
-import Form from "./Form";
-import Button from "./Button";
+import Table from "./Table/Table";
+import Modal from "./Modal/Modal";
+import Form from "./Form/Form";
+import Button from "./Button/Button";
+import { Icon } from "@iconify/react";
 
 const CrudPage = ({ config }) => {
   const {
@@ -134,7 +135,11 @@ const CrudPage = ({ config }) => {
       <Modal
         isOpen={showDelete}
         onClose={() => setShowDelete(false)}
-        icon={modalConfig.deleteModal?.icon}
+        icon={
+          modalConfig.deleteModal?.icon || (
+            <Icon icon="ph:warning-bold" className="w-6 h-6 text-red-500" />
+          )
+        }
         title={modalConfig.deleteModal?.title || "Confirm Delete"}
         size={modalConfig.deleteModal?.size || "md"}
         footerConfig={modalConfig.deleteModal?.footer}
