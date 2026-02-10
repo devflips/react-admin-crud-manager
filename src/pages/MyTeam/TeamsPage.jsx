@@ -77,9 +77,61 @@ const TeamsPage = () => {
     return result;
   }, [data, filters]);
 
-  const handleSearch = async (searchTerm) => {
-    console.log("API search called with:", searchTerm);
+  const fetchTableData = (props) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch(
+          `https://dummyjson.com/products/search?q=${props.search}&limit=${props.rows_per_page}&skip=${props.rows_per_page * (props.current_page - 1)}&page=${props.current_page}&delay=2000`,
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch listing");
+        }
+
+        let data = await response.json();
+
+        let list = data?.products?.map((obj) => ({
+          ...obj,
+          image: obj.images[0],
+          first_name: obj.title,
+          email: obj.brand,
+          phone: obj.price,
+        }));
+
+        data = {
+          data: [...list],
+          pagination: {
+            current_page: props.current_page,
+            rows_per_page: props.rows_per_page,
+            total_pages: Math.ceil(data.total / props.rows_per_page),
+            total_records: data.total,
+          },
+        };
+
+        console.log(data, "datadata", response);
+        resolve(data);
+      } catch (error) {
+        reject(error);
+      }
+    });
   };
+
+  const fetchTableData2 = async () => {
+    // Api Call goes here
+    return {
+      data: [...data],
+      pagination: {
+        current_page: 1,
+        rows_per_page: 50,
+        total_pages: 1,
+        total_records: 9,
+      },
+    };
+  };
+
+  useEffect(() => {
+    fetchTableData2();
+  }, []);
 
   const tableConfig = {
     table_head: [
@@ -159,36 +211,13 @@ const TeamsPage = () => {
       },
     ],
     actionsPosition: "start",
-    onSearch: handleSearch,
     search: {
       enabled: true,
-      placeholder: "Search...",
-      useLocalSearch: true,
+      useServerSideSearch: true,
     },
     pagination: {
       enabled: true,
-      pageSize: pagination.records_per_page,
-      currentPage: pagination.current_page,
-      totalPages: pagination.total_pages,
-      totalRecords: pagination.total_records,
-      hasNextPage: pagination.has_next_page,
-      hasPreviousPage: pagination.has_previous_page,
-      onPageChange: (page, limit) => {
-        console.log(`Page changed → Page: ${page}, Limit: ${limit}`);
-        // Example: update pagination state
-        setPagination((prev) => ({
-          ...prev,
-          current_page: page,
-          records_per_page: limit,
-        }));
-
-        // Simulate API call or filter change
-        // here you can fetch new page data if using API
-      },
-      setPageSize: (limit) => {
-        console.log("Limit changed:", limit);
-        setPagination((prev) => ({ ...prev, records_per_page: limit }));
-      },
+      useServerSidePagination: true,
     },
   };
 
@@ -196,73 +225,73 @@ const TeamsPage = () => {
     addModal: {
       title: "Add New Team Member",
       size: "lg",
-      formFields: {
-        gridClass: "grid grid-cols-12 gap-4",
-        config: [
-          {
-            key: "first_name",
-            label: "First Name",
-            type: "text",
-            required: true,
-            minLength: 3,
-            parentClass: "col-span-12 sm:col-span-6",
-          },
-          {
-            key: "last_name",
-            label: "Last Name",
-            type: "text",
-            minLength: 3,
-            required: true,
-            parentClass: "col-span-12 sm:col-span-6",
-          },
-          {
-            key: "email",
-            label: "Email",
-            type: "email",
-            required: true,
-            parentClass: "col-span-12 sm:col-span-6",
-          },
-          {
-            key: "password",
-            label: "Password",
-            type: "password",
-            minLength: 6,
-            required: true,
-            parentClass: "col-span-12 sm:col-span-6",
-          },
+      formClass: "grid grid-cols-12 gap-4",
+      formFields: [
+        {
+          key: "first_name",
+          label: "First Name",
+          type: "text",
+          required: true,
+          minLength: 3,
+          parentClass: "col-span-12 sm:col-span-6",
+        },
+        {
+          key: "last_name",
+          label: "Last Name",
+          type: "text",
+          minLength: 3,
+          required: true,
+          parentClass: "col-span-12 sm:col-span-6",
+        },
+        {
+          key: "email",
+          label: "Email",
+          type: "email",
+          required: true,
+          parentClass: "col-span-12 sm:col-span-6",
+        },
+        {
+          key: "password",
+          label: "Password",
+          type: "password",
+          minLength: 6,
+          required: true,
+          parentClass: "col-span-12 sm:col-span-6",
+        },
 
-          {
-            key: "phone",
-            label: "Phone Number",
-            type: "phone",
-            required: true,
-            search: true,
-            showFlag: true,
-            placeholder: "Enter Phone Number",
-            parentClass: "col-span-12 sm:col-span-6",
-          },
-          {
-            key: "role",
-            label: "Role",
-            type: "select",
-            search: true,
-            parentClass: "col-span-12 sm:col-span-6",
-            options: [
-              { value: "admin", label: "Super Administrator" },
-              { value: "moderator", label: "Moderator" },
-              { value: "editor", label: "Editor" },
-              { value: "viewer", label: "Viewer" },
-            ],
-          },
-          {
-            key: "bio",
-            label: "Bio",
-            type: "textarea",
-            rows: 3,
-            parentClass: "col-span-12",
-          },
-        ],
-      },
+        {
+          key: "phone",
+          label: "Phone Number",
+          type: "phone",
+          required: true,
+          search: true,
+          countries_list: true,
+          default_country: "PK",
+          placeholder: "Enter Phone Number",
+          parentClass: "col-span-12 sm:col-span-6",
+        },
+        {
+          key: "role",
+          label: "Role",
+          type: "select",
+          search: true,
+          parentClass: "col-span-12 sm:col-span-6",
+          options: [
+            { value: "admin", label: "Super Administrator" },
+            { value: "moderator", label: "Moderator" },
+            { value: "editor", label: "Editor" },
+            { value: "viewer", label: "Viewer" },
+          ],
+        },
+        {
+          key: "bio",
+          label: "Bio",
+          type: "textarea",
+          rows: 3,
+          required: true,
+          parentClass: "col-span-12",
+        },
+      ],
       footer: {
         submitButton: true,
         submitText: "Add Member",
@@ -270,98 +299,97 @@ const TeamsPage = () => {
         cancelText: "Cancel",
       },
     },
-
     editModal: {
       title: "Edit Member",
       size: "lg",
-      formFields: {
-        gridClass: "grid grid-cols-12 gap-4",
-        config: [
-          {
-            key: "image",
-            label: "Profile Image",
-            type: "image",
-            required: false,
-            dragDrop: true,
-            parentClass: "col-span-12",
-          },
-          {
-            key: "first_name",
-            label: "First Name",
-            type: "text",
-            required: true,
-            minLength: 3,
-            parentClass: "col-span-12 sm:col-span-6",
-          },
-          {
-            key: "last_name",
-            label: "Last Name",
-            type: "text",
-            minLength: 3,
-            required: true,
-            parentClass: "col-span-12 sm:col-span-6",
-          },
-          {
-            key: "email",
-            label: "Email Address",
-            type: "email",
-            required: true,
-            parentClass: "col-span-12 sm:col-span-6",
-          },
-          {
-            key: "status",
-            label: "Status",
-            type: "select",
-            parentClass: "col-span-12 sm:col-span-6",
-            options: [
-              { value: true, label: "Active" },
-              { value: false, label: "Inactive" },
-            ],
-          },
-          {
-            key: "is_active",
-            label: "Allow Editing",
-            type: "switch",
-            text: "",
-            options: [
-              { value: true, label: "Yes" },
-              { value: false, label: "No" },
-            ],
-            parentClass: "col-span-12 sm:col-span-6",
-          },
-          {
-            key: "role",
-            label: "Role",
-            type: "select",
-            search: true,
-            parentClass: "col-span-12 sm:col-span-6",
-            options: [
-              { value: "admin", label: "Super Administrator" },
-              { value: "moderator", label: "Moderator" },
-              { value: "editor", label: "Editor" },
-              { value: "viewer", label: "Viewer" },
-            ],
-          },
-          {
-            key: "phone",
-            label: "Phone Number",
-            type: "phone",
-            required: true,
-            search: true,
-            showFlag: true,
-            placeholder: "Enter Phone Number",
-            parentClass: "col-span-12 sm:col-span-6",
-          },
-          {
-            key: "bio",
-            label: "Bio / Notes",
-            type: "textarea",
-            rows: 3,
-            placeholder: "Additional information about this member...",
-            parentClass: "col-span-12",
-          },
-        ],
-      },
+      formClass: "grid grid-cols-12 gap-4",
+      formFields: [
+        {
+          key: "image",
+          label: "Profile Image",
+          type: "image",
+          required: false,
+          dragDrop: true,
+          parentClass: "col-span-12",
+        },
+        {
+          key: "first_name",
+          label: "First Name",
+          type: "text",
+          required: true,
+          minLength: 3,
+          parentClass: "col-span-12 sm:col-span-6",
+        },
+        {
+          key: "last_name",
+          label: "Last Name",
+          type: "text",
+          minLength: 3,
+          required: true,
+          parentClass: "col-span-12 sm:col-span-6",
+        },
+        {
+          key: "email",
+          label: "Email Address",
+          type: "email",
+          required: true,
+          parentClass: "col-span-12 sm:col-span-6",
+        },
+        {
+          key: "status",
+          label: "Status",
+          type: "select",
+          parentClass: "col-span-12 sm:col-span-6",
+          options: [
+            { value: true, label: "Active" },
+            { value: false, label: "Inactive" },
+          ],
+        },
+        {
+          key: "is_active",
+          label: "Allow Editing",
+          type: "switch",
+          text: "",
+          required: true,
+          options: [
+            { value: true, label: "Yes" },
+            { value: false, label: "No" },
+          ],
+          parentClass: "col-span-12 sm:col-span-6",
+        },
+        {
+          key: "role",
+          label: "Role",
+          type: "select",
+          search: true,
+          parentClass: "col-span-12 sm:col-span-6",
+          options: [
+            { value: "admin", label: "Super Administrator" },
+            { value: "moderator", label: "Moderator" },
+            { value: "editor", label: "Editor" },
+            { value: "viewer", label: "Viewer" },
+          ],
+        },
+        {
+          key: "phone",
+          label: "Phone Number",
+          type: "phone",
+          required: true,
+          search: true,
+          countries_list: true,
+          default_country: "PK",
+          placeholder: "Enter Phone Number",
+          parentClass: "col-span-12 sm:col-span-6",
+        },
+        {
+          key: "bio",
+          label: "Bio / Notes",
+          type: "textarea",
+          rows: 3,
+          placeholder: "Additional information about this member...",
+          parentClass: "col-span-12",
+        },
+      ],
       footer: {
         submitButton: true,
         submitText: "Update Member",
@@ -400,7 +428,7 @@ const TeamsPage = () => {
     title: "Team Management",
     description: "Manage team members and their roles and permissions",
     buttonText: "Add New Member",
-    data: filteredData,
+    fetchData: fetchTableData,
     onSubmit: handleSubmit,
     onDelete: handleDelete,
     onFilterApply: setFilters,

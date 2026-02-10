@@ -81,6 +81,17 @@ const Select = ({
       <div key={name} className={parentClass || "col-span-12"}>
         <InputLabel label={label} required={required} />
         <div className={`relative ${className}`} ref={dropdownRef}>
+          <select
+            name="hidden_select_for_validation"
+            value={selectedOption?.label || ""}
+            required={required}
+            className="absolute opacity-0 right-1/2 top-[80%] -translate-x-1/2 -translate-y-1/2 pointer-events-none h-[10px]"
+          >
+            <option hidden value={selectedOption?.label}>
+              {selectedOption?.label}
+            </option>
+          </select>
+
           <button
             type="button"
             onClick={() => !disabled && setOpen(!open)}

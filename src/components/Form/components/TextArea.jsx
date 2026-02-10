@@ -13,7 +13,12 @@ const TextArea = React.forwardRef(
         <div key={props.name} className={props.parentClass || "col-span-12"}>
           <InputLabel label={label} required={required} />
           <div className="relative">
-            <textarea className={combinedClassName} ref={ref} {...props} />
+            <textarea
+              className={combinedClassName}
+              ref={ref}
+              required={required}
+              {...props}
+            />
           </div>
         </div>
       </>

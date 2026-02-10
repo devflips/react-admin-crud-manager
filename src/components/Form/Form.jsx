@@ -7,12 +7,8 @@ import ImagePicker from "./components/ImagePicker";
 import { TextArea } from "./components/TextArea";
 
 const Form = ({ config, onSubmit, initialData = {} }) => {
-  const {
-    formFields: {
-      config: fields = [],
-      gridClass = "grid grid-cols-12 gap-4",
-    } = {},
-  } = config || {};
+  const { formClass = "grid grid-cols-12 gap-4", formFields = [] } =
+    config || {};
 
   const [formData, setFormData] = useState(initialData);
 
@@ -48,13 +44,17 @@ const Form = ({ config, onSubmit, initialData = {} }) => {
       search,
       accept,
       text,
-      showFlag,
       required,
       minLength,
       dragDrop,
       parentClass,
+      countries_list,
+      default_country,
     } = field;
-    const value = formData[key] || "";
+    let value = formData[key];
+    if (value === undefined || value === null) {
+      value = "";
+    }
 
     const finalPlaceholder =
       placeholder || (type === "select" ? `Select ${label}` : `Enter ${label}`);
@@ -81,16 +81,18 @@ const Form = ({ config, onSubmit, initialData = {} }) => {
 
       case "switch":
         return (
-          <Switch
-            value={value}
-            onChange={(val) => handleChange(key, val)}
-            text={text}
-            options={options || []}
-            label={label}
-            required={required}
-            name={key}
-            parentClass={parentClass}
-          />
+          <>
+            <Switch
+              value={value}
+              onChange={(val) => handleChange(key, val)}
+              text={text}
+              options={options || []}
+              label={label}
+              required={required}
+              name={key}
+              parentClass={parentClass}
+            />
+          </>
         );
 
       case "phone":
@@ -98,7 +100,8 @@ const Form = ({ config, onSubmit, initialData = {} }) => {
           <PhoneInput
             value={value || ""}
             onChange={(val) => handleChange(key, val)}
-            showFlag={showFlag}
+            countries_list={countries_list}
+            default_country={default_country}
             required={required}
             placeholder={finalPlaceholder}
             search={search}
@@ -160,10 +163,10 @@ const Form = ({ config, onSubmit, initialData = {} }) => {
     <form
       id={config.title?.toLowerCase().includes("edit") ? "editForm" : "addForm"}
       onSubmit={handleSubmit}
-      className={gridClass}
+      className={formClass}
       noValidate={false} // enables native validation
     >
-      {fields.map((field) => (
+      {formFields.map((field) => (
         <>{renderField(field)}</>
       ))}
     </form>

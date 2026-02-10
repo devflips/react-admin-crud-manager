@@ -13,9 +13,16 @@ export default function PhoneInput({
   required = false,
   placeholder = "Phone number",
   search = false,
-  showFlag = false,
+  countries_list = false,
+  default_country = "",
 }) {
-  const [selectedCountry, setSelectedCountry] = useState(null);
+  const find_country_with_code = (value) => {
+    return countries.find((obj) => obj.code == value);
+  };
+
+  const [selectedCountry, setSelectedCountry] = useState(
+    find_country_with_code(default_country) || countries[0],
+  );
   const [fullNumber, setFullNumber] = useState("");
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -67,7 +74,7 @@ export default function PhoneInput({
       c.phone.includes(searchTerm),
   );
 
-  if (!showFlag) {
+  if (!countries_list) {
     const handleInputChange = (e) => {
       const input = e.target.value.replace(/[^+\d]/g, "");
       const formatted = input.startsWith("+")
@@ -78,19 +85,22 @@ export default function PhoneInput({
 
     return (
       <>
-        <input
-          type="text"
-          value={value}
-          onChange={handleInputChange}
-          placeholder={placeholder}
-          disabled={disabled}
-          required={required}
-          className="w-full h-10 px-3 text-sm border border-gray-300 dark:border-gray-600 rounded-md 
+        <div key={name} className={parentClass || "col-span-12"}>
+          <InputLabel label={label} required={required} />
+          <input
+            type="text"
+            value={value}
+            onChange={handleInputChange}
+            placeholder={placeholder}
+            disabled={disabled}
+            required={required}
+            className="w-full h-10 px-3 text-sm border border-gray-300 dark:border-gray-600 rounded-md 
         bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none 
         focus:ring-1 focus:ring-blue-300 dark:focus:ring-blue-200"
-          inputMode="tel"
-          pattern="^\+\d{1,15}$"
-        />
+            inputMode="tel"
+            pattern="^\+\d{1,15}$"
+          />
+        </div>
       </>
     );
   }

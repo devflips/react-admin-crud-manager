@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import Table from "./Table/Table";
 import Modal from "./Modal/Modal";
 import Form from "./Form/Form";
 import Button from "./Button/Button";
 import { Icon } from "@iconify/react";
+import { set } from "date-fns";
+import { enqueueSnackbar } from "notistack";
 
 const CrudPage = ({ config }) => {
   const {
     title,
-    data = [],
+    fetchData = async () => {},
     formLoading = false,
     tableConfig = {},
     modalConfig = {},
@@ -18,6 +20,15 @@ const CrudPage = ({ config }) => {
     onSubmit,
     onFilterApply,
   } = config;
+
+  const [loading, setLoading] = useState(true);
+  const [listingData, setListingData] = useState([]);
+  const [paginationData, setPaginationData] = useState(null);
+  const [serverSidePaginationData, setServerSidePaginationData] = useState({
+    search: "",
+    rows_per_page: 50,
+    current_page: 1,
+  });
 
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
@@ -39,7 +50,6 @@ const CrudPage = ({ config }) => {
   };
 
   const handleFormSubmit = async (formData) => {
-    console.log("_form_data_", formData);
     await onSubmit?.(formData, selectedItem);
     setShowAdd(false);
     setShowEdit(false);
@@ -53,6 +63,30 @@ const CrudPage = ({ config }) => {
       setSelectedItem(null);
     }
   };
+
+  const handleGetListing = async () => {
+    setLoading(true);
+
+    fetchData?.(serverSidePaginationData)
+      .then((resp) => {
+        setListingData(resp.data);
+        setPaginationData(resp.pagination);
+      })
+      .catch((error) => {
+        enqueueSnackbar(error.message, { variant: "error" });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    handleGetListing();
+  }, [
+    serverSidePaginationData.search,
+    serverSidePaginationData.rows_per_page,
+    serverSidePaginationData.current_page,
+  ]);
 
   return (
     <div>
@@ -82,10 +116,16 @@ const CrudPage = ({ config }) => {
       <Table
         config={{
           ...tableConfig,
-          data,
+          pagination: {
+            ...tableConfig.pagination,
+            ...paginationData,
+          },
+          data: listingData,
+          setServerSidePaginationData: setServerSidePaginationData,
           onMenuAction: handleMenuAction,
           filterConfig,
           onFilterApply,
+          loading,
         }}
       />
 

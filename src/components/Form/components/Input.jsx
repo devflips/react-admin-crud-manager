@@ -38,6 +38,7 @@ const Input = React.forwardRef(
             <input
               type={type === "password" && showPassword ? "text" : type}
               ref={ref}
+              required={required}
               onKeyDown={handleKeyDown}
               className={combinedClassName}
               {...props}

@@ -41,6 +41,7 @@ const Switch = ({
                 <input
                   type="radio"
                   name="switch-field"
+                  required={required && idx === 0}
                   value={opt.value}
                   checked={value === opt.value}
                   onChange={() => onChange(opt.value)}

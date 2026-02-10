@@ -20,11 +20,19 @@ const Table = ({ config }) => {
     table_head = [],
     actions = [],
     loading = false,
-    search = { enabled: false, useLocalSearch: true },
-    pagination = { enabled: false, pageSize: 10 },
+    search = {
+      enabled: false,
+      placeholder: "Search...",
+      useServerSideSearch: false,
+    },
+    pagination = {
+      enabled: false,
+      rows_per_page: 10,
+      useServerSidePagination: false,
+    },
     emptyMessage = "No data available",
     onMenuAction,
-    onSearch,
+    setServerSidePaginationData = () => {},
     onFilterApply,
     filterConfig = null,
     actionsPosition = "end",
@@ -33,21 +41,24 @@ const Table = ({ config }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeMenu, setActiveMenu] = useState(null);
   const [menuPosition, setMenuPosition] = useState({});
-  const [isSearching, setIsSearching] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(pagination?.pageSize || 10);
 
   const filteredData = useMemo(() => {
     if (!search.enabled || !searchTerm.trim()) return data;
-    if (!search.useLocalSearch) return data;
+    if (search.useServerSideSearch) return data;
     return searchLocalData(data, searchTerm);
   }, [data, searchTerm, search]);
 
-  const totalPages = Math.ceil(filteredData.length / pageSize);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(pagination?.rows_per_page || 50);
+  const [totalRecords, setTotalRecords] = useState(filteredData.length || 0);
+
+  const totalPages = pagination?.useServerSidePagination
+    ? pagination.total_pages
+    : Math.ceil(filteredData.length / pageSize);
 
   const paginatedData = useMemo(() => {
+    if (pagination.useServerSidePagination) return filteredData;
     const start = (currentPage - 1) * pageSize;
     return filteredData.slice(start, start + pageSize);
   }, [filteredData, currentPage, pageSize]);
@@ -60,19 +71,20 @@ const Table = ({ config }) => {
     setSearchTerm(value);
     setCurrentPage(1);
 
-    if (!search.useLocalSearch && onSearch) {
+    if (search.useServerSideSearch) {
       if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
 
       searchTimeoutRef.current = setTimeout(async () => {
-        setIsSearching(true);
         try {
-          await onSearch(value);
+          await setServerSidePaginationData((prev) => ({
+            ...prev,
+            search: value,
+            current_page: 1,
+          }));
         } catch (error) {
           console.error("Search error:", error);
-        } finally {
-          setIsSearching(false);
         }
-      }, 300);
+      }, 800);
     }
   };
 
@@ -128,7 +140,7 @@ const Table = ({ config }) => {
         )}
         <div>
           <p className="font-medium text-gray-900 dark:text-white">
-            {userInfo?.first_name + " " + userInfo?.last_name}
+            {userInfo?.first_name || "" + " " + userInfo?.last_name || ""}
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {userInfo.email || "N/A"}
@@ -195,6 +207,15 @@ const Table = ({ config }) => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    setPageSize(pagination?.rows_per_page || 50);
+    setTotalRecords(
+      pagination?.useServerSidePagination
+        ? pagination.total_records
+        : filteredData.length,
+    );
+  }, [pagination, filteredData]);
+
   if (loading) return <TableSkeleton rows={6} columns={6} />;
 
   return (
@@ -210,7 +231,6 @@ const Table = ({ config }) => {
                 placeholder={search.placeholder || "Search..."}
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                disabled={isSearching}
                 className="w-full h-[36px] pl-9 pr-4 py-3 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-300 dark:ring-blue-200 disabled:opacity-50"
               />
             </div>
@@ -316,8 +336,8 @@ const Table = ({ config }) => {
           <div className=" bg-gray-50 dark:bg-gray-700/60 px-6 py-3 flex flex-wrap items-center justify-between border-t border-gray-200 dark:border-gray-600 gap-3">
             <div className="text-sm text-gray-700 dark:text-gray-300">
               Showing {(currentPage - 1) * pageSize + 1} to{" "}
-              {Math.min(currentPage * pageSize, filteredData.length)} of{" "}
-              {filteredData.length} results
+              {Math.min(currentPage * pageSize, totalRecords)} of {totalRecords}{" "}
+              results
             </div>
 
             <div className="flex items-center gap-4">
@@ -332,12 +352,15 @@ const Table = ({ config }) => {
                     const newLimit = Number(e.target.value);
                     setPageSize(newLimit);
                     setCurrentPage(1);
-                    pagination?.setPageSize?.(newLimit);
-                    pagination?.onPageChange?.(1, newLimit);
+                    setServerSidePaginationData((prev) => ({
+                      ...prev,
+                      current_page: 1,
+                      rows_per_page: newLimit,
+                    }));
                   }}
                   className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
-                  {[2, 10, 20, 50, 100].map((n) => (
+                  {[2, 10, 25, 50, 100].map((n) => (
                     <option key={n} value={n}>
                       {n}
                     </option>
@@ -352,7 +375,10 @@ const Table = ({ config }) => {
                     if (currentPage > 1) {
                       const newPage = currentPage - 1;
                       setCurrentPage(newPage);
-                      pagination?.onPageChange?.(newPage, pageSize);
+                      setServerSidePaginationData((prev) => ({
+                        ...prev,
+                        current_page: newPage,
+                      }));
                     }
                   }}
                   disabled={currentPage === 1}
@@ -370,7 +396,10 @@ const Table = ({ config }) => {
                     if (currentPage < totalPages) {
                       const newPage = currentPage + 1;
                       setCurrentPage(newPage);
-                      pagination?.onPageChange?.(newPage, pageSize);
+                      setServerSidePaginationData((prev) => ({
+                        ...prev,
+                        current_page: newPage,
+                      }));
                     }
                   }}
                   disabled={currentPage === totalPages}
