@@ -13,12 +13,12 @@ import Button from "../Button/Button";
 import FilterDrawer from "../Filter/FilterDrawer";
 import Chip from "../Chip/Chip";
 import TableSkeleton from "./components/TableSkeleton";
+import ImagePreview from "./components/ImagePreview";
 
 const Table = ({ config }) => {
   const {
     data = [],
     table_head = [],
-    actions = [],
     loading = false,
     search = {
       enabled: false,
@@ -35,18 +35,22 @@ const Table = ({ config }) => {
     setServerSidePaginationData = () => {},
     onFilterApply,
     filterConfig = null,
-    actionsPosition = "end",
   } = config;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [activeMenu, setActiveMenu] = useState(null);
+  const [menuList, setMenuList] = useState([]);
   const [menuPosition, setMenuPosition] = useState({});
   const [showFilters, setShowFilters] = useState(false);
+
+  // image preview
+  const [targetImage, setTargetImage] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const filteredData = useMemo(() => {
     if (!search.enabled || !searchTerm.trim()) return data;
     if (search.useServerSideSearch) return data;
-    return searchLocalData(data, searchTerm);
+    return searchLocalData(data, searchTerm, search.searchKeys || []);
   }, [data, searchTerm, search]);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -94,14 +98,14 @@ const Table = ({ config }) => {
     onMenuAction?.(action.type, item);
   };
 
-  const handleMenuToggle = (itemId, e) => {
+  const handleMenuToggle = (itemId, e, menu_list) => {
     e.stopPropagation();
+    setMenuList(menu_list);
     const button = e.currentTarget;
     buttonRefs.current[itemId] = button;
     const rect = button.getBoundingClientRect();
-
     const menuWidth = 192;
-    const menuHeight = actions.length * 40;
+    const menuHeight = menu_list.length * 40;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
@@ -124,67 +128,121 @@ const Table = ({ config }) => {
     return (currentPage - 1) * pageSize + index + 1;
   };
 
-  const renderUserProfileCell = (userInfo) => {
+  const openPreview = (image) => {
+    setTargetImage(image);
+    setIsOpen(true);
+  };
+
+  const renderAvatar = (
+    imageSrc,
+    imageAlt,
+    className,
+    fallback_icon = null,
+  ) => {
     return (
-      <div className="flex items-center space-x-4">
-        {userInfo?.image ? (
+      <>
+        {imageSrc ? (
           <img
-            src={userInfo.image}
-            alt={userInfo?.name || "User"}
-            className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700"
+            src={imageSrc}
+            alt={imageAlt || "Avatar"}
+            onClick={() => openPreview({ src: imageSrc, alt: imageAlt })}
+            className={`w-10 h-10 cursor-pointer rounded-full object-cover border border-gray-200 dark:border-gray-700 ${className || ""}`}
           />
         ) : (
-          <div className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600">
-            <User className="w-6 h-6 text-gray-400 dark:text-gray-400" />
-          </div>
+          <>
+            {fallback_icon ? (
+              fallback_icon
+            ) : (
+              <div
+                className={`w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600 ${className || ""}`}
+              >
+                <User className="w-6 h-6 text-gray-400 dark:text-gray-400" />
+              </div>
+            )}
+          </>
         )}
+      </>
+    );
+  };
+
+  const renderGroupCell = (row, col) => {
+    return (
+      <div className={`flex items-center space-x-4 ${col.className || ""}`}>
+        {col.imageKey
+          ? renderAvatar(row[col.imageKey], row[col.titleKey], "group-avatar")
+          : ""}
         <div>
-          <p className="font-medium text-gray-900 dark:text-white">
-            {userInfo?.first_name || "" + " " + userInfo?.last_name || ""}
+          <p className="font-medium text-gray-900 dark:text-white group-title">
+            {row[col.titleKey] || ""}
           </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {userInfo.email || "N/A"}
+          <p className="text-sm text-gray-500 dark:text-gray-400 group-sub-title">
+            {row[col.subtitleKey] || ""}
           </p>
         </div>
       </div>
     );
   };
 
+  const handleRenderChip = (value, col) => {
+    let label = String(value);
+    const variant = col.variant || "contained";
+    let color = col.defaultColor;
+
+    if (col?.chipOptions?.length > 0) {
+      let chipObj = col?.chipOptions.find((obj) => obj.value == value);
+      if (chipObj) {
+        label = chipObj.label;
+        color = chipObj.color;
+      }
+    }
+
+    return (
+      <Chip
+        label={label}
+        variant={variant}
+        color={color}
+        className={col.className || ""}
+      />
+    );
+  };
+
   const handleRenderCellValue = (col, row, index) => {
     const value = row[col.key];
-    if (col.type === "index") {
+    if (col.type === "menu_actions") {
       return (
-        <div className="text-gray-500 dark:text-gray-400">
-          {calculateRowNumber(index)}
+        <div className={`text-center ${col.className || ""}`}>
+          <button
+            ref={(el) => (buttonRefs.current[row.id] = el)}
+            onClick={(e) => handleMenuToggle(row.id, e, col.menuList)}
+            className="p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition text-gray-700 dark:text-gray-300"
+          >
+            <EllipsisVertical className="h-4 w-4" />
+          </button>
         </div>
       );
-    } else if (col.type === "user_profile") {
-      return renderUserProfileCell(row);
-    } else if (col.type === "chip") {
-      const label =
-        typeof col.label === "function" ? col.label(row) : String(value);
-      const variant = col.variant || "contained";
-      const color =
-        value === true
-          ? "green"
-          : typeof col?.color === "function"
-            ? col?.color(row)
-            : "red";
-
+    } else if (col.type === "index") {
       return (
-        <Chip
-          label={label}
-          variant={variant}
-          color={color}
-          className={col.className || ""}
-        />
+        <span className={col.className || ""}>{calculateRowNumber(index)}</span>
       );
+    } else if (col.type === "group") {
+      return renderGroupCell(row, col);
+    } else if (col.type === "chip") {
+      return <>{handleRenderChip(value, col)}</>;
     } else if (col.type === "date") {
-      return <span>{formatDate(value, col.format || "DD MMM YYYY")}</span>;
+      return (
+        <span className={col.className || ""}>
+          {formatDate(value, col.format || "DD MMM YYYY")}
+        </span>
+      );
+    } else if (col.type === "avatar") {
+      return (
+        <>{renderAvatar(value, col.alt, col.className, col.fallback_icon)}</>
+      );
     } else {
-      return <span>{value || "N/A"}</span>;
+      return <span className={col.className || ""}>{value || "N/A"}</span>;
     }
   };
+
   // Close menu on scroll -------------------
   useEffect(() => {
     const handleScroll = () => {
@@ -208,18 +266,42 @@ const Table = ({ config }) => {
   }, []);
 
   useEffect(() => {
-    setPageSize(pagination?.rows_per_page || 50);
+    if (pagination?.rows_per_page && pagination?.useServerSidePagination) {
+      setPageSize(pagination?.rows_per_page || 50);
+    }
+
+    if (pagination.current_page) {
+      setCurrentPage(pagination.current_page);
+    }
+  }, [
+    pagination.rows_per_page,
+    pagination?.useServerSidePagination,
+    pagination.current_page,
+  ]);
+
+  useEffect(() => {
     setTotalRecords(
       pagination?.useServerSidePagination
         ? pagination.total_records
         : filteredData.length,
     );
-  }, [pagination, filteredData]);
+
+    if (
+      filteredData.length <= pageSize * (currentPage - 1) &&
+      !pagination?.useServerSidePagination
+    ) {
+      setCurrentPage((prev) => prev - 1 || 1);
+    }
+  }, [
+    filteredData.length,
+    pagination.total_records,
+    pagination?.useServerSidePagination,
+  ]);
 
   if (loading) return <TableSkeleton rows={6} columns={6} />;
 
   return (
-    <div className="">
+    <>
       {/* Search Bar */}
       <div className="flex justify-end items-center mb-6 gap-2">
         {search.enabled && (
@@ -251,26 +333,14 @@ const Table = ({ config }) => {
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-700/60">
               <tr>
-                {actions.length > 0 && actionsPosition === "start" && (
-                  <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Actions
-                  </th>
-                )}
-
                 {table_head.map((col) => (
                   <th
                     key={col.key}
-                    className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider min-w-max max-w-[180px] truncate"
+                    className="px-6 py-4 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider min-w-max max-w-[180px] truncate"
                   >
                     {col.title}
                   </th>
                 ))}
-
-                {actions.length > 0 && actionsPosition === "end" && (
-                  <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Actions
-                  </th>
-                )}
               </tr>
             </thead>
 
@@ -278,7 +348,7 @@ const Table = ({ config }) => {
               {paginatedData.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={table_head.length + (actions.length > 0 ? 1 : 0)}
+                    colSpan={table_head.length}
                     className="text-center py-10 text-gray-500 dark:text-gray-400"
                   >
                     {emptyMessage}
@@ -290,18 +360,6 @@ const Table = ({ config }) => {
                     key={row.id || index}
                     className="hover:bg-gray-50 dark:hover:bg-blue-800/10 transition"
                   >
-                    {actions.length > 0 && actionsPosition === "start" && (
-                      <td className="px-6 py-4 text-center min-w-max max-w-[120px]">
-                        <button
-                          ref={(el) => (buttonRefs.current[row.id] = el)}
-                          onClick={(e) => handleMenuToggle(row.id, e)}
-                          className="p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition text-gray-700 dark:text-gray-300"
-                        >
-                          <EllipsisVertical className="h-4 w-4" />
-                        </button>
-                      </td>
-                    )}
-
                     {table_head.map((col) => (
                       <td
                         key={col.key}
@@ -313,18 +371,6 @@ const Table = ({ config }) => {
                           : handleRenderCellValue(col, row, index)}
                       </td>
                     ))}
-
-                    {actions.length > 0 && actionsPosition === "end" && (
-                      <td className="px-6 py-4 text-center min-w-max max-w-[120px]">
-                        <button
-                          ref={(el) => (buttonRefs.current[row.id] = el)}
-                          onClick={(e) => handleMenuToggle(row.id, e)}
-                          className="p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition text-gray-700 dark:text-gray-300"
-                        >
-                          <EllipsisVertical className="h-4 w-4" />
-                        </button>
-                      </td>
-                    )}
                   </tr>
                 ))
               )}
@@ -352,11 +398,13 @@ const Table = ({ config }) => {
                     const newLimit = Number(e.target.value);
                     setPageSize(newLimit);
                     setCurrentPage(1);
-                    setServerSidePaginationData((prev) => ({
-                      ...prev,
-                      current_page: 1,
-                      rows_per_page: newLimit,
-                    }));
+                    if (pagination.useServerSidePagination) {
+                      setServerSidePaginationData((prev) => ({
+                        ...prev,
+                        current_page: 1,
+                        rows_per_page: newLimit,
+                      }));
+                    }
                   }}
                   className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
@@ -375,10 +423,12 @@ const Table = ({ config }) => {
                     if (currentPage > 1) {
                       const newPage = currentPage - 1;
                       setCurrentPage(newPage);
-                      setServerSidePaginationData((prev) => ({
-                        ...prev,
-                        current_page: newPage,
-                      }));
+                      if (pagination.useServerSidePagination) {
+                        setServerSidePaginationData((prev) => ({
+                          ...prev,
+                          current_page: newPage,
+                        }));
+                      }
                     }
                   }}
                   disabled={currentPage === 1}
@@ -396,10 +446,12 @@ const Table = ({ config }) => {
                     if (currentPage < totalPages) {
                       const newPage = currentPage + 1;
                       setCurrentPage(newPage);
-                      setServerSidePaginationData((prev) => ({
-                        ...prev,
-                        current_page: newPage,
-                      }));
+                      if (pagination.useServerSidePagination) {
+                        setServerSidePaginationData((prev) => ({
+                          ...prev,
+                          current_page: newPage,
+                        }));
+                      }
                     }
                   }}
                   disabled={currentPage === totalPages}
@@ -426,7 +478,7 @@ const Table = ({ config }) => {
             }}
             className="w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg border border-gray-200 dark:border-gray-600"
           >
-            {actions.map((action, i) => (
+            {menuList.map((action, i) => (
               <button
                 key={i}
                 onClick={(e) =>
@@ -459,7 +511,16 @@ const Table = ({ config }) => {
           onApply={onFilterApply}
         />
       )}
-    </div>
+
+      {isOpen && (
+        <ImagePreview
+          src={targetImage.src}
+          alt={targetImage.alt}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        />
+      )}
+    </>
   );
 };
 

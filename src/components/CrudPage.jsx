@@ -12,16 +12,16 @@ const CrudPage = ({ config }) => {
   const {
     title,
     fetchData = async () => {},
-    formLoading = false,
+    isStaticData = false,
     tableConfig = {},
     modalConfig = {},
     filterConfig,
-    onDelete,
-    onSubmit,
     onFilterApply,
   } = config;
 
   const [loading, setLoading] = useState(true);
+  const [formLoading, setFormLoading] = useState(false);
+
   const [listingData, setListingData] = useState([]);
   const [paginationData, setPaginationData] = useState(null);
   const [serverSidePaginationData, setServerSidePaginationData] = useState({
@@ -49,20 +49,102 @@ const CrudPage = ({ config }) => {
     }
   };
 
-  const handleFormSubmit = async (formData) => {
-    await onSubmit?.(formData, selectedItem);
+  const executeAction = async (
+    action,
+    onSuccess,
+    success_message = "",
+    error_message = "",
+  ) => {
+    setFormLoading(true);
+
+    try {
+      const resp = await action?.();
+      if (success_message || resp.message) {
+        enqueueSnackbar(success_message || resp.message, {
+          variant: "success",
+        });
+      }
+      onSuccess?.(resp);
+    } catch (error) {
+      if (error_message || error.message) {
+        enqueueSnackbar(error_message || error.message, { variant: "error" });
+      }
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleAddResult = (resp) => {
+    let newObj = resp.newObject;
+    if (isStaticData) {
+      setListingData((prev) => [newObj, ...prev]);
+      setPaginationData((prev) => ({
+        ...prev,
+        current_page: 1,
+      }));
+    } else {
+      setServerSidePaginationData((prev) => ({
+        ...prev,
+        current_page: 1,
+      }));
+    }
     setShowAdd(false);
+  };
+
+  const handleEditResult = (resp) => {
+    let updatedObj = resp.newObject;
+    let targetObj = resp.targetObject;
+    if (isStaticData) {
+      setListingData((prev) =>
+        prev.map((item) =>
+          item.id === targetObj.id ? { ...item, ...updatedObj } : item,
+        ),
+      );
+    } else {
+      handleGetListing();
+    }
     setShowEdit(false);
   };
 
-  const handleDeleteConfirm = async () => {
-    try {
-      await onDelete?.(selectedItem);
-      setShowDelete(false);
-    } finally {
-      setSelectedItem(null);
+  const handleDeleteResult = (resp) => {
+    if (isStaticData) {
+      setListingData((prev) =>
+        prev.filter((item) => item.id !== resp.targetObject.id),
+      );
+    } else {
+      if (
+        listingData.length == 1 &&
+        serverSidePaginationData.current_page > 1
+      ) {
+        setServerSidePaginationData((prev) => ({
+          ...prev,
+          current_page: prev.current_page - 1,
+        }));
+      } else {
+        handleGetListing();
+      }
     }
+    setShowDelete(false);
+    setSelectedItem(null);
   };
+
+  const handleAddFormSubmit = (formData) =>
+    executeAction(
+      () => modalConfig?.addModal?.action?.(formData),
+      handleAddResult,
+    );
+
+  const handleEditFormSubmit = (formData) =>
+    executeAction(
+      () => modalConfig?.editModal?.action?.(formData, selectedItem),
+      handleEditResult,
+    );
+
+  const handleDeleteConfirm = () =>
+    executeAction(
+      () => modalConfig?.deleteModal?.action?.(selectedItem),
+      handleDeleteResult,
+    );
 
   const handleGetListing = async () => {
     setLoading(true);
@@ -143,7 +225,7 @@ const CrudPage = ({ config }) => {
       >
         <Form
           config={modalConfig?.addModal || []}
-          onSubmit={handleFormSubmit}
+          onSubmit={handleAddFormSubmit}
           initialData={{}}
           loading={formLoading}
         />
@@ -165,7 +247,7 @@ const CrudPage = ({ config }) => {
       >
         <Form
           config={modalConfig.editModal || []}
-          onSubmit={handleFormSubmit}
+          onSubmit={handleEditFormSubmit}
           initialData={selectedItem}
           loading={formLoading}
         />

@@ -39,7 +39,7 @@ export const formatDate = (dateString, format = "DD MMM YYYY") => {
 };
 
 // =========== Local Search function ===========
-export const searchLocalData = (data, searchTerm) => {
+export const searchLocalData = (data, searchTerm, searchKeys = []) => {
   if (!searchTerm?.trim()) return data;
 
   const lowerSearchTerm = searchTerm.toLowerCase();
@@ -53,7 +53,22 @@ export const searchLocalData = (data, searchTerm) => {
   };
 
   return data.filter((item) => {
-    const allValues = extractValues(item);
-    return allValues.some((val) => val.toLowerCase().includes(lowerSearchTerm));
+    let valuesToSearch = [];
+
+    // ✅ If specific keys are provided → search only in those keys
+    if (searchKeys.length > 0) {
+      searchKeys.forEach((key) => {
+        if (item[key] !== undefined) {
+          valuesToSearch.push(...extractValues(item[key]));
+        }
+      });
+    } else {
+      // ✅ Otherwise → search in entire object
+      valuesToSearch = extractValues(item);
+    }
+
+    return valuesToSearch.some((val) =>
+      val.toLowerCase().includes(lowerSearchTerm),
+    );
   });
 };

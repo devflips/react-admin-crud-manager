@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useSnackbar } from "notistack";
-import { Eye, Pencil, Trash2, User } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import CrudPage from "../../components/CrudPage";
 import { mockData } from "../../data/teams";
 import { formatDate } from "../../lib/utils";
@@ -9,75 +8,41 @@ import TeamFilters from "./TeamFilters";
 import TeamMemberDetail from "./TeamMemberDetail";
 
 const TeamsPage = () => {
-  const { enqueueSnackbar } = useSnackbar();
   const [data, setData] = useState(mockData.data);
   const [filters, setFilters] = useState({});
-  const [formLoading, setFormLoading] = useState(false);
-  const [pagination, setPagination] = useState(mockData.pagination);
 
-  const handleSubmit = async (formData, selectedItem) => {
-    setFormLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      if (selectedItem) {
-        // Update existing item
-        setData((prev) =>
-          prev.map((item) =>
-            item.id === selectedItem.id ? { ...item, ...formData } : item,
-          ),
-        );
-        enqueueSnackbar("User updated successfully", { variant: "success" });
-      } else {
-        // Add new item at top and reassign IDs
-        const newItem = {
-          ...formData,
-          createdAt: new Date().toISOString().split("T")[0],
-        };
-
-        setData((prev) => {
-          const updated = [newItem, ...prev];
-          // reassign IDs starting from 1
-          return updated.map((item, index) => ({ ...item, id: index + 1 }));
+  const handleSubmit = async (formData, selectedItem = null) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // call here api's for add edit
+        resolve({
+          newObject: {
+            ...formData,
+            createdAt: new Date(),
+            id: `testing-${formData.first_name}`,
+          },
+          targetObject: selectedItem,
         });
-
-        enqueueSnackbar("User added successfully", { variant: "success" });
+      } catch (error) {
+        reject(error);
       }
-    } finally {
-      setFormLoading(false);
-    }
+    });
   };
 
   const handleDelete = async (selectedItem) => {
-    setFormLoading(true);
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      setData((prev) => prev.filter((item) => item.id !== selectedItem.id));
-      enqueueSnackbar("User deleted successfully", { variant: "success" });
-    } catch (error) {
-      enqueueSnackbar("Delete failed", { variant: "error" });
-    } finally {
-      setFormLoading(false);
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        // call here api's for delete
+        resolve({
+          targetObject: selectedItem,
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
   };
 
-  const filteredData = useMemo(() => {
-    let result = [...data];
-    if (filters.status)
-      result = result.filter((item) => item.status === filters.status);
-    if (filters.role)
-      result = result.filter((item) => item.role === filters.role);
-    if (filters.department)
-      result = result.filter((item) =>
-        item.department
-          ?.toLowerCase()
-          .includes(filters.department.toLowerCase()),
-      );
-    return result;
-  }, [data, filters]);
-
-  const fetchTableData = (props) => {
+  const fetchTableData2 = (props) => {
     return new Promise(async (resolve, reject) => {
       try {
         const response = await fetch(
@@ -107,8 +72,6 @@ const TeamsPage = () => {
             total_records: data.total,
           },
         };
-
-        console.log(data, "datadata", response);
         resolve(data);
       } catch (error) {
         reject(error);
@@ -116,10 +79,14 @@ const TeamsPage = () => {
     });
   };
 
-  const fetchTableData2 = async () => {
+  const fetchTableData = async () => {
     // Api Call goes here
+    let list = data.map((obj) => ({
+      ...obj,
+      name: `${obj.first_name} ${obj.last_name || ""}`,
+    }));
     return {
-      data: [...data],
+      data: [...list],
       pagination: {
         current_page: 1,
         rows_per_page: 50,
@@ -136,14 +103,40 @@ const TeamsPage = () => {
   const tableConfig = {
     table_head: [
       {
+        key: "menu_actions",
+        title: "Actions",
+        type: "menu_actions",
+        menuList: [
+          {
+            title: "Edit",
+            type: "edit",
+            icon: <Pencil className="w-4 h-4" />,
+          },
+          {
+            title: "View Details",
+            type: "view",
+            icon: <Eye className="w-4 h-4" />,
+          },
+          {
+            title: "Delete",
+            type: "delete",
+            variant: "danger",
+            icon: <Trash2 className="w-4 h-4" />,
+          },
+        ],
+      },
+      {
         key: "index",
         title: "#",
         type: "index",
       },
       {
-        key: "user_profile",
+        key: "group",
         title: "Info",
-        type: "user_profile",
+        type: "group",
+        imageKey: "image",
+        titleKey: "name",
+        subtitleKey: "email",
       },
       {
         key: "phone",
@@ -154,35 +147,24 @@ const TeamsPage = () => {
         title: "Role",
         type: "chip",
         variant: "contained",
-        label: (row) => {
-          return row.role === "admin"
-            ? "Super Admin"
-            : row.role === "moderator"
-              ? "Moderator"
-              : row.role === "editor"
-                ? "Editor"
-                : row.role === "viewer"
-                  ? "Viewer"
-                  : "No Role";
-        },
-        color: (row) => {
-          return row.role === "admin"
-            ? "blue"
-            : row.role === "moderator"
-              ? "teal"
-              : row.role === "editor"
-                ? "purple"
-                : row.role === "viewer"
-                  ? "yellow"
-                  : "gray";
-        },
+        chipOptions: [
+          { value: "admin", label: "Super Admin", color: "blue" },
+          { value: "moderator", label: "Moderator", color: "teal" },
+          { value: "editor", label: "Editor", color: "purple" },
+          { value: "viewer", label: "Viewer", color: "yellow" },
+        ],
+        defaultColor: "gray",
       },
       {
         key: "status",
         title: "Status",
         type: "chip",
         variant: "outline",
-        label: (row) => (row.status === true ? "Active" : "Inactive"),
+        chipOptions: [
+          { value: true, label: "Active", color: "green" },
+          { value: false, label: "Inactive", color: "red" },
+        ],
+        defaultColor: "gray",
         className: "uppercase",
       },
       {
@@ -192,32 +174,14 @@ const TeamsPage = () => {
         format: "DD MMM YYYY",
       },
     ],
-    actions: [
-      {
-        title: "Edit",
-        type: "edit",
-        icon: <Pencil className="w-4 h-4" />,
-      },
-      {
-        title: "View Details",
-        type: "view",
-        icon: <Eye className="w-4 h-4" />,
-      },
-      {
-        title: "Delete",
-        type: "delete",
-        variant: "danger",
-        icon: <Trash2 className="w-4 h-4" />,
-      },
-    ],
-    actionsPosition: "start",
     search: {
       enabled: true,
-      useServerSideSearch: true,
+      useServerSideSearch: false,
+      searchKeys: ["name", "email"], // optional for the static search
     },
     pagination: {
       enabled: true,
-      useServerSidePagination: true,
+      useServerSidePagination: false,
     },
   };
 
@@ -265,8 +229,8 @@ const TeamsPage = () => {
           type: "phone",
           required: true,
           search: true,
-          countries_list: true,
-          default_country: "PK",
+          countriesList: true,
+          defaultCountry: "PK",
           placeholder: "Enter Phone Number",
           parentClass: "col-span-12 sm:col-span-6",
         },
@@ -292,6 +256,7 @@ const TeamsPage = () => {
           parentClass: "col-span-12",
         },
       ],
+      action: handleSubmit,
       footer: {
         submitButton: true,
         submitText: "Add Member",
@@ -376,8 +341,8 @@ const TeamsPage = () => {
           type: "phone",
           required: true,
           search: true,
-          countries_list: true,
-          default_country: "PK",
+          countriesList: true,
+          defaultCountry: "PK",
           placeholder: "Enter Phone Number",
           parentClass: "col-span-12 sm:col-span-6",
         },
@@ -390,6 +355,7 @@ const TeamsPage = () => {
           parentClass: "col-span-12",
         },
       ],
+      action: handleSubmit,
       footer: {
         submitButton: true,
         submitText: "Update Member",
@@ -401,6 +367,7 @@ const TeamsPage = () => {
       title: "Confirm Delete",
       size: "md",
       confirmText: "Are you sure you want to delete this member?",
+      action: handleDelete,
       footer: {
         submitButton: true,
         submitText: "Delete",
@@ -429,13 +396,11 @@ const TeamsPage = () => {
     description: "Manage team members and their roles and permissions",
     buttonText: "Add New Member",
     fetchData: fetchTableData,
-    onSubmit: handleSubmit,
-    onDelete: handleDelete,
+    isStaticData: true,
     onFilterApply: setFilters,
     tableConfig,
     modalConfig,
     filterConfig,
-    formLoading,
   };
 
   return <CrudPage config={config} />;

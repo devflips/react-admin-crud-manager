@@ -13,15 +13,15 @@ export default function PhoneInput({
   required = false,
   placeholder = "Phone number",
   search = false,
-  countries_list = false,
-  default_country = "",
+  countriesList = false,
+  defaultCountry = "",
 }) {
   const find_country_with_code = (value) => {
     return countries.find((obj) => obj.code == value);
   };
 
   const [selectedCountry, setSelectedCountry] = useState(
-    find_country_with_code(default_country) || countries[0],
+    find_country_with_code(defaultCountry) || countries[0],
   );
   const [fullNumber, setFullNumber] = useState("");
   const [open, setOpen] = useState(false);
@@ -74,7 +74,7 @@ export default function PhoneInput({
       c.phone.includes(searchTerm),
   );
 
-  if (!countries_list) {
+  if (!countriesList) {
     const handleInputChange = (e) => {
       const input = e.target.value.replace(/[^+\d]/g, "");
       const formatted = input.startsWith("+")
