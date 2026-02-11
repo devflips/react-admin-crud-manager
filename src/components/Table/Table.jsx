@@ -25,6 +25,10 @@ const Table = ({ config }) => {
       placeholder: "Search...",
       useServerSideSearch: false,
     },
+    filter = {
+      enabled: false,
+      useServerSideFilters: false,
+    },
     pagination = {
       enabled: false,
       rows_per_page: 10,
@@ -319,7 +323,7 @@ const Table = ({ config }) => {
           </div>
         )}
 
-        {filterConfig && (
+        {filterConfig && filter.enabled && (
           <Button onClick={() => setShowFilters(true)} variant="contained">
             <Filter className="w-4 h-4 mr-2" />
             Filters

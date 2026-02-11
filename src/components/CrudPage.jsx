@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import Table from "./Table/Table";
 import Modal from "./Modal/Modal";
 import Form from "./Form/Form";
 import Button from "./Button/Button";
 import { Icon } from "@iconify/react";
-import { set } from "date-fns";
 import { enqueueSnackbar } from "notistack";
 
 const CrudPage = ({ config }) => {
@@ -16,7 +15,6 @@ const CrudPage = ({ config }) => {
     tableConfig = {},
     modalConfig = {},
     filterConfig,
-    onFilterApply,
   } = config;
 
   const [loading, setLoading] = useState(true);
@@ -29,6 +27,8 @@ const CrudPage = ({ config }) => {
     rows_per_page: 50,
     current_page: 1,
   });
+  const [filterData, setFilterData] = useState({});
+  const [changeFilterData, setChangeFilterData] = useState(false);
 
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
@@ -149,7 +149,7 @@ const CrudPage = ({ config }) => {
   const handleGetListing = async () => {
     setLoading(true);
 
-    fetchData?.(serverSidePaginationData)
+    fetchData?.({ ...serverSidePaginationData, ...filterData })
       .then((resp) => {
         setListingData(resp.data);
         setPaginationData(resp.pagination);
@@ -162,12 +162,33 @@ const CrudPage = ({ config }) => {
       });
   };
 
+  const handleFilterData = (data) => {
+    setFilterData((prev) => ({
+      ...data,
+    }));
+    if (tableConfig?.filter?.useServerSideFilters) {
+      setChangeFilterData((prev) => !prev);
+    }
+  };
+
+  const filterByMatchingFields = (data, filters) => {
+    return data.filter((item) =>
+      Object.entries(filters).every(([key, value]) => item[key] === value),
+    );
+  };
+
+  const filteredData = useMemo(() => {
+    if (tableConfig?.filter?.useServerSideFilters) return data;
+    return filterByMatchingFields(listingData, filterData);
+  }, [listingData, filterData]);
+
   useEffect(() => {
     handleGetListing();
   }, [
     serverSidePaginationData.search,
     serverSidePaginationData.rows_per_page,
     serverSidePaginationData.current_page,
+    changeFilterData,
   ]);
 
   return (
@@ -202,11 +223,11 @@ const CrudPage = ({ config }) => {
             ...tableConfig.pagination,
             ...paginationData,
           },
-          data: listingData,
+          data: filteredData,
           setServerSidePaginationData: setServerSidePaginationData,
           onMenuAction: handleMenuAction,
           filterConfig,
-          onFilterApply,
+          onFilterApply: handleFilterData,
           loading,
         }}
       />

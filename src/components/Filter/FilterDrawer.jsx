@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import Button from "../Button/Button";
+import RenderFields from "../Form/components/RenderFields";
 
 const FilterDrawer = ({ isOpen, onClose, config, onApply }) => {
   const [filters, setFilters] = useState({});
@@ -59,33 +60,14 @@ const FilterDrawer = ({ isOpen, onClose, config, onApply }) => {
           ) : (
             <div className="space-y-4">
               {config?.fields?.map((field) => (
-                <div key={field.key}>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {field.label}
-                  </label>
-                  {field.type === "select" ? (
-                    <select
-                      value={filters[field.key] || ""}
-                      onChange={(e) => handleChange(field.key, e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">All</option>
-                      {field.options?.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input
-                      type={field.type}
-                      value={filters[field.key] || ""}
-                      onChange={(e) => handleChange(field.key, e.target.value)}
-                      placeholder={field.placeholder}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  )}
-                </div>
+                <>
+                  <RenderFields
+                    key={field.key}
+                    field={field}
+                    formData={filters}
+                    handleChange={handleChange}
+                  />
+                </>
               ))}
             </div>
           )}

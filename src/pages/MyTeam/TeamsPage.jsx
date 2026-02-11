@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import CrudPage from "../../components/CrudPage";
 import { mockData } from "../../data/teams";
-import { formatDate } from "../../lib/utils";
-import { Icon } from "@iconify/react";
 import TeamFilters from "./TeamFilters";
 import TeamMemberDetail from "./TeamMemberDetail";
 
@@ -42,11 +40,11 @@ const TeamsPage = () => {
     });
   };
 
-  const fetchTableData2 = (props) => {
+  const fetchTableData2 = (params) => {
     return new Promise(async (resolve, reject) => {
       try {
         const response = await fetch(
-          `https://dummyjson.com/products/search?q=${props.search}&limit=${props.rows_per_page}&skip=${props.rows_per_page * (props.current_page - 1)}&page=${props.current_page}&delay=2000`,
+          `https://dummyjson.com/products/search?q=${params.search}&limit=${params.rows_per_page}&skip=${params.rows_per_page * (params.current_page - 1)}&page=${params.current_page}&delay=2000`,
         );
 
         if (!response.ok) {
@@ -66,9 +64,9 @@ const TeamsPage = () => {
         data = {
           data: [...list],
           pagination: {
-            current_page: props.current_page,
-            rows_per_page: props.rows_per_page,
-            total_pages: Math.ceil(data.total / props.rows_per_page),
+            current_page: params.current_page,
+            rows_per_page: params.rows_per_page,
+            total_pages: Math.ceil(data.total / params.rows_per_page),
             total_records: data.total,
           },
         };
@@ -182,6 +180,10 @@ const TeamsPage = () => {
     pagination: {
       enabled: true,
       useServerSidePagination: false,
+    },
+    filter: {
+      enabled: true,
+      useServerSideFilters: false,
     },
   };
 
