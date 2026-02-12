@@ -20,7 +20,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
     search,
     accept,
     text,
-    required,
+    required = false,
     minLength,
     dragDrop,
     parentClass,

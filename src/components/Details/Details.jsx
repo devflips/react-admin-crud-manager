@@ -34,13 +34,10 @@ export default function Details({ data, config }) {
 
     return (
       <div
-        className={`col-span-12 flex items-start space-x-3 py-3 border-b border-gray-100 dark:border-gray-700 last:border-0 ${col.blockClass}`}
+        className={`col-span-12 flex items-center space-x-4 p-4 rounded-xl 
+                    bg-gray-100 dark:bg-gray-900 ${col.blockClass}`}
       >
-        {Icon && (
-          <div className="flex-shrink-0 mt-1">
-            <Icon className="w-5 h-5 text-gray-400 dark:text-gray-500" />
-          </div>
-        )}
+        {Icon && <div className="flex-shrink-0">{Icon}</div>}
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
             {label}
@@ -83,7 +80,9 @@ export default function Details({ data, config }) {
 
     return (
       <div
-        className={`col-span-12 flex items-center space-x-4 pb-4 border-b border-gray-200 dark:border-gray-700 ${col.blockClass}`}
+        className={`col-span-12 flex items-center space-x-4 p-4 rounded-xl 
+      bg-gray-100 dark:bg-gray-900 
+      ${col.blockClass}`}
       >
         {image ? (
           <img
@@ -95,12 +94,11 @@ export default function Details({ data, config }) {
         ) : fallback_icon ? (
           fallback_icon
         ) : (
-          <>
-            <div className="w-16 h-16 flex items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600">
-              <User className="w-8 h-8 text-gray-400" />
-            </div>
-          </>
+          <div className="w-16 h-16 flex items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600">
+            <User className="w-8 h-8 text-gray-400" />
+          </div>
         )}
+
         <div>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
             {title}

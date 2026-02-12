@@ -2,7 +2,6 @@ import React from "react";
 import { X } from "lucide-react";
 import Button from "../Button/Button";
 
-
 const Modal = ({
   isOpen,
   onClose,
@@ -10,13 +9,16 @@ const Modal = ({
   title,
   children,
   size = "md",
+  actionButtons = [],
   actions,
   showDefaultClose = true,
   footerConfig = null,
   hideFooter = false,
-  onFormSubmit,
+  onFormSubmit = () => {},
   onCancel,
   loadingBtn = false,
+  executeFunction = () => {},
+  selectedItem = null,
 }) => {
   if (!isOpen) return null;
 
@@ -34,7 +36,7 @@ const Modal = ({
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-gray-500 opacity-75"
-        onClick={onClose}
+        onClick={() => onClose()}
       ></div>
 
       {/* Modal container */}
@@ -51,9 +53,9 @@ const Modal = ({
               {title}
             </h3>
           </div>
-          
+
           <button
-            onClick={onClose}
+            onClick={() => onClose()}
             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
           >
             <X className="w-6 h-6" />
@@ -64,7 +66,7 @@ const Modal = ({
         <div className="flex-1 overflow-y-auto p-4">{children}</div>
 
         {/* Footer */}
-        {!hideFooter && (actions || footerConfig || showDefaultClose) && (
+        {/* {!hideFooter && (actions || footerConfig || showDefaultClose) && (
           <div className="px-4 py-3 flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700 sm:px-6">
             {actions}
 
@@ -72,7 +74,7 @@ const Modal = ({
               <>
                 {footerConfig.cancelButton && (
                   <Button
-                    onClick={onCancel || onClose}
+                    onClick={() =>  (onCancel() || onClose())}
                     disabled={loadingBtn}
                     variant="contained"
                     color="default"
@@ -103,10 +105,43 @@ const Modal = ({
             )}
 
             {showDefaultClose && !actions && !footerConfig && (
-              <Button onClick={onClose} variant="outlined">
+              <Button onClick={() => onClose()} variant="outlined">
                 Close
               </Button>
             )}
+          </div>
+        )} */}
+
+        {actionButtons.length > 0 && (
+          <div className="px-4 py-3 flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700 sm:px-6">
+            {actionButtons.map((btn) => (
+              <Button
+                onClick={(e) => {
+                  if (btn.type == "submit") {
+                    onFormSubmit(e);
+                  } else {
+                    executeFunction(
+                      () => btn?.onClick?.(e, selectedItem),
+                      (resp) => onClose?.(resp),
+                    );
+                  }
+                }}
+                disabled={loadingBtn || btn.disabled}
+                variant={btn.variant || "contained"}
+                color={btn.color || "primary"}
+                className={`min-w-[100px] ${btn.className}`}
+                type={btn.type || "button"}
+              >
+                {loadingBtn ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-2 border-t-white mr-2"></div>
+                    {btn.label || "Submit"}...
+                  </div>
+                ) : (
+                  btn.label || "Submit"
+                )}
+              </Button>
+            ))}
           </div>
         )}
       </div>

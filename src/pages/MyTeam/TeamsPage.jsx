@@ -4,6 +4,16 @@ import CrudPage from "../../components/CrudPage";
 import { mockData } from "../../data/teams";
 import TeamFilters from "./TeamFilters";
 import TeamMemberDetail from "./TeamMemberDetail";
+import {
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  Shield,
+  Activity,
+  FileText,
+  Users,
+} from "lucide-react";
 
 const TeamsPage = () => {
   const [data, setData] = useState(mockData.data);
@@ -26,7 +36,8 @@ const TeamsPage = () => {
     });
   };
 
-  const handleDelete = async (selectedItem) => {
+  const handleDelete = async (e, selectedItem) => {
+    e.preventDefault();
     return new Promise(async (resolve, reject) => {
       try {
         // call here api's for delete
@@ -255,19 +266,19 @@ const TeamsPage = () => {
           key: "bio",
           label: "Bio",
           type: "tinyEditor",
-          editorKey: "5fiismlxsot48vfobqbjy4i4186y92uh5dln3isjaj5w4rld",
+          editorKey: import.meta.env.VITE_EDITOR_KEY,
           rows: 3,
           required: true,
           parentClass: "col-span-12",
         },
       ],
-      action: handleSubmit,
-      footer: {
-        submitButton: true,
-        submitText: "Add Member",
-        cancelButton: true,
-        cancelText: "Cancel",
-      },
+      handleSubmit: handleSubmit,
+      actionButtons: [
+        {
+          type: "submit",
+          label: "Add Member",
+        },
+      ],
     },
     editModal: {
       title: "Edit Member",
@@ -360,31 +371,33 @@ const TeamsPage = () => {
           parentClass: "col-span-12",
         },
       ],
-      action: handleSubmit,
-      footer: {
-        submitButton: true,
-        submitText: "Update Member",
-        cancelButton: true,
-        cancelText: "Cancel",
-      },
+      handleSubmit: handleSubmit,
+      actionButtons: [
+        {
+          type: "submit",
+          label: "Update Member",
+        },
+      ],
     },
     deleteModal: {
       title: "Confirm Delete",
       size: "md",
       confirmText: "Are you sure you want to delete this member?",
-      action: handleDelete,
-      footer: {
-        submitButton: true,
-        submitText: "Delete",
-        cancelButton: true,
-        cancelText: "Cancel",
-        color: "error",
-      },
+      referenceKey: "name",
+      actionButtons: [
+        {
+          type: "button",
+          label: "Delete Member",
+          color: "error",
+          onClick: handleDelete,
+        },
+      ],
     },
     viewModal: {
       title: "Team Member Details",
       size: "lg",
       // component: TeamMemberDetail,
+
       fields: [
         {
           key: "group",
@@ -398,22 +411,28 @@ const TeamsPage = () => {
           label: "First Name",
           key: "first_name",
           blockClass: "col-span-6",
+          icon: <User size={18} />,
         },
         {
           label: "Last Name",
           key: "last_name",
           blockClass: "col-span-6",
+          icon: <User size={18} />,
         },
 
         {
           key: "phone",
           label: "Phone Number",
+          blockClass: "col-span-6",
+          icon: <Phone size={18} />,
         },
         {
           key: "createdAt",
           label: "Created Date",
           type: "date",
           format: "DD MMM YYYY",
+          blockClass: "col-span-6",
+          icon: <Calendar size={18} />,
         },
         {
           key: "role",
@@ -428,6 +447,7 @@ const TeamsPage = () => {
           ],
           defaultColor: "gray",
           blockClass: "col-span-6",
+          icon: <Shield size={18} />,
         },
         {
           key: "status",
@@ -441,14 +461,17 @@ const TeamsPage = () => {
           defaultColor: "gray",
           className: "uppercase",
           blockClass: "col-span-6",
+          icon: <Activity size={18} />,
         },
         {
           key: "bio",
           label: "Bio / Notes",
           type: "tinyEditor",
           blockClass: "col-span-12",
+          icon: <FileText size={18} />,
         },
       ],
+
       footer: {
         cancelButton: true,
         cancelText: "Close",

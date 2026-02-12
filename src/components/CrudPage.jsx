@@ -111,6 +111,7 @@ const CrudPage = ({ config }) => {
   };
 
   const handleDeleteResult = (resp) => {
+    if (!resp) return;
     if (isStaticData) {
       setListingData((prev) =>
         prev.filter((item) => item.id !== resp.targetObject.id),
@@ -134,13 +135,13 @@ const CrudPage = ({ config }) => {
 
   const handleAddFormSubmit = (formData) =>
     executeAction(
-      () => modalConfig?.addModal?.action?.(formData),
+      () => modalConfig?.addModal?.handleSubmit?.(formData),
       handleAddResult,
     );
 
   const handleEditFormSubmit = (formData) =>
     executeAction(
-      () => modalConfig?.editModal?.action?.(formData, selectedItem),
+      () => modalConfig?.editModal?.handleSubmit?.(formData, selectedItem),
       handleEditResult,
     );
 
@@ -243,10 +244,9 @@ const CrudPage = ({ config }) => {
         icon={modalConfig.addModal?.icon}
         title={modalConfig.addModal?.title || "Add New"}
         size={modalConfig.addModal?.size || "md"}
-        footerConfig={modalConfig.addModal?.footer}
         onFormSubmit={() => document.querySelector("#addForm")?.requestSubmit()}
-        onCancel={() => setShowAdd(false)}
         loadingBtn={formLoading}
+        actionButtons={modalConfig.addModal.actionButtons}
       >
         <Form
           config={modalConfig?.addModal || []}
@@ -263,11 +263,10 @@ const CrudPage = ({ config }) => {
         icon={modalConfig.editModal?.icon}
         title={modalConfig.editModal?.title || "Edit"}
         size={modalConfig.editModal?.size || "md"}
-        footerConfig={modalConfig.editModal?.footer}
         onFormSubmit={() =>
           document.querySelector("#editForm")?.requestSubmit()
         }
-        onCancel={() => setShowEdit(false)}
+        actionButtons={modalConfig.editModal.actionButtons}
         loadingBtn={formLoading}
       >
         <Form
@@ -279,30 +278,39 @@ const CrudPage = ({ config }) => {
       </Modal>
 
       {/* Delete Modal */}
-      <Modal
-        isOpen={showDelete}
-        onClose={() => setShowDelete(false)}
-        icon={
-          modalConfig.deleteModal?.icon || (
-            <Icon icon="ph:warning-bold" className="w-6 h-6 text-red-500" />
-          )
-        }
-        title={modalConfig.deleteModal?.title || "Confirm Delete"}
-        size={modalConfig.deleteModal?.size || "md"}
-        footerConfig={modalConfig.deleteModal?.footer}
-        onFormSubmit={handleDeleteConfirm}
-        onCancel={() => setShowDelete(false)}
-        loading={formLoading}
-      >
-        <div className="flex items-center space-x-2 py-3">
-          <div>
-            <p className="text-md text-gray-700 dark:text-white">
-              {modalConfig.deleteModal?.confirmText ||
-                "Are you sure you want to delete this item?"}
-            </p>
+      {showDelete && (
+        <Modal
+          isOpen={showDelete}
+          onClose={(resp) => {
+            handleDeleteResult(resp);
+          }}
+          icon={
+            modalConfig.deleteModal?.icon || (
+              <Icon icon="ph:warning-bold" className="w-6 h-6 text-red-500" />
+            )
+          }
+          title={modalConfig.deleteModal?.title || "Confirm Delete"}
+          size={modalConfig.deleteModal?.size || "md"}
+          loading={formLoading}
+          actionButtons={modalConfig.deleteModal.actionButtons}
+          executeFunction={executeAction}
+          selectedItem={selectedItem}
+        >
+          <div className="flex items-center space-x-2 py-3">
+            <div>
+              <p className="text-md text-gray-700 dark:text-white">
+                {modalConfig.deleteModal?.confirmText ||
+                  "Are you sure you want to delete this item?"}
+              </p>
+              {modalConfig.deleteModal?.referenceKey && (
+                <p className="text-md font-semibold text-gray-700 dark:text-white">
+                  {selectedItem[modalConfig.deleteModal?.referenceKey]}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
-      </Modal>
+        </Modal>
+      )}
 
       {/* View Detail Modal */}
       {modalConfig.viewModal && (
