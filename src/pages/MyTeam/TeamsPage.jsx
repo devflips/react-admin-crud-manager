@@ -134,6 +134,7 @@ const TeamsPage = () => {
         imageKey: "image",
         titleKey: "name",
         subtitleKey: "email",
+        onClickDetails: true,
       },
       {
         key: "phone",
@@ -254,7 +255,7 @@ const TeamsPage = () => {
           key: "bio",
           label: "Bio",
           type: "tinyEditor",
-          editorKey:"5fiismlxsot48vfobqbjy4i4186y92uh5dln3isjaj5w4rld",
+          editorKey: "5fiismlxsot48vfobqbjy4i4186y92uh5dln3isjaj5w4rld",
           rows: 3,
           required: true,
           parentClass: "col-span-12",
@@ -383,7 +384,71 @@ const TeamsPage = () => {
     viewModal: {
       title: "Team Member Details",
       size: "lg",
-      component: TeamMemberDetail,
+      // component: TeamMemberDetail,
+      fields: [
+        {
+          key: "group",
+          type: "group",
+          imageKey: "image",
+          titleKey: "name",
+          subtitleKey: "email",
+        },
+
+        {
+          label: "First Name",
+          key: "first_name",
+          blockClass: "col-span-6",
+        },
+        {
+          label: "Last Name",
+          key: "last_name",
+          blockClass: "col-span-6",
+        },
+
+        {
+          key: "phone",
+          label: "Phone Number",
+        },
+        {
+          key: "createdAt",
+          label: "Created Date",
+          type: "date",
+          format: "DD MMM YYYY",
+        },
+        {
+          key: "role",
+          label: "Role",
+          type: "chip",
+          variant: "contained",
+          chipOptions: [
+            { value: "admin", label: "Super Admin", color: "blue" },
+            { value: "moderator", label: "Moderator", color: "teal" },
+            { value: "editor", label: "Editor", color: "purple" },
+            { value: "viewer", label: "Viewer", color: "yellow" },
+          ],
+          defaultColor: "gray",
+          blockClass: "col-span-6",
+        },
+        {
+          key: "status",
+          label: "Status",
+          type: "chip",
+          variant: "outline",
+          chipOptions: [
+            { value: true, label: "Active", color: "green" },
+            { value: false, label: "Inactive", color: "red" },
+          ],
+          defaultColor: "gray",
+          className: "uppercase",
+          blockClass: "col-span-6",
+        },
+        {
+          key: "bio",
+          label: "Bio / Notes",
+          type: "tinyEditor",
+          blockClass: "col-span-12",
+        },
+      ],
       footer: {
         cancelButton: true,
         cancelText: "Close",

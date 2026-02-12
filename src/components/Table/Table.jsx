@@ -149,7 +149,11 @@ const Table = ({ config }) => {
           <img
             src={imageSrc}
             alt={imageAlt || "Avatar"}
-            onClick={() => openPreview({ src: imageSrc, alt: imageAlt })}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              openPreview({ src: imageSrc, alt: imageAlt });
+            }}
             className={`w-10 h-10 cursor-pointer rounded-full object-cover border border-gray-200 dark:border-gray-700 ${className || ""}`}
           />
         ) : (
@@ -246,6 +250,22 @@ const Table = ({ config }) => {
       return <span className={col.className || ""}>{value || "N/A"}</span>;
     }
   };
+
+  //  handle CLick on cell
+
+  const handleColumnClick = (col, row) => {
+    if (col.onClickDetails) {
+      return onMenuAction?.("view", row);
+    }
+
+    if (typeof col.handleClick === "function") {
+      return col.handleClick(row);
+    }
+  };
+
+  // Helper to check if column is clickable
+  const isColumnClickable = (col) =>
+    col.onClickDetails || typeof col.handleClick === "function";
 
   // Close menu on scroll -------------------
   useEffect(() => {
@@ -367,8 +387,11 @@ const Table = ({ config }) => {
                     {table_head.map((col) => (
                       <td
                         key={col.key}
-                        className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100 min-w-max max-w-[300px] truncate"
+                        className={`px-6 py-4 text-sm text-gray-900 dark:text-gray-100 min-w-max max-w-[300px] truncate ${
+                          isColumnClickable(col) ? "cursor-pointer" : ""
+                        }`}
                         title={String(row[col.key] ?? "")}
+                        onClick={() => handleColumnClick(col, row)}
                       >
                         {col.render
                           ? col.render(row, index)

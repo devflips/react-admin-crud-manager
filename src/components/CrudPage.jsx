@@ -6,6 +6,7 @@ import Form from "./Form/Form";
 import Button from "./Button/Button";
 import { Icon } from "@iconify/react";
 import { enqueueSnackbar } from "notistack";
+import Details from "./Details/Details";
 
 const CrudPage = ({ config }) => {
   const {
@@ -316,8 +317,10 @@ const CrudPage = ({ config }) => {
           size={modalConfig.viewModal?.size || "lg"}
           footerConfig={modalConfig?.viewModal.footer}
         >
-          {modalConfig.viewModal?.component && (
+          {modalConfig.viewModal?.component ? (
             <modalConfig.viewModal.component data={selectedItem} />
+          ) : (
+            <Details data={selectedItem} config={modalConfig.viewModal || {}} />
           )}
         </Modal>
       )}
