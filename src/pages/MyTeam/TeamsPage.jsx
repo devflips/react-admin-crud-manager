@@ -7,7 +7,6 @@ import TeamMemberDetail from "./TeamMemberDetail";
 
 const TeamsPage = () => {
   const [data, setData] = useState(mockData.data);
-  const [filters, setFilters] = useState({});
 
   const handleSubmit = async (formData, selectedItem = null) => {
     return new Promise(async (resolve, reject) => {
@@ -241,6 +240,8 @@ const TeamsPage = () => {
           label: "Role",
           type: "select",
           search: true,
+          multiple: true,
+          dropdownMaxHeight: "75px",
           parentClass: "col-span-12 sm:col-span-6",
           options: [
             { value: "admin", label: "Super Administrator" },
@@ -390,7 +391,31 @@ const TeamsPage = () => {
   };
 
   const filterConfig = {
-    component: TeamFilters,
+    fields: [
+      {
+        key: "status",
+        label: "Status",
+        type: "select",
+        parentClass: "col-span-12 sm:col-span-6",
+        options: [
+          { value: true, label: "Active" },
+          { value: false, label: "Inactive" },
+        ],
+      },
+      {
+        key: "role",
+        label: "Role",
+        type: "select",
+        search: false,
+        parentClass: "col-span-12 sm:col-span-6",
+        options: [
+          { value: "admin", label: "Super Administrator" },
+          { value: "moderator", label: "Moderator" },
+          { value: "editor", label: "Editor" },
+          { value: "viewer", label: "Viewer" },
+        ],
+      },
+    ],
   };
 
   const config = {
@@ -399,7 +424,6 @@ const TeamsPage = () => {
     buttonText: "Add New Member",
     fetchData: fetchTableData,
     isStaticData: true,
-    onFilterApply: setFilters,
     tableConfig,
     modalConfig,
     filterConfig,

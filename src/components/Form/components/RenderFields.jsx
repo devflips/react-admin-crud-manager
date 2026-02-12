@@ -24,6 +24,8 @@ const RenderFields = ({ field, formData, handleChange }) => {
     parentClass,
     countriesList,
     defaultCountry,
+    multiple,
+    dropdownMaxHeight,
   } = field;
 
   let value = formData?.[key];
@@ -51,6 +53,8 @@ const RenderFields = ({ field, formData, handleChange }) => {
           label={label}
           name={key}
           parentClass={parentClass}
+          multiple={multiple}
+          dropdownMaxHeight={dropdownMaxHeight}
         />
       );
 

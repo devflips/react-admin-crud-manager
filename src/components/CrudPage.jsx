@@ -87,6 +87,9 @@ const CrudPage = ({ config }) => {
         ...prev,
         current_page: 1,
       }));
+      if (serverSidePaginationData.current_page == 1) {
+        handleGetListing();
+      }
     }
     setShowAdd(false);
   };
