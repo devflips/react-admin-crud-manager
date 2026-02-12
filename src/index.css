@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 /* --- Tailwind core layers (must come first) --- */
 @tailwind base;
@@ -19,12 +19,24 @@
   --primary-900: #1e3a8a;
 }
 
-.primary-bg { background-color: var(--primary-500); }
-.primary-bg-light { background-color: var(--primary-100); }
-.primary-bg-dark { background-color: var(--primary-700); }
-.primary-text { color: var(--primary-600); }
-.primary-border { border-color: var(--primary-300); }
-.primary-hover:hover { background-color: var(--primary-600); }
+.primary-bg {
+  background-color: var(--primary-500);
+}
+.primary-bg-light {
+  background-color: var(--primary-100);
+}
+.primary-bg-dark {
+  background-color: var(--primary-700);
+}
+.primary-text {
+  color: var(--primary-600);
+}
+.primary-border {
+  border-color: var(--primary-300);
+}
+.primary-hover:hover {
+  background-color: var(--primary-600);
+}
 
 /* --- Custom CSS variables --- */
 :root {
@@ -150,4 +162,9 @@ body {
 
 *::-webkit-scrollbar-thumb:hover {
   background-color: var(--scrollbar-thumb-hover);
+}
+
+.tox.tox-tinymce .tox-edit-area::before {
+  border: 0 !important;
+  box-shadow: none !important;
 }

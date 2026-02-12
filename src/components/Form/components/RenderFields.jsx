@@ -5,6 +5,7 @@ import PhoneInput from "./PhoneInput";
 import { TextArea } from "./TextArea";
 import ImagePicker from "./ImagePicker";
 import { Input } from "./Input";
+import TinyEditor from "./TinyEditor";
 
 const RenderFields = ({ field, formData, handleChange }) => {
   const {
@@ -26,6 +27,8 @@ const RenderFields = ({ field, formData, handleChange }) => {
     defaultCountry,
     multiple,
     dropdownMaxHeight,
+    editorKey,
+    fontFamily,
   } = field;
 
   let value = formData?.[key];
@@ -115,6 +118,21 @@ const RenderFields = ({ field, formData, handleChange }) => {
           label={label}
           name={key}
           parentClass={parentClass}
+        />
+      );
+
+    case "tinyEditor":
+      return (
+        <TinyEditor
+          value={value}
+          onChange={(newValue) => handleChange(key, newValue)}
+          required={required}
+          key={`editor-${key}`}
+          placeholder={finalPlaceholder}
+          label={label}
+          parentClass={parentClass}
+          fontFamily={fontFamily}
+          editorKey={editorKey}
         />
       );
 

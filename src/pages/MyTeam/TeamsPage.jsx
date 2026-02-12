@@ -253,7 +253,8 @@ const TeamsPage = () => {
         {
           key: "bio",
           label: "Bio",
-          type: "textarea",
+          type: "tinyEditor",
+          editorKey:"5fiismlxsot48vfobqbjy4i4186y92uh5dln3isjaj5w4rld",
           rows: 3,
           required: true,
           parentClass: "col-span-12",

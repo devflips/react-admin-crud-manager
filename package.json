@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@iconify/react": "^6.0.2",
+    "@tinymce/tinymce-react": "^6.3.0",
     "axios": "^1.11.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
@@ -17,7 +18,8 @@
     "notistack": "^3.0.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-router-dom": "^7.9.1"
+    "react-router-dom": "^7.9.1",
+    "tinymce": "^8.3.2"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
