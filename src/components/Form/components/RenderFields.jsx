@@ -6,6 +6,7 @@ import { TextArea } from "./TextArea";
 import ImagePicker from "./ImagePicker";
 import { Input } from "./Input";
 import TinyEditor from "./TinyEditor";
+import Checkbox from "./Checkbox";
 
 const RenderFields = ({ field, formData, handleChange }) => {
   const {
@@ -58,6 +59,21 @@ const RenderFields = ({ field, formData, handleChange }) => {
           parentClass={parentClass}
           multiple={multiple}
           dropdownMaxHeight={dropdownMaxHeight}
+        />
+      );
+
+    case "checkbox":
+      return (
+        <Checkbox
+          name={key}
+          label={label}
+          options={options || []}
+          value={value}
+          onChange={(val) => handleChange(key, val)}
+          required={required}
+          parentClass={parentClass}
+          className={inputClass || ""}
+          multiSelect={multiple}
         />
       );
 
