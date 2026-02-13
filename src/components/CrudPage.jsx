@@ -111,7 +111,12 @@ const CrudPage = ({ config }) => {
   };
 
   const handleDeleteResult = (resp) => {
-    if (!resp) return;
+    if (!resp) {
+      setShowDelete(false);
+      setSelectedItem(null);
+      return;
+    }
+
     if (isStaticData) {
       setListingData((prev) =>
         prev.filter((item) => item.id !== resp.targetObject.id),

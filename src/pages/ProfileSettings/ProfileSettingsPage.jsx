@@ -5,6 +5,7 @@ import { Camera, User, Mail, Phone, Save, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/Button/Button";
 import { Input } from "../../components/Form/components/Input";
+import RenderFields from "../../components/Form/components/RenderFields";
 
 const ProfileSettingsPage = () => {
   const { user, setUser } = useAppContext();
@@ -67,6 +68,46 @@ const ProfileSettingsPage = () => {
       setLoading(false);
     }
   };
+
+  // Define your fields array
+  const fields = [
+    {
+      key: "email",
+      label: "Email Address",
+      type: "email",
+      placeholder: "Enter email address",
+      icon: <Mail className="h-5 w-5 text-gray-400" />,
+      disabled: true,
+      className:
+        "pl-10 bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400 cursor-not-allowed hover:cursor-not-allowed opacity-70",
+    },
+    {
+      key: "first_name",
+      label: "First Name",
+      type: "text",
+      placeholder: "Enter first name",
+      icon: <User className="h-5 w-5 text-gray-400 z-10" />,
+      required: true,
+      className: "pl-10",
+    },
+    {
+      key: "last_name",
+      label: "Last Name",
+      type: "text",
+      placeholder: "Enter last name",
+      icon: <User className="h-5 w-5 text-gray-400 z-10" />,
+      required: true,
+      className: "pl-10",
+    },
+    {
+      key: "phone",
+      label: "Phone Number",
+      type: "text",
+      placeholder: "Enter phone number",
+      icon: <Phone className="h-5 w-5 text-gray-400 z-10" />,
+      className: "pl-10",
+    },
+  ];
 
   return (
     <div>
@@ -139,87 +180,15 @@ const ProfileSettingsPage = () => {
             {/* Right: Form Fields (col-span-8 on md+) */}
             <div className="md:col-span-8 space-y-5">
               {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <Input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
-                    placeholder="Enter email address"
-                    className="pl-10 bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400 cursor-not-allowed hover:cursor-not-allowed opacity-70"
-                    disabled
-                  />
-                </div>
-              </div>
 
-              {/* First Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  First Name
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400 z-10" />
-                  </div>
-                  <Input
-                    type="text"
-                    value={formData.first_name}
-                    onChange={(e) =>
-                      handleInputChange("first_name", e.target.value)
-                    }
-                    placeholder="Enter first name"
-                    className="pl-10"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Last Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Last Name
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400 z-10" />
-                  </div>
-                  <Input
-                    type="text"
-                    value={formData.last_name}
-                    onChange={(e) =>
-                      handleInputChange("last_name", e.target.value)
-                    }
-                    placeholder="Enter last name"
-                    className="pl-10"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Phone Number
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Phone className="h-5 w-5 text-gray-400 z-10" />
-                  </div>
-                  <Input
-                    type="text"
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
-                    placeholder="Enter phone number"
-                    className="pl-10"
-                  />
-                </div>
-              </div>
+              {fields.map((field) => (
+                <RenderFields
+                  key={field.key}
+                  field={field}
+                  formData={formData}
+                  handleChange={handleInputChange}
+                />
+              ))}
 
               {/* Submit Button */}
               <div className="flex justify-end pt-4">

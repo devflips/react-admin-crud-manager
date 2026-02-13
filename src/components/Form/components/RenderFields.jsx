@@ -30,6 +30,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
     dropdownMaxHeight,
     editorKey,
     fontFamily,
+    disabled,
   } = field;
 
   let value = formData?.[key];
@@ -56,6 +57,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
           required={required}
           label={label}
           name={key}
+          disabled={disabled}
           parentClass={parentClass}
           multiple={multiple}
           dropdownMaxHeight={dropdownMaxHeight}
@@ -74,6 +76,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
           parentClass={parentClass}
           className={inputClass || ""}
           multiSelect={multiple}
+          disabled={disabled}
         />
       );
 
@@ -87,6 +90,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
           label={label}
           required={required}
           name={key}
+          disabled={disabled}
           parentClass={parentClass}
         />
       );
@@ -103,6 +107,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
           search={search}
           label={label}
           name={key}
+          disabled={disabled}
           parentClass={parentClass}
         />
       );
@@ -118,6 +123,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
           required={required}
           name={key}
           label={label}
+          disabled={disabled}
           parentClass={parentClass}
         />
       );
@@ -149,6 +155,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
           parentClass={parentClass}
           fontFamily={fontFamily}
           editorKey={editorKey}
+          disabled={disabled}
         />
       );
 
@@ -165,6 +172,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
           minLength={minLength}
           label={label}
           parentClass={parentClass}
+          disabled={disabled}
         />
       );
   }

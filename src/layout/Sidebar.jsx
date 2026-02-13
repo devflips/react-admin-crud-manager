@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, Link } from "react-router-dom";
-import { Chrome as Home, UserCog } from "lucide-react";
+import { CalendarCheck, Chrome as Home, Landmark, ListCollapse, UserCog } from "lucide-react";
 
 const menuItems = [
   {
@@ -16,6 +16,27 @@ const menuItems = [
     path: "/teams",
     color: "text-purple-500",
     bgColor: "bg-purple-50",
+  },
+  {
+    text: "Categories",
+    icon: ListCollapse,
+    path: "/category",
+    color: "text-blue-500",
+    bgColor: "bg-blue-50",
+  },
+  {
+    text: "Salaries",
+    icon: Landmark,
+    path: "/salaries",
+    color: "text-gray-500",
+    bgColor: "bg-gray-50",
+  },
+  {
+    text: "Task",
+    icon: CalendarCheck,
+    path: "/task",
+    color: "text-red-500",
+    bgColor: "bg-red-50",
   },
 ];
 

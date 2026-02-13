@@ -50,42 +50,7 @@ const TeamsPage = () => {
     });
   };
 
-  const fetchTableData2 = (params) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const response = await fetch(
-          `https://dummyjson.com/products/search?q=${params.search}&limit=${params.rows_per_page}&skip=${params.rows_per_page * (params.current_page - 1)}&page=${params.current_page}&delay=2000`,
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch listing");
-        }
-
-        let data = await response.json();
-
-        let list = data?.products?.map((obj) => ({
-          ...obj,
-          image: obj.images[0],
-          first_name: obj.title,
-          email: obj.brand,
-          phone: obj.price,
-        }));
-
-        data = {
-          data: [...list],
-          pagination: {
-            current_page: params.current_page,
-            rows_per_page: params.rows_per_page,
-            total_pages: Math.ceil(data.total / params.rows_per_page),
-            total_records: data.total,
-          },
-        };
-        resolve(data);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  };
+ 
 
   const fetchTableData = async () => {
     // Api Call goes here
@@ -104,9 +69,7 @@ const TeamsPage = () => {
     };
   };
 
-  useEffect(() => {
-    fetchTableData2();
-  }, []);
+ 
 
   const tableConfig = {
     table_head: [

@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {Mail, Lock } from "lucide-react";
+import { Mail, Lock } from "lucide-react";
 import { useAppContext } from "../contexts/AppContext";
 import { Input } from "../components/Form/components/Input";
 import Button from "../components/Button/Button";
+import RenderFields from "../components/Form/components/RenderFields";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("admin@crud.com");
-  const [password, setPassword] = useState("admin@crud.com");
+  const [formData, setFormData] = useState({
+    email: "admin@crud.com",
+    password: "admin@crud.com",
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   const { login } = useAppContext();
@@ -16,12 +19,40 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const result = await login(email, password);
+    const result = await login(formData.email, formData.password);
     if (result.success) {
       navigate("/dashboard");
     }
     setIsLoading(false);
   };
+
+  const handleInputChange = (key, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const loginFields = [
+    {
+      key: "email",
+      label: "Email address",
+      type: "email",
+      placeholder: "Enter your email",
+      icon: <Mail className="h-5 w-5 text-gray-400 z-10" />,
+      required: true,
+      className: "block w-full pl-10 pr-3 py-3",
+    },
+    {
+      key: "password",
+      label: "Password",
+      type: "password",
+      placeholder: "Enter your password",
+      icon: <Lock className="h-5 w-5 text-gray-400 z-10" />,
+      required: true,
+      className: "block w-full pl-10 pr-12 py-3",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-200 to-blue-50 dark:from-gray-900 dark:to-gray-800">
@@ -80,55 +111,14 @@ export default function LoginPage() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                  >
-                    Email address
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-gray-400 z-10" />
-                    </div>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="block w-full pl-10 pr-3 py-3"
-                      placeholder="Enter your email"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                  >
-                    Password
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-gray-400 z-10" />
-                    </div>
-                    <Input
-                      id="password"
-                      name="password"
-                      type="password"
-                      autoComplete="current-password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="block w-full pl-10 pr-12 py-3"
-                      placeholder="Enter your password"
-                    />
-                  </div>
-                </div>
+                {loginFields.map((field) => (
+                  <RenderFields
+                    key={field.key}
+                    field={field}
+                    formData={formData}
+                    handleChange={handleInputChange}
+                  />
+                ))}
 
                 <Button
                   type="submit"

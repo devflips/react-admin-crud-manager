@@ -9,6 +9,7 @@ const Switch = ({
   label,
   required,
   name = "",
+  disabled = false,
   parentClass = "",
 }) => {
   const radioOptions =
@@ -43,6 +44,7 @@ const Switch = ({
                   name="switch-field"
                   required={required && idx === 0}
                   value={opt.value}
+                  disabled={disabled}
                   checked={value === opt.value}
                   onChange={() => onChange(opt.value)}
                   className="w-4 h-4  border-gray-300 cursor-pointer"
