@@ -7,6 +7,7 @@ import Button from "./Button/Button";
 import { Icon } from "@iconify/react";
 import { enqueueSnackbar } from "notistack";
 import Details from "./Details/Details";
+import PropTypes from "prop-types";
 
 const CrudPage = ({ config }) => {
   const {
@@ -339,6 +340,166 @@ const CrudPage = ({ config }) => {
       )}
     </div>
   );
+};
+
+const optionType = PropTypes.shape({
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+    PropTypes.bool,
+  ]).isRequired,
+  label: PropTypes.string.isRequired,
+  color: PropTypes.string,
+});
+
+const actionButtonType = PropTypes.shape({
+  type: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  color: PropTypes.string,
+  variant: PropTypes.string,
+  onClick: PropTypes.func,
+});
+
+const menuActionType = PropTypes.shape({
+  title: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  variant: PropTypes.string,
+  icon: PropTypes.node,
+});
+
+const tableHeadType = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  title: PropTypes.string,
+  type: PropTypes.string,
+  imageKey: PropTypes.string,
+  titleKey: PropTypes.string,
+  subtitleKey: PropTypes.string,
+  onClickDetails: PropTypes.bool,
+  variant: PropTypes.string,
+  chipOptions: PropTypes.arrayOf(optionType),
+  defaultColor: PropTypes.string,
+  className: PropTypes.string,
+  format: PropTypes.string,
+  menuList: PropTypes.arrayOf(menuActionType),
+});
+
+const formFieldType = PropTypes.shape({
+  key: PropTypes.string.isRequired,
+  label: PropTypes.string,
+  type: PropTypes.string.isRequired,
+  required: PropTypes.bool,
+  minLength: PropTypes.number,
+  parentClass: PropTypes.string,
+  search: PropTypes.bool,
+  multiple: PropTypes.bool,
+  dropdownMaxHeight: PropTypes.string,
+  dragDrop: PropTypes.bool,
+  countriesList: PropTypes.bool,
+  defaultCountry: PropTypes.string,
+  placeholder: PropTypes.string,
+  rows: PropTypes.number,
+  text: PropTypes.string,
+  editorKey: PropTypes.string,
+  options: PropTypes.arrayOf(optionType),
+});
+
+const viewFieldType = PropTypes.shape({
+  key: PropTypes.string,
+  label: PropTypes.string,
+  type: PropTypes.string,
+  imageKey: PropTypes.string,
+  titleKey: PropTypes.string,
+  subtitleKey: PropTypes.string,
+  blockClass: PropTypes.string,
+  icon: PropTypes.node,
+  variant: PropTypes.string,
+  chipOptions: PropTypes.arrayOf(optionType),
+  defaultColor: PropTypes.string,
+  className: PropTypes.string,
+  format: PropTypes.string,
+});
+
+CrudPage.propTypes = {
+  config: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string,
+    buttonText: PropTypes.string,
+    fetchData: PropTypes.func.isRequired,
+    isStaticData: PropTypes.bool,
+
+    /* ================= TABLE CONFIG ================= */
+
+    tableConfig: PropTypes.shape({
+      table_head: PropTypes.arrayOf(tableHeadType).isRequired,
+
+      search: PropTypes.shape({
+        enabled: PropTypes.bool,
+        useServerSideSearch: PropTypes.bool,
+        searchKeys: PropTypes.arrayOf(PropTypes.string),
+      }),
+
+      pagination: PropTypes.shape({
+        enabled: PropTypes.bool,
+        useServerSidePagination: PropTypes.bool,
+      }),
+
+      filter: PropTypes.shape({
+        enabled: PropTypes.bool,
+        useServerSideFilters: PropTypes.bool,
+      }),
+    }).isRequired,
+
+    /* ================= MODAL CONFIG ================= */
+
+    modalConfig: PropTypes.shape({
+      addModal: PropTypes.shape({
+        title: PropTypes.string.isRequired,
+        size: PropTypes.string,
+        formClass: PropTypes.string,
+        formFields: PropTypes.arrayOf(formFieldType),
+        handleSubmit: PropTypes.func.isRequired,
+        actionButtons: PropTypes.arrayOf(actionButtonType),
+      }),
+
+      editModal: PropTypes.shape({
+        title: PropTypes.string.isRequired,
+        size: PropTypes.string,
+        formClass: PropTypes.string,
+        formFields: PropTypes.arrayOf(formFieldType),
+        handleSubmit: PropTypes.func.isRequired,
+        actionButtons: PropTypes.arrayOf(actionButtonType),
+      }),
+
+      deleteModal: PropTypes.shape({
+        title: PropTypes.string.isRequired,
+        size: PropTypes.string,
+        confirmText: PropTypes.string,
+        referenceKey: PropTypes.string,
+        actionButtons: PropTypes.arrayOf(actionButtonType),
+      }),
+
+      viewModal: PropTypes.shape({
+        title: PropTypes.string.isRequired,
+        size: PropTypes.string,
+
+        // 👇 This covers your commented code:
+        component: PropTypes.elementType, // for custom component like TeamMemberDetail
+
+        fields: PropTypes.arrayOf(viewFieldType),
+
+        footer: PropTypes.shape({
+          cancelButton: PropTypes.bool,
+          cancelText: PropTypes.string,
+        }),
+      }),
+    }),
+
+    /* ================= FILTER CONFIG ================= */
+
+    filterConfig: PropTypes.shape({
+      fields: PropTypes.arrayOf(formFieldType),
+    }),
+  }).isRequired,
 };
 
 export default CrudPage;
