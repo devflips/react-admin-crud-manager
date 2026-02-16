@@ -1,6 +1,6 @@
 {
   "name": "react-admin-crud-manager",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A reusable React CRUD admin template with modular components.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -46,8 +46,6 @@
     "lucide-react": "^0.446.0",
     "notistack": "^3.0.2",
     "prop-types": "^15.8.1",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
     "react-router-dom": "^7.9.1",
     "tinymce": "^8.3.2"
   },
