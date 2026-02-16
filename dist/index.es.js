@@ -2527,7 +2527,7 @@ Ke.propTypes = {
   }).isRequired
 };
 function ka(c) {
-  return console.info(c, "props passed"), /* @__PURE__ */ e.jsx(e.Fragment, { children: /* @__PURE__ */ e.jsx(Ke, { config: c.config }) });
+  return /* @__PURE__ */ e.jsx(e.Fragment, { children: /* @__PURE__ */ e.jsx(Ke, { config: c.config }) });
 }
 export {
   ka as default
