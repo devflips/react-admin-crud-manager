@@ -2863,7 +2863,7 @@ mr.propTypes = {
   }).isRequired
 };
 function ha(h) {
-  return /* @__PURE__ */ e.jsx(e.Fragment, { children: /* @__PURE__ */ e.jsx(mr, { config: h }) });
+  return console.info(h, "props passed"), /* @__PURE__ */ e.jsx(e.Fragment, { children: /* @__PURE__ */ e.jsx(mr, { config: h.config }) });
 }
 export {
   ha as default
