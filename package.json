@@ -1,6 +1,6 @@
 {
   "name": "react-admin-crud-manager",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A reusable React CRUD admin template with modular components.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
@@ -12,7 +12,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "dist/tailwind.css"
   ],
   "keywords": [
     "react",
@@ -34,6 +35,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:css": "node build-css.js",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -27,8 +27,18 @@ This will output the library files to the `dist/` folder in both CommonJS and ES
 
 ## Usage
 
+### 1. Import the built CSS for Tailwind styles
+
+In your main entry file (e.g., `src/main.jsx` or `src/index.js`):
+
+```js
+import 'react-admin-crud-manager/dist/tailwind.css';
 ```
-import { CrudPage } from 'react-admin-crud-manager';
+
+### 2. Use the component
+
+```
+import Crud from 'react-admin-crud-manager';
 
 function App() {
   const config = {
@@ -36,12 +46,12 @@ function App() {
     fetchData: async () => { /* fetch logic */ },
     // ...other config options
   };
-  return <CrudPage config={config} />;
+  return <Crud config={config} />;
 }
 ```
 
 ## Components
-- `CrudPage`: Main CRUD page component
+- `Crud`: Main CRUD page component
 - `Table`, `Modal`, `Form`, etc.: Available for advanced use
 
 ## Props
