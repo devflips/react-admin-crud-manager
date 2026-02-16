@@ -16,5 +16,35 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    lib: {
+      entry: path.resolve(__dirname, 'src/index.jsx'),
+      name: 'ReactAdminCrudManager',
+      fileName: (format) => `index.${format}.js`,
+      formats: ['es', 'cjs'],
+    },
+    rollupOptions: {
+      external: [
+        'react',
+        'react-dom',
+        'prop-types',
+        '@iconify/react',
+        '@tinymce/tinymce-react',
+        'axios',
+        'clsx',
+        'date-fns',
+        'js-cookie',
+        'lucide-react',
+        'notistack',
+        'react-router-dom',
+        'tinymce',
+      ],
+      output: {
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',
+        },
+      },
+    },
+    emptyOutDir: true,
   },
-})
+});

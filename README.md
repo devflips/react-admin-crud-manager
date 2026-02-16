@@ -8,11 +8,22 @@ A reusable React CRUD admin template with modular components for rapid admin das
 - Built with React 18+
 - Tailwind CSS for styling
 
+
 ## Installation
 
-```
+```sh
 npm install react-admin-crud-manager
 ```
+
+## Build (for contributors/maintainers)
+
+To build the package for npm distribution:
+
+```sh
+npm run build
+```
+
+This will output the library files to the `dist/` folder in both CommonJS and ESModule formats.
 
 ## Usage
 
