@@ -11,7 +11,7 @@ const Button = React.forwardRef(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const baseStyles =
       "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
@@ -27,10 +27,10 @@ const Button = React.forwardRef(
     const colorVariants = {
       primary: {
         contained:
-          "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-sm",
+          "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 shadow-sm",
         outlined:
-          "border border-blue-600 bg-transparent text-blue-600 hover:bg-blue-50 focus:ring-blue-500",
-        text: "bg-transparent text-blue-600 hover:bg-blue-50 focus:ring-blue-500",
+          "border border-primary-600 bg-transparent text-primary-600 hover:bg-primary-50 focus:ring-primary-500",
+        text: "bg-transparent text-primary-600 hover:bg-primary-50 focus:ring-primary-500",
       },
       success: {
         contained:
@@ -77,7 +77,7 @@ const Button = React.forwardRef(
         {children}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

@@ -327,7 +327,7 @@ const Table = ({ config }) => {
   return (
     <>
       {/* Search Bar */}
-      <div className="flex justify-end items-center mb-6 gap-2">
+      <div className="flex justify-end items-center mb-4 gap-2">
         {search.enabled && (
           <div className="">
             <div className="relative min-w-[300px]">

@@ -226,12 +226,12 @@ const CrudPage = ({ config }) => {
     >
       <div>
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               {title}
             </h1>
-            <p className="text-md text-gray-600 dark:text-gray-400 mt-2">
+            <p className="text-md text-gray-600 dark:text-gray-400">
               {config?.description}
             </p>
           </div>
