@@ -362,7 +362,7 @@ const Table = ({ config }) => {
                 {table_head.map((col) => (
                   <th
                     key={col.key}
-                    className="px-6 py-4 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider min-w-max max-w-[180px] truncate"
+                    className={`px-6 py-4 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider min-w-max max-w-[180px] truncate ${col.headClass || ""}`}
                   >
                     {col.title}
                   </th>

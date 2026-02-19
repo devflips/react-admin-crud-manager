@@ -18,7 +18,7 @@ const ImagePicker = ({
   const inputRef = useRef(null);
 
   useEffect(() => {
-    setImage(value);
+    setImage(value instanceof File ? URL.createObjectURL(value) : value);
   }, [value]);
 
   const handleFileChange = (files) => {
@@ -33,7 +33,7 @@ const ImagePicker = ({
     const imgObj = { file, preview };
 
     setImage(imgObj);
-    onChange?.(preview);
+    onChange?.(file);
   };
 
   // Drag events
