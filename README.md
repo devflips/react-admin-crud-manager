@@ -304,8 +304,5 @@ const fetchData = async ({ search, rows_per_page, current_page }) => {
 
 ---
 
-If you want me to add a TypeScript declaration snippet or a props table per component (or to document `table_head` examples), tell me which parts to expand and I will add them. ✅
-
-
 ## License
 MIT
