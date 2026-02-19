@@ -53,162 +53,225 @@ Below is a complete reference of the public props accepted by this package (type
 `<Crud config={config} />`
 - `config` (object) — required. Top-level configuration object used by the CRUD page.
 
-Key properties of `config` (types & accepted values):
+#### Key properties of `config`
 
-- `title` — string (required)
-- `description` — string (optional)
-- `buttonText` — string (optional)
-- `fetchData` — function (required)
-  - Signature: async ({ search, rows_per_page, current_page, ...filters }) => Promise<{ data: Array, pagination?: { current_page: number, rows_per_page: number, total_pages: number, total_records: number } }>
-  - The component expects `resp.data` (array) and optional `resp.pagination` when server-side pagination is used.
-- `isStaticData` — boolean (default: false)
-  - If true, add/edit/delete are applied client-side on local state instead of re-fetching.
-- `tableConfig` — object (required) — see "Table / tableConfig" below.
-- `modalConfig` — object — see "Modal / modalConfig" below.
-- `filterConfig` — object — used by the filter drawer (see Form field schema below).
-
----
-
-### Table / `tableConfig` (inside `config`)
-Type: object
-
-Common keys:
-- `table_head` — array of column objects (required)
-- `data` — array — rows shown in the table
-- `loading` — boolean — show skeleton when true
-- `search` — object: { enabled?: boolean, placeholder?: string, useServerSideSearch?: boolean, searchKeys?: string[] }
-- `filter` — object: { enabled?: boolean, useServerSideFilters?: boolean }
-- `pagination` — object: { enabled?: boolean, rows_per_page?: number, useServerSidePagination?: boolean, current_page?: number, total_pages?: number, total_records?: number }
-- `emptyMessage` — string — message when no rows
-- `onMenuAction` — function(actionType: string, item: object)
-- `setServerSidePaginationData` — function — used to update server-side pagination/search state
-- `onFilterApply` — function(filters: object)
-- `filterConfig` — object (fields array) — rendered in the FilterDrawer
-
-Table column object (`table_head[]`) — accepted keys:
-- `key` — string (required) — property name in row objects
-- `title` — string — column header
-- `type` — string — accepted values: (plain default) | `index` | `group` | `chip` | `date` | `avatar` | `menu_actions`
-- `imageKey`, `titleKey`, `subtitleKey` — string — used by `group`/`avatar` types
-- `onClickDetails` — boolean — if true clicking the cell triggers a view action
-- `variant` — string — used for chips (`contained` | `outline` | `soft`)
-- `chipOptions` — array of { value: string|number|boolean, label: string, color?: string }
-- `defaultColor` — string — default chip color key (e.g., `green`)
-- `className` — string — custom class for cell
-- `format` — string — date format (e.g. `DD MMM YYYY`)
-- `menuList` — array of menu action objects: { title: string, type: string, variant?: string, icon?: ReactNode }
-- `render` — function(row, rowIndex) — custom renderer; if present it overrides built-in renderers
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `title` | string | Yes | Title of the CRUD page |
+| `description` | string | No | Optional description text |
+| `buttonText` | string | No | Custom text for action buttons |
+| `fetchData` | function | Yes | Async function to fetch data. Signature: `async ({ search, rows_per_page, current_page, ...filters }) => Promise<{ data: Array, pagination?: { current_page: number, rows_per_page: number, total_pages: number, total_records: number } }>`. Component expects `resp.data` (array) and optional `resp.pagination` for server-side pagination. |
+| `isStaticData` | boolean | No | Default: `false`. If true, add/edit/delete apply client-side instead of re-fetching |
+| `tableConfig` | object | Yes | Table configuration — [see tableConfig](#tableconfig-configuration) |
+| `modalConfig` | object | No | Modal definitions — [see modalConfig](#modalconfig-definitions) |
+| `filterConfig` | object | No | Filter drawer configuration — [see Form Field Schema](#form-field-schema) |
 
 ---
 
-### Modal / `modalConfig`
-`modalConfig` groups modal definitions used by the CRUD page.
+### tableConfig Configuration
 
-Common modal shapes:
-- `addModal`, `editModal` (object)
-  - `title` — string (required)
-  - `size` — string (`sm` | `md` | `lg` | `xl` | `full`) (default `md`)
-  - `formClass` — string (optional)
-  - `formFields` — array of form-field objects (see Form schema)
-  - `handleSubmit` — function(formData) — required; should perform API call and return an object used by the parent (see notes)
-  - `actionButtons` — array of actionButton objects ({ type, label, color, variant, onClick, disabled, className })
+#### Table Configuration Keys
 
-- `deleteModal` (object)
-  - `title` — string
-  - `size` — string
-  - `confirmText` — string
-  - `referenceKey` — string — key of selectedItem to show as reference in delete dialog
-  - `action` — function(selectedItem) — function called to perform delete (should return a response used by the parent)
-  - `actionButtons` — array of actionButton objects
+| Key | Type | Required | Description |
+|-----|------|----------|-------------|
+| `table_head` | array of column objects | Yes | Column definitions — [see Table column object](#table-column-object-table_head) |
+| `data` | array | No | Rows shown in the table |
+| `loading` | boolean | No | Show skeleton loader when true |
+| `search` | object | No | `{ enabled?: boolean, placeholder?: string, useServerSideSearch?: boolean, searchKeys?: string[] }` |
+| `filter` | object | No | `{ enabled?: boolean, useServerSideFilters?: boolean }` |
+| `pagination` | object | No | `{ enabled?: boolean, rows_per_page?: number, useServerSidePagination?: boolean, current_page?: number, total_pages?: number, total_records?: number }` |
+| `emptyMessage` | string | No | Message shown when table has no rows |
+| `onMenuAction` | function | No | Callback: `(actionType: string, item: object)` |
+| `setServerSidePaginationData` | function | No | Used to update server-side pagination/search state |
+| `onFilterApply` | function | No | Callback: `(filters: object)` |
+| `filterConfig` | object | No | Fields array rendered in the FilterDrawer |
 
-- `viewModal` (object)
-  - `title` — string (required)
-  - `size` — string
-  - `component` — React component (elementType) — optional, receives `data` prop when provided
-  - `fields` — array of view-field objects (see View fields below)
-  - `footer` — { cancelButton?: boolean, cancelText?: string }
+#### Table Column Object (`table_head[]`)
 
-Notes on modal handlers (expected response shapes):
-- `addModal.handleSubmit` should return an object containing `newObject` (the created row) so Crud can insert it into the list when `isStaticData` is true or refresh server-side listing.
-- `editModal.handleSubmit` should return `{ newObject, targetObject }` where `targetObject` identifies which row was updated.
-- `deleteModal.action` should return an object containing `targetObject` (the deleted row) or an appropriate success response.
+| Key | Type | Required | Description |
+|-----|------|----------|-------------|
+| `key` | string | Yes | Property name in row objects |
+| `title` | string | No | Column header text |
+| `type` | string | No | Column type: `plain` (default), `index`, `group`, `chip`, `date`, `avatar`, `menu_actions` |
+| `imageKey` | string | No | Used with `group`/`avatar` types |
+| `titleKey` | string | No | Used with `group`/`avatar` types |
+| `subtitleKey` | string | No | Used with `group`/`avatar` types |
+| `onClickDetails` | boolean | No | If true, clicking cell triggers view action |
+| `variant` | string | No | For chips: `contained`, `outline`, `soft` |
+| `chipOptions` | array | No | Array of `{ value: string|number|boolean, label: string, color?: string }` |
+| `defaultColor` | string | No | Default chip color key (e.g., `green`) |
+| `className` | string | No | Custom CSS class for cell |
+| `format` | string | No | Date format (e.g., `DD MMM YYYY`) |
+| `menuList` | array | No | Menu action objects: `{ title, type, variant?, icon? }` |
+| `render` | function | No | Custom renderer: `(row, rowIndex) => ReactNode`. Overrides built-in renderers |
 
 ---
 
-### Form / Form fields (used by `modalConfig.*.formFields` and `filterConfig.fields`)
-Form fields follow the `formFieldType` shape used throughout the UI. Each field is an object with these keys:
+### modalConfig Definitions
 
-Common field keys (all field types):
-- `key` — string (required) — the property name for form data
-- `label` — string — human-readable label
-- `type` — string (required) — accepted values:
-  - `text` (default input), `number`, `email`, `password`, `select`, `checkbox`, `switch`, `phone`, `textarea`, `image`, `tinyEditor`
-- `required` — boolean
-- `minLength` — number
-- `parentClass` — string — grid class (e.g. `col-span-6`)
-- `placeholder` — string
-- `disabled` — boolean
+#### Add & Edit Modal (`addModal`, `editModal`)
 
-Type-specific keys:
-- select
-  - `options` — array of { value: string|number|boolean, label: string }
-  - `multiple` — boolean — allow multiple selection
-  - `search` — boolean — show search inside dropdown
-  - `dropdownMaxHeight` — string (CSS height value)
-- checkbox
-  - `options` — array of { value, label }
-  - `multiple` — boolean — when true allows selecting multiple values (component prop `multiSelect`)
-- switch
-  - `options` — optional array of radio-like options [{ label, value }]
-  - `text` — optional description text shown next to the switch
-- phone
-  - `countriesList` — boolean — show country selector
-  - `defaultCountry` — string (ISO country code like `US`)
-  - `search` — boolean — enable searching countries
-  - `placeholder` — string
-- textarea
-  - `rows` — number
-- image
-  - `accept` — string (default: `image/*`)
-  - `dragDrop` — boolean
-- tinyEditor
-  - `editorKey` — string (TinyMCE api key)
-  - `fontFamily` — string
-  - `height` — number
-  - `imageUploadHandler` — function(blobInfo) => Promise<string> (returns URL)
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `title` | string | Yes | Modal title |
+| `size` | string | No | Modal size: `sm`, `md` (default), `lg`, `xl`, `full` |
+| `formClass` | string | No | Custom CSS class for form |
+| `formFields` | array | Yes | Form field objects — [see Form Field Schema](#form-field-schema) |
+| `handleSubmit` | function | Yes | Async callback: `(formData) => Promise<{ newObject, targetObject? }>`. For add: return `{ newObject }`. For edit: return `{ newObject, targetObject }` |
+| `actionButtons` | array | No | Action button objects: `[{ type, label, color, variant, onClick, disabled, className }]` |
 
-Return values / onSubmit handlers
-- `onSubmit(formData)` receives an object keyed by `field.key` values.
+#### Delete Modal (`deleteModal`)
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `title` | string | No | Modal title |
+| `size` | string | No | Modal size: `sm`, `md` (default), `lg`, `xl`, `full` |
+| `confirmText` | string | No | Confirmation message text |
+| `referenceKey` | string | No | Property key of selectedItem to display as reference |
+| `action` | function | Yes | Async callback: `(selectedItem) => Promise<{ targetObject }>`. Should return the deleted row |
+| `actionButtons` | array | No | Action button objects: `[{ type, label, color, variant, onClick, disabled, className }]` |
+
+#### View Modal (`viewModal`)
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `title` | string | Yes | Modal title |
+| `size` | string | No | Modal size: `sm`, `md` (default), `lg`, `xl`, `full` |
+| `component` | React component | No | Custom component to render. Receives `data` prop with row data |
+| `fields` | array | No | View field objects for displaying data |
+| `footer` | object | No | `{ cancelButton?: boolean, cancelText?: string }` |
+
+---
+
+### Form Field Schema
+
+Used by `modalConfig.*.formFields` and `filterConfig.fields`. Form fields follow the `formFieldType` shape used throughout the UI.
+
+#### Common Field Keys (All Types)
+
+| Key | Type | Required | Description |
+|-----|------|----------|-------------|
+| `key` | string | Yes | Property name for form data |
+| `label` | string | No | Human-readable label |
+| `type` | string | Yes | Field type: `text`, `number`, `email`, `password`, `select`, `checkbox`, `switch`, `phone`, `textarea`, `image`, `tinyEditor` |
+| `required` | boolean | No | Field is required for form submission |
+| `minLength` | number | No | Minimum character length |
+| `parentClass` | string | No | Tailwind grid class (e.g., `col-span-6`) |
+| `placeholder` | string | No | Placeholder text |
+| `disabled` | boolean | No | Field is disabled |
+
+#### Type-Specific Keys
+
+##### Select Field
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `options` | array | `{ value: string|number|boolean, label: string }[]` |
+| `multiple` | boolean | Allow multiple selections |
+| `search` | boolean | Show search input inside dropdown |
+| `dropdownMaxHeight` | string | CSS height value (e.g., `300px`) |
+
+##### Checkbox Field
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `options` | array | `{ value, label }[]` |
+| `multiple` | boolean | Allow selecting multiple values (component prop: `multiSelect`) |
+
+##### Switch Field
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `options` | array | Optional radio-like options: `[{ label, value }]` |
+| `text` | string | Description text shown next to switch |
+
+##### Phone Field
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `countriesList` | boolean | Show country selector |
+| `defaultCountry` | string | ISO country code (e.g., `US`) |
+| `search` | boolean | Enable searching countries |
+| `placeholder` | string | Placeholder text |
+
+##### Textarea Field
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `rows` | number | Number of visible rows |
+
+##### Image Field
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `accept` | string | MIME type filter (default: `image/*`) |
+| `dragDrop` | boolean | Enable drag-and-drop upload |
+
+##### TinyEditor Field
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `editorKey` | string | TinyMCE API key |
+| `fontFamily` | string | Default font family |
+| `height` | number | Editor height in pixels |
+| `imageUploadHandler` | function | `(blobInfo) => Promise<string>`. Returns image URL |
+
+#### Return Values / onSubmit Handler
+
+`onSubmit(formData)` receives an object keyed by `field.key` values.
 
 ---
 
 ### Small/UI components (props summary)
-- `Button` props
-  - `variant` — `contained` | `outlined` | `text` (default `contained`)
-  - `color` — `primary` | `success` | `error` | `default`
-  - `size` — `sm` | `md` | `lg` | `xl` | `default`
-  - `fullWidth` — boolean
-  - `className`, `onClick`, `type`, `disabled` (standard button props)
 
-- `Chip` props
-  - `label` — string (required)
-  - `variant` — `contained` | `outline` | `soft` (default `contained`)
-  - `color` — `blue` | `teal` | `purple` | `yellow` | `green` | `red` | `gray`
+| Component | Key Props | Purpose |
+|-----------|-----------|----------|
+| **Button** | `variant`, `color`, `size`, `fullWidth`, `className`, `onClick`, `type`, `disabled` | Reusable button with multiple style variants (`contained`, `outlined`, `text`) and colors |
+| **Chip** | `label`, `variant`, `color` | Display small labeled badges with `contained`, `outline`, or `soft` styles |
+| **Modal** | `isOpen`, `onClose`, `icon`, `title`, `size`, `actionButtons`, `loadingBtn` | Modal dialog for forms, confirmations, and views with flexible sizing |
+| **FilterDrawer** | `isOpen`, `onClose`, `config`, `onApply` | Side panel for applying filters with customizable form fields |
 
-- `Modal` props (when used directly)
-  - `isOpen` — boolean
-  - `onClose` — function
-  - `icon` — React node
-  - `title` — string
-  - `size` — `sm` | `md` | `lg` | `xl` | `full`
-  - `actionButtons` — array of { type, label, color, variant, onClick, disabled }
-  - `loadingBtn` — boolean
+#### Button Props
 
-- `FilterDrawer` props
-  - `isOpen` — boolean
-  - `onClose` — function
-  - `config` — object (fields array — same `formFieldType`)
-  - `onApply` — function(filters: object)
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | string | `contained` | Style variant: `contained`, `outlined`, `text` |
+| `color` | string | `primary` | Color: `primary`, `success`, `error`, `default` |
+| `size` | string | `default` | Size: `sm`, `md`, `lg`, `xl`, `default` |
+| `fullWidth` | boolean | `false` | Stretch button to full width |
+| `className` | string | — | Custom CSS class |
+| `onClick` | function | — | Click event handler |
+| `type` | string | `button` | HTML button type: `button`, `submit`, `reset` |
+| `disabled` | boolean | `false` | Disable button interaction |
+
+#### Chip Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | string | Required | Badge text |
+| `variant` | string | `contained` | Style variant: `contained`, `outline`, `soft` |
+| `color` | string | `blue` | Color: `blue`, `teal`, `purple`, `yellow`, `green`, `red`, `gray` |
+
+#### Modal Props (Direct Usage)
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `isOpen` | boolean | Show/hide modal |
+| `onClose` | function | Callback when modal closes |
+| `icon` | React node | Icon element displayed in modal header |
+| `title` | string | Modal title |
+| `size` | string | Size: `sm`, `md`, `lg`, `xl`, `full` |
+| `actionButtons` | array | `[{ type, label, color, variant, onClick, disabled }]` |
+| `loadingBtn` | boolean | Show loading state on action button |
+
+#### FilterDrawer Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `isOpen` | boolean | Show/hide filter drawer |
+| `onClose` | function | Callback when drawer closes |
+| `config` | object | Fields array using `formFieldType` schema |
+| `onApply` | function | Callback: `(filters: object) => void` |
 
 ---
 

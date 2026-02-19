@@ -27,10 +27,10 @@ const Button = React.forwardRef(
     const colorVariants = {
       primary: {
         contained:
-          "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 shadow-sm",
+          "bg-primary text-white hover:bg-primary-600 focus:ring-primary-500 shadow-sm",
         outlined:
-          "border border-primary-600 bg-transparent text-primary-600 hover:bg-primary-50 focus:ring-primary-500",
-        text: "bg-transparent text-primary-600 hover:bg-primary-50 focus:ring-primary-500",
+          "border border-primary bg-transparent text-primary hover:bg-primary-50 focus:ring-primary-500",
+        text: "bg-transparent text-primary hover:bg-primary-50 focus:ring-primary-500",
       },
       success: {
         contained:
