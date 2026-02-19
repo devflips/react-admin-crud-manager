@@ -220,8 +220,10 @@ const Table = ({ config }) => {
       return (
         <div className={`text-center ${col.className || ""}`}>
           <button
-            ref={(el) => (buttonRefs.current[row.id] = el)}
-            onClick={(e) => handleMenuToggle(row.id, e, col.menuList)}
+            ref={(el) => (buttonRefs.current[row.id || row._id] = el)}
+            onClick={(e) =>
+              handleMenuToggle(row.id || row._id, e, col.menuList)
+            }
             className="p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition text-gray-700 dark:text-gray-300"
           >
             <EllipsisVertical className="h-4 w-4" />
@@ -381,7 +383,7 @@ const Table = ({ config }) => {
               ) : (
                 paginatedData.map((row, index) => (
                   <tr
-                    key={row.id || index}
+                    key={row.id || row._id || index}
                     className="hover:bg-gray-50 dark:hover:bg-blue-800/10 transition"
                   >
                     {table_head.map((col) => (
@@ -511,7 +513,9 @@ const Table = ({ config }) => {
                 onClick={(e) =>
                   handleActionClick(
                     action,
-                    data.find((d) => d.id === activeMenu),
+                    data.find(
+                      (d) => d.id === activeMenu || d._id == activeMenu,
+                    ),
                     e,
                   )
                 }

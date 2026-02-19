@@ -190,7 +190,7 @@ const CrudPage = ({ config }) => {
   };
 
   const filteredData = useMemo(() => {
-    if (tableConfig?.filter?.useServerSideFilters) return data;
+    if (tableConfig?.filter?.useServerSideFilters) return listingData;
     return filterByMatchingFields(listingData, filterData);
   }, [listingData, filterData]);
 

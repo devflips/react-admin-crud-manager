@@ -31,6 +31,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
     editorKey,
     fontFamily,
     disabled,
+    negativeNumberAllow,
   } = field;
 
   let value = formData?.[key];
@@ -171,6 +172,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
           name={key}
           minLength={minLength}
           label={label}
+          negativeNumberAllow={negativeNumberAllow}
           parentClass={parentClass}
           disabled={disabled}
         />

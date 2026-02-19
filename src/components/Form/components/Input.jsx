@@ -11,6 +11,7 @@ const Input = React.forwardRef(
       className = "",
       type = "text",
       onKeyDown,
+      negativeNumberAllow = true,
       ...props
     },
     ref,
@@ -18,15 +19,35 @@ const Input = React.forwardRef(
     const [showPassword, setShowPassword] = useState(false);
 
     const handleKeyDown = (e) => {
-      if (type === "number" && ["e", "E"].includes(e.key)) {
-        e.preventDefault();
+      if (type === "number") {
+        const blockedKeys = ["e", "E", "+"];
+
+        // Block e, E, +
+        if (blockedKeys.includes(e.key)) {
+          e.preventDefault();
+          return;
+        }
+
+        // Block negative sign if not allowed
+        if (negativeNumberAllow == false && e.key === "-") {
+          e.preventDefault();
+          return;
+        }
+
+        // Block arrow up/down from changing value
+        if (["ArrowUp", "ArrowDown"].includes(e.key)) {
+          e.preventDefault();
+          return;
+        }
       }
+
       onKeyDown?.(e);
     };
 
     const combinedClassName = `
       h-10 placeholder-gray-400 dark:placeholder-gray-400
       ${type === "password" ? "pr-10" : ""}
+      ${type === "number" ? "no-spinner" : ""}
       ${className}
     `.trim();
 

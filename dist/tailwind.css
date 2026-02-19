@@ -1543,6 +1543,17 @@ body {
   background-color: var(--scrollbar-thumb-hover);
 }
 
+/* Remove number input arrows */
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spinner {
+  -moz-appearance: textfield; /* Firefox */
+}
+
 .tox.tox-tinymce .tox-edit-area::before {
   border: 0 !important;
   box-shadow: none !important;
