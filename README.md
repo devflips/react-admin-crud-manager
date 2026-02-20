@@ -153,7 +153,7 @@ Used by `modalConfig.*.formFields` and `filterConfig.fields`. Form fields follow
 |-----|------|----------|-------------|
 | `key` | string | Yes | Property name for form data |
 | `label` | string | No | Human-readable label |
-| `type` | string | Yes | Field type: `text`, `number`, `email`, `password`, `select`, `checkbox`, `switch`, `phone`, `textarea`, `image`, `tinyEditor` |
+| `type` | string | Yes | Field type: `text`, `number`, `email`, `password`, `select`, `checkbox`, `switch`, `phone`, `textarea`, `image`, `tinyEditor`, `audio` |
 | `required` | boolean | No | Field is required for form submission |
 | `minLength` | number | No | Minimum character length |
 | `parentClass` | string | No | Tailwind grid class (e.g., `col-span-6`) |

@@ -7,6 +7,7 @@ import ImagePicker from "./ImagePicker";
 import { Input } from "./Input";
 import TinyEditor from "./TinyEditor";
 import Checkbox from "./Checkbox";
+import AudioPicker from "./AudioPicker";
 
 const RenderFields = ({ field, formData, handleChange }) => {
   const {
@@ -136,6 +137,20 @@ const RenderFields = ({ field, formData, handleChange }) => {
           onChange={(imgObj) => handleChange(key, imgObj)}
           required={required}
           accept={accept || "image/*"}
+          id={`file-${key}`}
+          dragDrop={dragDrop}
+          label={label}
+          name={key}
+          parentClass={parentClass}
+        />
+      );
+    case "audio":
+      return (
+        <AudioPicker
+          value={value}
+          onChange={(audio) => handleChange(key, audio)}
+          required={required}
+          accept={accept || "audio/*"}
           id={`file-${key}`}
           dragDrop={dragDrop}
           label={label}

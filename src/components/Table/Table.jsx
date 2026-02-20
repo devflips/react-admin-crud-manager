@@ -6,6 +6,7 @@ import {
   EllipsisVertical,
   Filter,
   User,
+  Music,
 } from "lucide-react";
 import { createPortal } from "react-dom";
 import { formatDate, searchLocalData } from "../../lib/utils";
@@ -173,6 +174,32 @@ const Table = ({ config }) => {
     );
   };
 
+  const renderAudio = (audioSrc, className) => {
+    return (
+      <>
+        {audioSrc ? (
+          <audio
+            key={audioSrc} // 🔥 ensures latest audio reloads
+            controls
+            src={audioSrc}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            className={`w-64 cursor-pointer ${className || ""}`}
+          />
+        ) : (
+          <>
+            <div
+              className={`w-12 h-12 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600 ${className || ""}`}
+            >
+              <Music className="w-6 h-6 text-gray-400 dark:text-gray-400" />
+            </div>
+          </>
+        )}
+      </>
+    );
+  };
+
   const renderGroupCell = (row, col) => {
     return (
       <div className={`flex items-center space-x-4 ${col.className || ""}`}>
@@ -248,6 +275,8 @@ const Table = ({ config }) => {
       return (
         <>{renderAvatar(value, col.alt, col.className, col.fallback_icon)}</>
       );
+    } else if (col.type === "audio") {
+      return <>{renderAudio(value, col.className)}</>;
     } else {
       return <span className={col.className || ""}>{value || "N/A"}</span>;
     }
@@ -389,7 +418,7 @@ const Table = ({ config }) => {
                     {table_head.map((col) => (
                       <td
                         key={col.key}
-                        className={`px-6 py-4 text-sm text-gray-900 dark:text-gray-100 min-w-max max-w-[300px] truncate ${
+                        className={`px-6 py-4 text-sm text-gray-900 dark:text-gray-100 min-w-max ${col.type == "audio" ? "" : "max-w-[300px]"} truncate ${
                           isColumnClickable(col) ? "cursor-pointer" : ""
                         }`}
                         title={String(row[col.key] ?? "")}
