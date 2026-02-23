@@ -1,6 +1,6 @@
 {
   "name": "react-admin-crud-manager",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "A reusable React CRUD admin template with modular components.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
