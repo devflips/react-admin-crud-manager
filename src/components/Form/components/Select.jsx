@@ -107,6 +107,14 @@ const Select = ({
         .join(", ")
     : options.find((opt) => isSelected(opt.value))?.label;
 
+  useEffect(() => {
+    if (initialVal || initialVal === false) {
+      setTimeout(() => {
+        onChange(initialVal);
+      }, 100);
+    }
+  }, []);
+
   return (
     <div key={name} className={parentClass || "col-span-12"}>
       <InputLabel label={label} required={required} />
