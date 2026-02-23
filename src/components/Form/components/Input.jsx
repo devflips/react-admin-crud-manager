@@ -74,7 +74,7 @@ const Input = React.forwardRef(
               >
                 <Icon
                   icon={
-                    showPassword ? "mdi:eye-off-outline" : "mdi:eye-outline"
+                    showPassword ? "mdi:eye-outline" : "mdi:eye-off-outline"
                   }
                   className="w-5 h-5"
                 />

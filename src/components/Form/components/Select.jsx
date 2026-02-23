@@ -4,7 +4,8 @@ import InputLabel from "./InputLabel";
 
 const Select = ({
   options = [],
-  value,
+  value = "",
+  defaultValue = "",
   onChange,
   placeholder = "Select option",
   className = "",
@@ -23,12 +24,16 @@ const Select = ({
   const dropdownRef = useRef(null);
   const searchInputRef = useRef(null);
 
-  const normalize = (val) =>
+  let initialVal = value || defaultValue;
+
+  const normalize = (val) => {
+    if (val === null || val === undefined || val === "") return "";
     typeof val === "boolean" ? String(val) : String(val ?? "");
+  };
 
   const normalizedValue = multiple
-    ? (value || []).map(normalize)
-    : normalize(value);
+    ? (initialVal || []).map(normalize)
+    : normalize(initialVal);
 
   const filteredOptions = options.filter((option) =>
     option.label.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -107,6 +112,17 @@ const Select = ({
       <InputLabel label={label} required={required} />
 
       <div className={`relative ${className}`} ref={dropdownRef}>
+        <select
+          name="hidden_select_for_validation"
+          value={selectedLabels || ""}
+          required={required}
+          multiple={multiple}
+          className="absolute opacity-0 right-1/2 top-[80%] -translate-x-1/2 -translate-y-1/2 pointer-events-none h-[10px]"
+        >
+          <option hidden value={selectedLabels}>
+            {selectedLabels}
+          </option>
+        </select>
         <button
           type="button"
           onClick={() => !disabled && setOpen(!open)}

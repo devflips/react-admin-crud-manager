@@ -273,7 +273,11 @@ const Table = ({ config }) => {
       );
     } else if (col.type === "avatar") {
       return (
-        <>{renderAvatar(value, col.alt, col.className, col.fallback_icon)}</>
+        <>
+          <div className="min-w-[40px]">
+            {renderAvatar(value, col.alt, col.className, col.fallback_icon)}
+          </div>
+        </>
       );
     } else if (col.type === "audio") {
       return <>{renderAudio(value, col.className)}</>;

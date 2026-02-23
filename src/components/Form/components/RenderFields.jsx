@@ -33,6 +33,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
     fontFamily,
     disabled,
     negativeNumberAllow,
+    defaultValue,
   } = field;
 
   let value = formData?.[key];
@@ -57,6 +58,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
           className={inputClass || ""}
           search={search}
           required={required}
+          defaultValue={defaultValue}
           label={label}
           name={key}
           disabled={disabled}
