@@ -124,41 +124,39 @@ const Qe = ({
   dropdownMaxHeight: m = ""
 }) => {
   var A;
-  const [u, x] = R(!1), [v, S] = R(""), [E, T] = R(!0), M = X(null), G = X(null);
-  let j = n || o;
-  const f = (N) => {
-    if (N == null || N === "") return "";
-  }, k = p ? (j || []).map(f) : f(j), O = h.filter(
-    (N) => N.label.toLowerCase().includes(v.toLowerCase())
-  ), D = (N) => {
-    const z = f(N);
-    return p ? k.includes(z) : z === k;
+  const [u, x] = R(!1), [w, S] = R(""), [E, T] = R(!0), M = X(null), G = X(null);
+  let j = n || n === !1 ? n : o;
+  const f = (v) => v == null || v === "" ? "" : String(typeof v == "boolean" ? v : v ?? ""), N = p ? (j || []).map(f) : f(j), O = h.filter(
+    (v) => v.label.toLowerCase().includes(w.toLowerCase())
+  ), D = (v) => {
+    const z = f(v);
+    return p ? N.includes(z) : z === N;
   };
   H(() => {
-    const N = (z) => {
+    const v = (z) => {
       M.current && !M.current.contains(z.target) && (x(!1), S(""));
     };
-    return document.addEventListener("mousedown", N), () => document.removeEventListener("mousedown", N);
+    return document.addEventListener("mousedown", v), () => document.removeEventListener("mousedown", v);
   }, []), H(() => {
     if (u && M.current) {
-      const N = M.current.getBoundingClientRect(), Z = window.innerHeight - N.bottom;
+      const v = M.current.getBoundingClientRect(), Z = window.innerHeight - v.bottom;
       T(Z < 200);
     }
   }, [u]), H(() => {
     u && G.current && G.current.focus();
   }, [u]);
-  const F = (N) => {
-    let z = N;
-    if (N === "true" ? z = !0 : N === "false" && (z = !1), p) {
-      const Z = k.includes(f(N));
+  const F = (v) => {
+    let z = v;
+    if (v === "true" ? z = !0 : v === "false" && (z = !1), p) {
+      const Z = N.includes(f(v));
       let W;
       Z ? W = n.filter(
-        (re) => f(re) !== f(N)
+        (re) => f(re) !== f(v)
       ) : W = [...n || [], z], i(W);
     } else
       i(z), x(!1);
     S("");
-  }, U = p ? h.filter((N) => D(N.value)).map((N) => N.label).join(", ") : (A = h.find((N) => D(N.value))) == null ? void 0 : A.label;
+  }, U = p ? h.filter((v) => D(v.value)).map((v) => v.label).join(", ") : (A = h.find((v) => D(v.value))) == null ? void 0 : A.label;
   return /* @__PURE__ */ c("div", { className: d || "col-span-12", children: [
     /* @__PURE__ */ e(q, { label: L, required: b }),
     /* @__PURE__ */ c("div", { className: `relative ${l}`, ref: M, children: [
@@ -206,8 +204,8 @@ const Qe = ({
                 {
                   ref: G,
                   type: "text",
-                  value: v,
-                  onChange: (N) => S(N.target.value),
+                  value: w,
+                  onChange: (v) => S(v.target.value),
                   placeholder: "Search...",
                   className: "w-full pl-9 pr-3 py-2 text-sm border rounded-md bg-white dark:bg-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none"
                 }
@@ -220,19 +218,19 @@ const Qe = ({
                 style: {
                   maxHeight: m || ""
                 },
-                children: O.length > 0 ? O.map((N) => /* @__PURE__ */ c(
+                children: O.length > 0 ? O.map((v) => /* @__PURE__ */ c(
                   "button",
                   {
                     type: "button",
-                    onClick: () => F(String(N.value)),
+                    onClick: () => F(String(v.value)),
                     className: `w-full px-3 py-2 text-left text-sm flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-600 
-                    ${D(N.value) ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300" : ""}`,
+                    ${D(v.value) ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300" : ""}`,
                     children: [
-                      /* @__PURE__ */ e("span", { children: N.label }),
-                      p && D(N.value) && /* @__PURE__ */ e(_e, { className: "w-4 h-4" })
+                      /* @__PURE__ */ e("span", { children: v.label }),
+                      p && D(v.value) && /* @__PURE__ */ e(_e, { className: "w-4 h-4" })
                     ]
                   },
-                  String(N.value)
+                  String(v.value)
                 )) : /* @__PURE__ */ e("div", { className: "px-3 py-2 text-sm text-gray-500 dark:text-gray-400", children: "No options found" })
               }
             )
@@ -550,33 +548,33 @@ function ea({
   countriesList: b = !1,
   defaultCountry: y = ""
 }) {
-  const d = (k) => me.find((O) => O.code == k), [p, m] = R(
+  const d = (N) => me.find((O) => O.code == N), [p, m] = R(
     d(y) || me[0]
-  ), [u, x] = R(""), [v, S] = R(!1), [E, T] = R(""), M = X();
+  ), [u, x] = R(""), [w, S] = R(!1), [E, T] = R(""), M = X();
   H(() => {
     if (typeof n == "string" && n.startsWith("+")) {
-      const k = me.filter((O) => n.startsWith("+" + O.phone)).sort((O, D) => D.phone.length - O.phone.length)[0];
-      if (k) {
-        m(k), x(n.replace("+" + k.phone, ""));
+      const N = me.filter((O) => n.startsWith("+" + O.phone)).sort((O, D) => D.phone.length - O.phone.length)[0];
+      if (N) {
+        m(N), x(n.replace("+" + N.phone, ""));
         return;
       }
     }
     x(n);
   }, [n]);
-  const G = (k) => {
-    const O = k.target.value.replace(/\D/g, "");
+  const G = (N) => {
+    const O = N.target.value.replace(/\D/g, "");
     x(O), p && s && s("+" + p.phone + O);
-  }, j = (k) => {
-    m(k), s && s("+" + k.phone + u), S(!1), T("");
+  }, j = (N) => {
+    m(N), s && s("+" + N.phone + u), S(!1), T("");
   };
   H(() => {
-    const k = (O) => {
+    const N = (O) => {
       M.current && !M.current.contains(O.target) && S(!1);
     };
-    return document.addEventListener("mousedown", k), () => document.removeEventListener("mousedown", k);
+    return document.addEventListener("mousedown", N), () => document.removeEventListener("mousedown", N);
   }, []);
   const f = me.filter(
-    (k) => k.label.toLowerCase().includes(E.toLowerCase()) || k.phone.includes(E)
+    (N) => N.label.toLowerCase().includes(E.toLowerCase()) || N.phone.includes(E)
   );
   return b ? /* @__PURE__ */ e($, { children: /* @__PURE__ */ c("div", { className: i || "col-span-12", children: [
     /* @__PURE__ */ e(q, { label: h, required: r }),
@@ -585,7 +583,7 @@ function ea({
         "div",
         {
           className: `h-[40px] flex items-center border rounded-md px-2 bg-white dark:bg-gray-700 transition-all
-  ${v ? "ring-0.5 ring-blue-100 border-blue-300" : "border-gray-300 dark:border-gray-600"}
+  ${w ? "ring-0.5 ring-blue-100 border-blue-300" : "border-gray-300 dark:border-gray-600"}
   ${l ? "opacity-60 cursor-not-allowed" : ""}`,
           children: [
             /* @__PURE__ */ c(
@@ -593,7 +591,7 @@ function ea({
               {
                 type: "button",
                 disabled: l,
-                onClick: () => S(!v),
+                onClick: () => S(!w),
                 className: "flex items-center gap-1 pr-2 border-r border-gray-300 dark:border-gray-700 focus:outline-none",
                 children: [
                   p ? /* @__PURE__ */ e(
@@ -643,7 +641,7 @@ function ea({
           ]
         }
       ),
-      v && /* @__PURE__ */ c("div", { className: "absolute top-full left-0 w-full mt-1 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 shadow-lg z-50 max-h-60 overflow-y-auto", children: [
+      w && /* @__PURE__ */ c("div", { className: "absolute top-full left-0 w-full mt-1 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 shadow-lg z-50 max-h-60 overflow-y-auto", children: [
         L && /* @__PURE__ */ e("div", { className: "p-2 border-b border-gray-200 dark:border-gray-700", children: /* @__PURE__ */ c("div", { className: "relative", children: [
           /* @__PURE__ */ e(Re, { className: "absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" }),
           /* @__PURE__ */ e(
@@ -651,36 +649,36 @@ function ea({
             {
               type: "text",
               value: E,
-              onChange: (k) => T(k.target.value),
+              onChange: (N) => T(N.target.value),
               placeholder: "Search country...",
               className: "w-full pl-9 pr-3 py-2 text-sm border rounded-md bg-white dark:bg-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none "
             }
           )
         ] }) }),
-        f.map((k) => /* @__PURE__ */ c(
+        f.map((N) => /* @__PURE__ */ c(
           "button",
           {
             type: "button",
-            onClick: () => j(k),
+            onClick: () => j(N),
             className: "w-full flex items-center gap-2 px-2 py-1 text-sm hover:bg-blue-50 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100",
             children: [
               /* @__PURE__ */ e(
                 "img",
                 {
-                  src: `https://flagcdn.com/w20/${k.code.toLowerCase()}.png`,
-                  alt: k.code,
+                  src: `https://flagcdn.com/w20/${N.code.toLowerCase()}.png`,
+                  alt: N.code,
                   className: "w-5 h-3 object-cover"
                 }
               ),
               /* @__PURE__ */ c("span", { children: [
-                k.label,
+                N.label,
                 " (+",
-                k.phone,
+                N.phone,
                 ")"
               ] })
             ]
           },
-          k.code
+          N.code
         ))
       ] })
     ] })
@@ -750,7 +748,7 @@ const aa = ({
     b != null && b.preview && b.preview.startsWith("blob:") && URL.revokeObjectURL(b.preview), y(f), o == null || o(G);
   }, x = (M) => {
     M && M.stopPropagation(), b != null && b.preview && b.preview.startsWith("blob:") && URL.revokeObjectURL(b.preview), y(null), o == null || o(null), m.current && (m.current.value = "");
-  }, v = (M) => {
+  }, w = (M) => {
     r && (M.preventDefault(), p(!0));
   }, S = (M) => {
     r && (M.preventDefault(), p(!1));
@@ -765,7 +763,7 @@ const aa = ({
       "div",
       {
         className: `relative rounded-md p-2 transition-all ${d ? "border-2 border-dashed border-blue-500 bg-blue-50 dark:bg-blue-900/20" : "border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"}`,
-        onDragOver: v,
+        onDragOver: w,
         onDragLeave: S,
         onDrop: E,
         children: [
@@ -924,7 +922,7 @@ const ra = ({
   menubar: m = !1,
   fontFamily: u = "Inter, sans-serif",
   initConfig: x = {},
-  imageUploadHandler: v
+  imageUploadHandler: w
   // ✅ Promise function passed from parent
 }) => /* @__PURE__ */ c("div", { className: C, children: [
   s && /* @__PURE__ */ e(q, { label: s, required: l }),
@@ -942,11 +940,11 @@ const ra = ({
         statusbar: !0,
         automatic_uploads: !0,
         images_upload_handler: (M) => new Promise((G, j) => {
-          if (!v) {
+          if (!w) {
             G(`data:${M.blob().type};base64,${M.base64()}`);
             return;
           }
-          v(M).then((f) => {
+          w(M).then((f) => {
             f ? G(f) : j("Upload failed: No URL returned");
           }).catch((f) => {
             j(
@@ -1010,14 +1008,14 @@ const ra = ({
       if (!b)
         s(x ? u : "", h);
       else {
-        const v = Array.isArray(i) ? [...i] : [];
+        const w = Array.isArray(i) ? [...i] : [];
         if (x)
-          v.includes(u) || v.push(u);
+          w.includes(u) || w.push(u);
         else {
-          const S = v.indexOf(u);
-          S > -1 && v.splice(S, 1);
+          const S = w.indexOf(u);
+          S > -1 && w.splice(S, 1);
         }
-        s(v, h);
+        s(w, h);
       }
   };
   return y ? /* @__PURE__ */ e($, { children: /* @__PURE__ */ c("div", { className: `${C}`, children: [
@@ -1032,7 +1030,7 @@ const ra = ({
           checked: d(u.value),
           disabled: l || u.disabled,
           required: r && x === 0,
-          onChange: (v) => m(u.value, v.target.checked),
+          onChange: (w) => m(u.value, w.target.checked),
           className: `h-4 w-4 cursor-pointer text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 ${L}`
         },
         h
@@ -1084,7 +1082,7 @@ const ra = ({
   const [d, p] = R(null), [m, u] = R(!1), x = X(null);
   H(() => {
     if (!n) {
-      v(), p(null);
+      w(), p(null);
       return;
     }
     if (n instanceof File) {
@@ -1094,15 +1092,15 @@ const ra = ({
       };
     } else typeof n == "string" ? p({ preview: n }) : n != null && n.preview && p(n);
   }, [n]);
-  const v = () => {
+  const w = () => {
     d != null && d.preview && d.preview.startsWith("blob:") && URL.revokeObjectURL(d.preview);
   }, S = (f) => {
     if (!f || f.length === 0)
       return;
-    const k = f[0], O = URL.createObjectURL(k);
-    v(), p({ file: k, preview: O }), o == null || o(k);
+    const N = f[0], O = URL.createObjectURL(N);
+    w(), p({ file: N, preview: O }), o == null || o(N);
   }, E = (f) => {
-    f && f.stopPropagation(), v(), p(null), o == null || o(null), x.current && (x.current.value = "");
+    f && f.stopPropagation(), w(), p(null), o == null || o(null), x.current && (x.current.value = "");
   }, T = (f) => {
     r && (f.preventDefault(), u(!0));
   }, M = (f) => {
@@ -1194,7 +1192,7 @@ const ra = ({
     required: m = !1,
     minLength: u,
     dragDrop: x,
-    parentClass: v,
+    parentClass: w,
     countriesList: S,
     defaultCountry: E,
     multiple: T,
@@ -1202,7 +1200,7 @@ const ra = ({
     editorKey: G,
     fontFamily: j,
     disabled: f,
-    negativeNumberAllow: k,
+    negativeNumberAllow: N,
     defaultValue: O
   } = h;
   let D = n == null ? void 0 : n[i];
@@ -1224,7 +1222,7 @@ const ra = ({
           label: s,
           name: i,
           disabled: f,
-          parentClass: v,
+          parentClass: w,
           multiple: T,
           dropdownMaxHeight: M
         }
@@ -1239,7 +1237,7 @@ const ra = ({
           value: D,
           onChange: (A) => o(i, A),
           required: m,
-          parentClass: v,
+          parentClass: w,
           className: b || "",
           multiSelect: T,
           disabled: f
@@ -1257,7 +1255,7 @@ const ra = ({
           required: m,
           name: i,
           disabled: f,
-          parentClass: v
+          parentClass: w
         }
       );
     case "phone":
@@ -1274,7 +1272,7 @@ const ra = ({
           label: s,
           name: i,
           disabled: f,
-          parentClass: v
+          parentClass: w
         }
       );
     case "textarea":
@@ -1290,7 +1288,7 @@ const ra = ({
           name: i,
           label: s,
           disabled: f,
-          parentClass: v
+          parentClass: w
         }
       );
     case "image":
@@ -1305,7 +1303,7 @@ const ra = ({
           dragDrop: x,
           label: s,
           name: i,
-          parentClass: v
+          parentClass: w
         }
       );
     case "audio":
@@ -1320,7 +1318,7 @@ const ra = ({
           dragDrop: x,
           label: s,
           name: i,
-          parentClass: v
+          parentClass: w
         }
       );
     case "tinyEditor":
@@ -1332,7 +1330,7 @@ const ra = ({
           required: m,
           placeholder: F,
           label: s,
-          parentClass: v,
+          parentClass: w,
           fontFamily: j,
           editorKey: G,
           disabled: f
@@ -1352,8 +1350,8 @@ const ra = ({
           name: i,
           minLength: u,
           label: s,
-          negativeNumberAllow: k,
-          parentClass: v,
+          negativeNumberAllow: N,
+          parentClass: w,
           disabled: f
         }
       );
@@ -1560,7 +1558,7 @@ const ra = ({
     },
     onFilterApply: y,
     filterConfig: d = null
-  } = h, [p, m] = R(""), [u, x] = R(null), [v, S] = R([]), [E, T] = R({}), [M, G] = R(!1), [j, f] = R(null), [k, O] = R(!1), D = Me(() => !s.enabled || !p.trim() || s.useServerSideSearch ? n : Je(n, p, s.searchKeys || []), [n, p, s]), [F, U] = R(1), [A, N] = R((r == null ? void 0 : r.rows_per_page) || 50), [z, Z] = R(D.length || 0), W = r != null && r.useServerSidePagination ? r.total_pages : Math.ceil(D.length / A), re = Me(() => {
+  } = h, [p, m] = R(""), [u, x] = R(null), [w, S] = R([]), [E, T] = R({}), [M, G] = R(!1), [j, f] = R(null), [N, O] = R(!1), D = Me(() => !s.enabled || !p.trim() || s.useServerSideSearch ? n : Je(n, p, s.searchKeys || []), [n, p, s]), [F, U] = R(1), [A, v] = R((r == null ? void 0 : r.rows_per_page) || 50), [z, Z] = R(D.length || 0), W = r != null && r.useServerSidePagination ? r.total_pages : Math.ceil(D.length / A), re = Me(() => {
     if (r.useServerSidePagination) return D;
     const t = (F - 1) * A;
     return D.slice(t, t + A);
@@ -1582,9 +1580,9 @@ const ra = ({
     g.stopPropagation(), S(I);
     const K = g.currentTarget;
     se.current[t] = K;
-    const _ = K.getBoundingClientRect(), J = 192, V = I.length * 40, ee = window.innerWidth, w = window.innerHeight, B = ee - _.right < J ? _.left - J + _.width : _.left, Y = w - _.bottom < V && _.top > V ? _.top - V - 2 : _.bottom + 2;
+    const _ = K.getBoundingClientRect(), J = 192, V = I.length * 40, ee = window.innerWidth, k = window.innerHeight, B = ee - _.right < J ? _.left - J + _.width : _.left, Y = k - _.bottom < V && _.top > V ? _.top - V - 2 : _.bottom + 2;
     T({
-      top: Math.max(8, Math.min(Y, w - V - 8)),
+      top: Math.max(8, Math.min(Y, k - V - 8)),
       left: Math.max(8, Math.min(B, ee - J - 8))
     }), x(u === t ? null : t);
   }, we = (t) => (F - 1) * A + t + 1, de = (t) => {
@@ -1676,7 +1674,7 @@ const ra = ({
     };
     return document.addEventListener("click", t), () => document.removeEventListener("click", t);
   }, []), H(() => {
-    r != null && r.rows_per_page && (r != null && r.useServerSidePagination) && N((r == null ? void 0 : r.rows_per_page) || 50), r.current_page && U(r.current_page);
+    r != null && r.rows_per_page && (r != null && r.useServerSidePagination) && v((r == null ? void 0 : r.rows_per_page) || 50), r.current_page && U(r.current_page);
   }, [
     r.rows_per_page,
     r == null ? void 0 : r.useServerSidePagination,
@@ -1765,7 +1763,7 @@ const ra = ({
                 value: A,
                 onChange: (t) => {
                   const g = Number(t.target.value);
-                  N(g), U(1), r.useServerSidePagination && b((I) => ({
+                  v(g), U(1), r.useServerSidePagination && b((I) => ({
                     ...I,
                     current_page: 1,
                     rows_per_page: g
@@ -1833,7 +1831,7 @@ const ra = ({
             zIndex: 9999
           },
           className: "w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg border border-gray-200 dark:border-gray-600",
-          children: v.map((t, g) => /* @__PURE__ */ c(
+          children: w.map((t, g) => /* @__PURE__ */ c(
             "button",
             {
               onClick: (I) => xe(
@@ -1864,12 +1862,12 @@ const ra = ({
         onApply: y
       }
     ),
-    k && /* @__PURE__ */ e(
+    N && /* @__PURE__ */ e(
       Ge,
       {
         src: j.src,
         alt: j.alt,
-        isOpen: k,
+        isOpen: N,
         setIsOpen: O
       }
     )
@@ -1895,7 +1893,7 @@ const ra = ({
   selectedItem: x = null
 }) => {
   if (!h) return null;
-  const v = {
+  const w = {
     sm: "max-w-md",
     md: "max-w-lg",
     lg: "max-w-2xl",
@@ -1913,7 +1911,7 @@ const ra = ({
     /* @__PURE__ */ c(
       "div",
       {
-        className: `relative bg-white rounded-lg shadow-xl w-full ${v[l] || v.md} max-h-[90vh] flex flex-col dark:bg-gray-800`,
+        className: `relative bg-white rounded-lg shadow-xl w-full ${w[l] || w.md} max-h-[90vh] flex flex-col dark:bg-gray-800`,
         children: [
           /* @__PURE__ */ c("div", { className: "flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0", children: [
             /* @__PURE__ */ c("div", { className: "flex items-center gap-1", children: [
@@ -1998,7 +1996,7 @@ function sa({ data: h, config: n }) {
     l(d), C(!0);
   }, b = ({ col: d }) => {
     var E;
-    let p = d == null ? void 0 : d.icon, m = d.label, u = h[d.key], x = d.type, v = d.variant || "outline", S = d.defaultColor;
+    let p = d == null ? void 0 : d.icon, m = d.label, u = h[d.key], x = d.type, w = d.variant || "outline", S = d.defaultColor;
     if (x === "chip" && ((E = d.chipOptions) == null ? void 0 : E.length) > 0) {
       let T = d == null ? void 0 : d.chipOptions.find((M) => M.value == u);
       T && (u = T.label, S = T.color);
@@ -2016,7 +2014,7 @@ function sa({ data: h, config: n }) {
               $e,
               {
                 label: u,
-                variant: v,
+                variant: w,
                 color: S,
                 className: "mt-1"
               }
@@ -2099,16 +2097,16 @@ const je = ({ config: h }) => {
     tableConfig: s = {},
     modalConfig: l = {},
     filterConfig: r
-  } = h, [C, L] = R(!0), [b, y] = R(!1), [d, p] = R([]), [m, u] = R(null), [x, v] = R({
+  } = h, [C, L] = R(!0), [b, y] = R(!1), [d, p] = R([]), [m, u] = R(null), [x, w] = R({
     search: "",
     rows_per_page: 50,
     current_page: 1
-  }), [S, E] = R({}), [T, M] = R(!1), [G, j] = R(!1), [f, k] = R(!1), [O, D] = R(!1), [F, U] = R(!1), [A, N] = R(null), z = (w, P) => {
-    w === "edit" ? (N(P), k(!0)) : w === "view" ? (N(P), U(!0)) : w === "delete" && (N(P), D(!0));
-  }, Z = async (w, P, B = "", ae = "") => {
+  }), [S, E] = R({}), [T, M] = R(!1), [G, j] = R(!1), [f, N] = R(!1), [O, D] = R(!1), [F, U] = R(!1), [A, v] = R(null), z = (k, P) => {
+    k === "edit" ? (v(P), N(!0)) : k === "view" ? (v(P), U(!0)) : k === "delete" && (v(P), D(!0));
+  }, Z = async (k, P, B = "", ae = "") => {
     y(!0);
     try {
-      const Y = await (w == null ? void 0 : w());
+      const Y = await (k == null ? void 0 : k());
       (B || Y.message) && ke(B || Y.message, {
         variant: "success"
       }), P == null || P(Y);
@@ -2117,63 +2115,63 @@ const je = ({ config: h }) => {
     } finally {
       y(!1);
     }
-  }, W = (w) => {
-    let P = w.newObject;
+  }, W = (k) => {
+    let P = k.newObject;
     i ? (p((B) => [P, ...B]), u((B) => ({
       ...B,
       current_page: 1
-    }))) : (v((B) => ({
+    }))) : (w((B) => ({
       ...B,
       current_page: 1
     })), x.current_page == 1 && te()), j(!1);
-  }, re = (w) => {
-    let P = w.newObject, B = w.targetObject;
+  }, re = (k) => {
+    let P = k.newObject, B = k.targetObject;
     i ? p(
       (ae) => ae.map(
         (Y) => Y.id === B.id ? { ...Y, ...P } : Y
       )
-    ) : te(), k(!1);
-  }, ne = (w) => {
-    if (!w) {
-      D(!1), N(null);
+    ) : te(), N(!1);
+  }, ne = (k) => {
+    if (!k) {
+      D(!1), v(null);
       return;
     }
     i ? p(
-      (P) => P.filter((B) => B.id !== w.targetObject.id)
-    ) : d.length == 1 && x.current_page > 1 ? v((P) => ({
+      (P) => P.filter((B) => B.id !== k.targetObject.id)
+    ) : d.length == 1 && x.current_page > 1 ? w((P) => ({
       ...P,
       current_page: P.current_page - 1
-    })) : te(), D(!1), N(null);
-  }, se = (w) => Z(
+    })) : te(), D(!1), v(null);
+  }, se = (k) => Z(
     () => {
       var P, B;
-      return (B = (P = l == null ? void 0 : l.addModal) == null ? void 0 : P.handleSubmit) == null ? void 0 : B.call(P, w);
+      return (B = (P = l == null ? void 0 : l.addModal) == null ? void 0 : P.handleSubmit) == null ? void 0 : B.call(P, k);
     },
     W
-  ), oe = (w) => Z(
+  ), oe = (k) => Z(
     () => {
       var P, B;
-      return (B = (P = l == null ? void 0 : l.editModal) == null ? void 0 : P.handleSubmit) == null ? void 0 : B.call(P, w, A);
+      return (B = (P = l == null ? void 0 : l.editModal) == null ? void 0 : P.handleSubmit) == null ? void 0 : B.call(P, k, A);
     },
     re
   ), te = async () => {
-    L(!0), o == null || o({ ...x, ...S }).then((w) => {
-      p(w.data), u(w.pagination);
-    }).catch((w) => {
-      ke(w.message, { variant: "error" });
+    L(!0), o == null || o({ ...x, ...S }).then((k) => {
+      p(k.data), u(k.pagination);
+    }).catch((k) => {
+      ke(k.message, { variant: "error" });
     }).finally(() => {
       L(!1);
     });
-  }, xe = (w) => {
+  }, xe = (k) => {
     var P;
     E((B) => ({
-      ...w
+      ...k
     })), (P = s == null ? void 0 : s.filter) != null && P.useServerSideFilters && M((B) => !B);
-  }, ve = (w, P) => w.filter(
+  }, ve = (k, P) => k.filter(
     (B) => Object.entries(P).every(([ae, Y]) => B[ae] === Y)
   ), we = Me(() => {
-    var w;
-    return (w = s == null ? void 0 : s.filter) != null && w.useServerSideFilters ? d : ve(d, S);
+    var k;
+    return (k = s == null ? void 0 : s.filter) != null && k.useServerSideFilters ? d : ve(d, S);
   }, [d, S]);
   return H(() => {
     te();
@@ -2191,12 +2189,12 @@ const je = ({ config: h }) => {
         horizontal: "right"
       },
       autoHideDuration: 3e3,
-      action: (w) => /* @__PURE__ */ e(
+      action: (k) => /* @__PURE__ */ e(
         "button",
         {
           onClick: () => {
             window.dispatchEvent(
-              new CustomEvent("closeSnackbar", { detail: w })
+              new CustomEvent("closeSnackbar", { detail: k })
             );
           },
           className: "p-1 hover:bg-white/20 rounded-full transition-colors duration-200 text-white flex items-center justify-center",
@@ -2232,7 +2230,7 @@ const je = ({ config: h }) => {
                 ...m
               },
               data: we,
-              setServerSidePaginationData: v,
+              setServerSidePaginationData: w,
               onMenuAction: z,
               filterConfig: r,
               onFilterApply: xe,
@@ -2251,8 +2249,8 @@ const je = ({ config: h }) => {
             title: ((ie = l.addModal) == null ? void 0 : ie.title) || "Add New",
             size: ((ce = l.addModal) == null ? void 0 : ce.size) || "md",
             onFormSubmit: () => {
-              var w;
-              return (w = document.querySelector("#addForm")) == null ? void 0 : w.requestSubmit();
+              var k;
+              return (k = document.querySelector("#addForm")) == null ? void 0 : k.requestSubmit();
             },
             loadingBtn: b,
             actionButtons: l.addModal.actionButtons,
@@ -2273,14 +2271,14 @@ const je = ({ config: h }) => {
           {
             isOpen: f,
             onClose: () => {
-              b || k(!1);
+              b || N(!1);
             },
             icon: (he = l.editModal) == null ? void 0 : he.icon,
             title: ((ue = l.editModal) == null ? void 0 : ue.title) || "Edit",
             size: ((be = l.editModal) == null ? void 0 : be.size) || "md",
             onFormSubmit: () => {
-              var w;
-              return (w = document.querySelector("#editForm")) == null ? void 0 : w.requestSubmit();
+              var k;
+              return (k = document.querySelector("#editForm")) == null ? void 0 : k.requestSubmit();
             },
             actionButtons: l.editModal.actionButtons,
             loadingBtn: b,
@@ -2300,8 +2298,8 @@ const je = ({ config: h }) => {
           fe,
           {
             isOpen: O,
-            onClose: (w) => {
-              ne(w);
+            onClose: (k) => {
+              ne(k);
             },
             icon: ((pe = l.deleteModal) == null ? void 0 : pe.icon) || /* @__PURE__ */ e(le, { icon: "ph:warning-bold", className: "w-6 h-6 text-red-500" }),
             title: ((ge = l.deleteModal) == null ? void 0 : ge.title) || "Confirm Delete",
@@ -2321,7 +2319,7 @@ const je = ({ config: h }) => {
           {
             isOpen: F,
             onClose: () => {
-              U(!1), N(null);
+              U(!1), v(null);
             },
             icon: (_ = l.viewModal) == null ? void 0 : _.icon,
             title: ((J = l.viewModal) == null ? void 0 : J.title) || "View Details",

@@ -24,11 +24,11 @@ const Select = ({
   const dropdownRef = useRef(null);
   const searchInputRef = useRef(null);
 
-  let initialVal = value || defaultValue;
+  let initialVal = value || value === false ? value : defaultValue;
 
   const normalize = (val) => {
     if (val === null || val === undefined || val === "") return "";
-    typeof val === "boolean" ? String(val) : String(val ?? "");
+    return typeof val === "boolean" ? String(val) : String(val ?? "");
   };
 
   const normalizedValue = multiple
