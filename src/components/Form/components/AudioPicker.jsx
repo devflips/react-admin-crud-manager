@@ -135,22 +135,23 @@ const AudioPicker = ({
         >
           {audio ? (
             // Audio player with close button and change button
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-4">
               {/* Close button */}
               <div className="relative w-full">
-                <button
-                  type="button"
-                  onClick={removeAudio}
-                  className="absolute top-0 -right-3 bg-red-500 text-white rounded-full p-1.5 shadow-lg hover:bg-red-600 transition-colors z-10 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-                  aria-label="Remove audio"
-                >
-                  <Icon icon="mdi:close" className="w-3 h-3" />
-                </button>
+                {!required && (
+                  <button
+                    type="button"
+                    onClick={removeAudio}
+                    className="absolute top-0 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600 transition-colors z-10 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                    aria-label="Remove audio"
+                  >
+                    <Icon icon="mdi:close" className="w-3 h-3" />
+                  </button>
+                )}
 
                 {/* Audio player */}
                 <audio key={audio.preview} src={audio.preview} controls />
               </div>
-
               <Button type="button" onClick={handleButtonClick}>
                 <span>Change Audio File</span>
               </Button>

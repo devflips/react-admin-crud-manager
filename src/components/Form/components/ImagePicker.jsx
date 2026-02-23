@@ -136,14 +136,16 @@ const ImagePicker = ({
                   className="object-cover w-20 h-20 rounded-full shadow-md"
                 />
                 {/* Close button */}
-                <button
-                  type="button"
-                  onClick={removeImage}
-                  className="absolute top-0 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                  aria-label="Remove image"
-                >
-                  <Icon icon="mdi:close" className="w-3 h-3" />
-                </button>
+                {!required && (
+                  <button
+                    type="button"
+                    onClick={removeImage}
+                    className="absolute top-0 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                    aria-label="Remove image"
+                  >
+                    <Icon icon="mdi:close" className="w-3 h-3" />
+                  </button>
+                )}
               </div>
             ) : (
               // Placeholder icon
