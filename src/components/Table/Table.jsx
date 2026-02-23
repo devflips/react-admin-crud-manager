@@ -163,7 +163,7 @@ const Table = ({ config }) => {
               fallback_icon
             ) : (
               <div
-                className={`w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600 ${className || ""}`}
+                className={`w-10 h-10 flex items-center shrink-0 justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600 ${className || ""}`}
               >
                 <User className="w-6 h-6 text-gray-400 dark:text-gray-400" />
               </div>
@@ -190,7 +190,7 @@ const Table = ({ config }) => {
         ) : (
           <>
             <div
-              className={`w-12 h-12 flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600 ${className || ""}`}
+              className={`w-12 h-12 flex items-center shrink-0 justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600 ${className || ""}`}
             >
               <Music className="w-6 h-6 text-gray-400 dark:text-gray-400" />
             </div>

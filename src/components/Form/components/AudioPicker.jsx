@@ -83,7 +83,7 @@ const AudioPicker = ({
       <InputLabel label={label} required={required} />
 
       <div
-        className={`relative rounded-md p-3 transition-all ${
+        className={`relative rounded-md p-2 transition-all ${
           isDragging
             ? "border border-dashed border-blue-500 bg-blue-50 dark:bg-blue-900"
             : "border bg-gray-50 dark:bg-gray-700"
@@ -110,11 +110,8 @@ const AudioPicker = ({
                 className="w-64"
               />
             ) : (
-              <div className="rounded-md bg-gray-200 dark:bg-gray-800 h-16 w-16 flex items-center justify-center">
-                <Icon
-                  icon="mdi:music"
-                  className="text-gray-400 w-8 h-8"
-                />
+              <div className="rounded-full bg-gray-200 dark:bg-gray-800 h-20 w-20 flex items-center justify-center">
+                <Icon icon="mdi:music" className="text-gray-400 w-10 h-10" />
               </div>
             )}
           </div>

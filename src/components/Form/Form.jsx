@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import RenderFields from "./components/RenderFields";
 
-const Form = ({ config, onSubmit, initialData = {} }) => {
+const Form = ({ config, onSubmit, initialData = {}, type = "add" }) => {
   const { formClass = "grid grid-cols-12 gap-4", formFields = [] } =
     config || {};
 
@@ -29,7 +29,9 @@ const Form = ({ config, onSubmit, initialData = {} }) => {
 
   return (
     <form
-      id={config.title?.toLowerCase().includes("edit") ? "editForm" : "addForm"}
+      id={
+        type == "add" ? "addForm" : type == "edit" ? "editForm" : "defaultForm"
+      }
       onSubmit={handleSubmit}
       className={formClass}
       noValidate={false} // enables native validation

@@ -267,7 +267,11 @@ const CrudPage = ({ config }) => {
         {/* Add Modal */}
         <Modal
           isOpen={showAdd}
-          onClose={() => setShowAdd(false)}
+          onClose={() => {
+            if (!formLoading) {
+              setShowAdd(false);
+            }
+          }}
           icon={modalConfig.addModal?.icon}
           title={modalConfig.addModal?.title || "Add New"}
           size={modalConfig.addModal?.size || "md"}
@@ -281,6 +285,7 @@ const CrudPage = ({ config }) => {
             config={modalConfig?.addModal || []}
             onSubmit={handleAddFormSubmit}
             initialData={{}}
+            type="add"
             loading={formLoading}
           />
         </Modal>
@@ -288,7 +293,11 @@ const CrudPage = ({ config }) => {
         {/* Edit Modal */}
         <Modal
           isOpen={showEdit}
-          onClose={() => setShowEdit(false)}
+          onClose={() => {
+            if (!formLoading) {
+              setShowEdit(false);
+            }
+          }}
           icon={modalConfig.editModal?.icon}
           title={modalConfig.editModal?.title || "Edit"}
           size={modalConfig.editModal?.size || "md"}
@@ -302,6 +311,7 @@ const CrudPage = ({ config }) => {
             config={modalConfig.editModal || []}
             onSubmit={handleEditFormSubmit}
             initialData={selectedItem}
+            type="edit"
             loading={formLoading}
           />
         </Modal>
