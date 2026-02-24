@@ -23,6 +23,7 @@ const Select = ({
   const [showAboveState, setShowAboveState] = useState(true);
   const dropdownRef = useRef(null);
   const searchInputRef = useRef(null);
+  const [normalizedOptions, setNormalizedOptions] = useState([]);
 
   let initialVal = value || value === false ? value : defaultValue;
 
@@ -31,11 +32,24 @@ const Select = ({
     return typeof val === "boolean" ? String(val) : String(val ?? "");
   };
 
+  useEffect(() => {
+    const loadOptions = async () => {
+      if (typeof options === "function") {
+        const result = await options();
+        setNormalizedOptions(result);
+      } else {
+        setNormalizedOptions(options || []);
+      }
+    };
+
+    loadOptions();
+  }, [options]);
+
   const normalizedValue = multiple
     ? (initialVal || []).map(normalize)
     : normalize(initialVal);
 
-  const filteredOptions = options.filter((option) =>
+  const filteredOptions = normalizedOptions.filter((option) =>
     option.label.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
@@ -101,11 +115,11 @@ const Select = ({
   };
 
   const selectedLabels = multiple
-    ? options
+    ? normalizedOptions
         .filter((opt) => isSelected(opt.value))
         .map((opt) => opt.label)
         .join(", ")
-    : options.find((opt) => isSelected(opt.value))?.label;
+    : normalizedOptions.find((opt) => isSelected(opt.value))?.label;
 
   useEffect(() => {
     if (initialVal || initialVal === false) {
