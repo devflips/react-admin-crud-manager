@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 import Table from "./Table/Table";
 import Modal from "./Modal/Modal";
 import Form from "./Form/Form";
-import Button from "./Button/Button";
 import { Icon } from "@iconify/react";
 import { enqueueSnackbar } from "notistack";
 import Details from "./Details/Details";
@@ -225,30 +224,12 @@ const CrudPage = ({ config }) => {
       )}
     >
       <div>
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {title}
-            </h1>
-            <p className="text-md text-gray-600 dark:text-gray-400">
-              {config?.description}
-            </p>
-          </div>
-          <div className="flex items-center space-x-3">
-            <Button
-              onClick={() => setShowAdd(true)}
-              variant="contained"
-              color="primary"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              {config.buttonText || "Add New"}
-            </Button>
-          </div>
-        </div>
-
         {/* Table */}
         <Table
+          title={title}
+          setShowAdd={setShowAdd}
+          description={config.description}
+          buttonText={config.buttonText}
           config={{
             ...tableConfig,
             pagination: {

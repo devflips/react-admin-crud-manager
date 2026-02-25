@@ -17,6 +17,8 @@ const Select = ({
   parentClass = "",
   multiple = false, // ✅ NEW
   dropdownMaxHeight = "",
+  formData = {},
+  dependencyKey = "",
 }) => {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,18 +34,21 @@ const Select = ({
     return typeof val === "boolean" ? String(val) : String(val ?? "");
   };
 
-  useEffect(() => {
-    const loadOptions = async () => {
-      if (typeof options === "function") {
-        const result = await options();
-        setNormalizedOptions(result);
-      } else {
-        setNormalizedOptions(options || []);
-      }
-    };
+  useEffect(
+    () => {
+      const loadOptions = async () => {
+        if (typeof options === "function") {
+          const result = await options(formData);
+          setNormalizedOptions(result);
+        } else {
+          setNormalizedOptions(options || []);
+        }
+      };
 
-    loadOptions();
-  }, [options]);
+      loadOptions();
+    },
+    dependencyKey ? [options, formData?.[dependencyKey]] : [options],
+  ); // ✅ Add dependencyKey if options depend on formData
 
   const normalizedValue = multiple
     ? (initialVal || []).map(normalize)

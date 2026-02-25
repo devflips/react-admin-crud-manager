@@ -34,6 +34,8 @@ const RenderFields = ({ field, formData, handleChange }) => {
     disabled,
     negativeNumberAllow,
     defaultValue,
+    renderCondition,
+    optionDependencyKey,
   } = field;
 
   let value = formData?.[key];
@@ -47,12 +49,21 @@ const RenderFields = ({ field, formData, handleChange }) => {
   const baseClass =
     "w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 text-sm focus:outline-none focus:ring-1 focus:ring-blue-200 bg-white text-black dark:bg-gray-700 dark:text-white";
 
+  if (renderCondition && typeof renderCondition === "function") {
+    const shouldRender = renderCondition(formData);
+    if (!shouldRender) {
+      return null;
+    }
+  }
+
   switch (type) {
     case "select":
       return (
         <Select
           options={options || []}
           value={value}
+          formData={formData}
+          dependencyKey={optionDependencyKey}
           onChange={(val) => handleChange(key, val)}
           placeholder={finalPlaceholder}
           className={inputClass || ""}

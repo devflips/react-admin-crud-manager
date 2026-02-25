@@ -13,8 +13,6 @@ const AudioPicker = ({
   dragDrop = false,
   name = "",
   parentClass = "",
-  buttonComponent: ButtonComponent = null,
-  buttonProps = {},
 }) => {
   const [audio, setAudio] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -150,7 +148,12 @@ const AudioPicker = ({
                 )}
 
                 {/* Audio player */}
-                <audio key={audio.preview} src={audio.preview} controls />
+                <audio
+                  key={audio.preview}
+                  src={audio.preview}
+                  controls
+                  controlsList="nodownload"
+                />
               </div>
               <Button type="button" onClick={handleButtonClick}>
                 <span>Change Audio File</span>

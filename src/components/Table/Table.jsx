@@ -7,6 +7,7 @@ import {
   Filter,
   User,
   Music,
+  Plus,
 } from "lucide-react";
 import { createPortal } from "react-dom";
 import { formatDate, searchLocalData } from "../../lib/utils";
@@ -16,7 +17,7 @@ import Chip from "../Chip/Chip";
 import TableSkeleton from "./components/TableSkeleton";
 import ImagePreview from "./components/ImagePreview";
 
-const Table = ({ config }) => {
+const Table = ({ config, setShowAdd, title, buttonText, description }) => {
   const {
     data = [],
     table_head = [],
@@ -134,6 +135,9 @@ const Table = ({ config }) => {
   };
 
   const openPreview = (image) => {
+    if (image && image.src instanceof File) {
+      image = { ...image, src: URL.createObjectURL(image.src) };
+    }
     setTargetImage(image);
     setIsOpen(true);
   };
@@ -148,14 +152,18 @@ const Table = ({ config }) => {
       <>
         {imageSrc ? (
           <img
-            src={imageSrc}
+            src={
+              imageSrc instanceof File
+                ? URL.createObjectURL(imageSrc)
+                : imageSrc
+            }
             alt={imageAlt || "Avatar"}
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
               openPreview({ src: imageSrc, alt: imageAlt });
             }}
-            className={`w-10 h-10 cursor-pointer rounded-full object-cover border border-gray-200 dark:border-gray-700 ${className || ""}`}
+            className={`w-10 h-10 cursor-pointer shrink-0 rounded-full object-cover border border-gray-200 dark:border-gray-700 ${className || ""}`}
           />
         ) : (
           <>
@@ -179,9 +187,17 @@ const Table = ({ config }) => {
       <>
         {audioSrc ? (
           <audio
-            key={audioSrc} // 🔥 ensures latest audio reloads
+            key={
+              audioSrc instanceof File
+                ? URL.createObjectURL(audioSrc)
+                : audioSrc
+            }
             controls
-            src={audioSrc}
+            src={
+              audioSrc instanceof File
+                ? URL.createObjectURL(audioSrc)
+                : audioSrc
+            }
             onClick={(e) => {
               e.stopPropagation();
             }}
@@ -361,31 +377,51 @@ const Table = ({ config }) => {
 
   return (
     <>
-      {/* Search Bar */}
-      <div className="flex justify-end items-center mb-4 gap-2">
-        {search.enabled && (
-          <div className="">
-            <div className="relative min-w-[300px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-300" />
-              <input
-                type="text"
-                placeholder={search.placeholder || "Search..."}
-                value={searchTerm}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full h-[36px] pl-9 pr-4 py-3 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-300 dark:ring-blue-200 disabled:opacity-50"
-              />
-            </div>
-          </div>
-        )}
+      {/* header Bar */}
 
-        {filterConfig && filter.enabled && (
-          <Button onClick={() => setShowFilters(true)} variant="contained">
-            <Filter className="w-4 h-4 mr-2" />
-            Filters
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {title}
+          </h1>
+          <p className="text-md text-gray-600 dark:text-gray-400">
+            {description}
+          </p>
+        </div>
+        <div className="flex flex-col justify-end items-end gap-2">
+          <Button
+            onClick={() => setShowAdd(true)}
+            variant="contained"
+            color="primary"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            {buttonText || "Add New"}
           </Button>
-        )}
-      </div>
+          <div className="flex justify-end items-center gap-2">
+            {search.enabled && (
+              <div className="">
+                <div className="relative min-w-[300px]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-300" />
+                  <input
+                    type="text"
+                    placeholder={search.placeholder || "Search..."}
+                    value={searchTerm}
+                    onChange={(e) => handleSearchChange(e.target.value)}
+                    className="w-full h-[36px] pl-9 pr-4 py-3 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-300 dark:ring-blue-200 disabled:opacity-50"
+                  />
+                </div>
+              </div>
+            )}
 
+            {filterConfig && filter.enabled && (
+              <Button onClick={() => setShowFilters(true)} variant="contained">
+                <Filter className="w-4 h-4 mr-2" />
+                Filters
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
       {/* =========================== Table =========================== */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-200 dark:border-gray-700">
         <div className="overflow-x-auto">

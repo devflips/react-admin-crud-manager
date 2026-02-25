@@ -12,6 +12,9 @@ export default function Details({ data, config }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const openPreview = (image) => {
+    if (image && image.src instanceof File) {
+      image = { ...image, src: URL.createObjectURL(image.src) };
+    }
     setTargetImage(image);
     setIsOpen(true);
   };
@@ -63,9 +66,9 @@ export default function Details({ data, config }) {
           ) : type === "audio" ? (
             value ? (
               <audio
-                key={value} // 🔥 ensures latest audio reload
+                key={value instanceof File ? URL.createObjectURL(value) : value}
                 controls
-                src={value}
+                src={value instanceof File ? URL.createObjectURL(value) : value}
                 onClick={(e) => e.stopPropagation()}
                 className="shadow-md rounded-full"
               />
@@ -101,7 +104,7 @@ export default function Details({ data, config }) {
       >
         {image ? (
           <img
-            src={image}
+            src={image instanceof File ? URL.createObjectURL(image) : image}
             alt={title}
             onClick={() => openPreview({ src: image, alt: title })}
             className="w-16 h-16 cursor-pointer rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
