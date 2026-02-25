@@ -41,6 +41,7 @@ const Table = ({ config, setShowAdd, title, buttonText, description }) => {
     setServerSidePaginationData = () => {},
     onFilterApply,
     filterConfig = null,
+    rowClick = null,
   } = config;
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -302,7 +303,15 @@ const Table = ({ config, setShowAdd, title, buttonText, description }) => {
     }
   };
 
-  //  handle CLick on cell
+  //  handle CLick
+  const handleRowClick = (row) => {
+    if (typeof rowClick === "function") {
+      return rowClick(row);
+    }
+    if (rowClick) {
+      return onMenuAction?.("view", row);
+    }
+  };
 
   const handleColumnClick = (col, row) => {
     if (col.onClickDetails) {
@@ -314,6 +323,8 @@ const Table = ({ config, setShowAdd, title, buttonText, description }) => {
     }
   };
 
+  // Helper to check if row is clickable
+  const isRowClickable = () => rowClick || typeof rowClick === "function";
   // Helper to check if column is clickable
   const isColumnClickable = (col) =>
     col.onClickDetails || typeof col.handleClick === "function";
@@ -453,7 +464,12 @@ const Table = ({ config, setShowAdd, title, buttonText, description }) => {
                 paginatedData.map((row, index) => (
                   <tr
                     key={row.id || row._id || index}
-                    className="hover:bg-gray-50 dark:hover:bg-blue-800/10 transition"
+                    className={`hover:bg-gray-50 dark:hover:bg-blue-800/10 transition ${isRowClickable() ? "cursor-pointer" : ""}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      isRowClickable() && handleRowClick(row);
+                    }}
                   >
                     {table_head.map((col) => (
                       <td
@@ -462,7 +478,11 @@ const Table = ({ config, setShowAdd, title, buttonText, description }) => {
                           isColumnClickable(col) ? "cursor-pointer" : ""
                         }`}
                         title={String(row[col.key] ?? "")}
-                        onClick={() => handleColumnClick(col, row)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          handleColumnClick(col, row);
+                        }}
                       >
                         {col.render
                           ? col.render(row, index)
