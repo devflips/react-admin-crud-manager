@@ -1719,7 +1719,7 @@ const na = ({
     l.total_records,
     l == null ? void 0 : l.useServerSidePagination
   ]), k ? /* @__PURE__ */ e(sa, { rows: 6, columns: 6 }) : /* @__PURE__ */ d(E, { children: [
-    /* @__PURE__ */ d("div", { className: "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3", children: [
+    /* @__PURE__ */ d("div", { className: "flex flex-col sm:flex-row sm:justify-between gap-4 mb-3", children: [
       /* @__PURE__ */ d("div", { children: [
         /* @__PURE__ */ e("h1", { className: "text-2xl font-bold text-gray-900 dark:text-white", children: i }),
         /* @__PURE__ */ e("p", { className: "text-md text-gray-600 dark:text-gray-400", children: s })
