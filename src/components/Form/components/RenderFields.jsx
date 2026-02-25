@@ -192,6 +192,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
       return (
         <Input
           type={type || "text"}
+          defaultValue={defaultValue}
           value={value}
           onChange={(e) => handleChange(key, e.target.value)}
           placeholder={finalPlaceholder}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import InputLabel from "./InputLabel";
 
@@ -12,6 +12,7 @@ const Input = React.forwardRef(
       type = "text",
       onKeyDown,
       negativeNumberAllow = true,
+      defaultValue = "",
       ...props
     },
     ref,
@@ -50,6 +51,14 @@ const Input = React.forwardRef(
       ${type === "number" ? "no-spinner" : ""}
       ${className}
     `.trim();
+
+    useEffect(() => {
+      if (defaultValue) {
+        setTimeout(() => {
+          props.onChange?.({ target: { value: defaultValue } });
+        }, 100);
+      }
+    }, [defaultValue]);
 
     return (
       <>
