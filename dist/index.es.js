@@ -2,15 +2,15 @@ import { jsx as e, Fragment as j, jsxs as h } from "react/jsx-runtime";
 import Le, { useState as R, useRef as ee, useEffect as K, useMemo as Re } from "react";
 import { ChevronDown as Ie, Search as Oe, Check as Ye, X as Ne, Plus as Ve, Filter as We, ChevronLeft as qe, ChevronRight as Ze, EllipsisVertical as Je, User as Be, Music as Qe } from "lucide-react";
 import { createPortal as Xe } from "react-dom";
-import { Icon as te } from "@iconify/react";
+import { Icon as re } from "@iconify/react";
 import { Editor as ea } from "@tinymce/tinymce-react";
 import { SnackbarProvider as aa, enqueueSnackbar as Se } from "notistack";
-import t from "prop-types";
+import r from "prop-types";
 const Ue = (b, o = "DD MMM YYYY") => {
   if (!b) return "N/A";
   const s = new Date(b);
   if (isNaN(s)) return "Invalid Date";
-  const i = (r) => String(r).padStart(2, "0"), d = {
+  const i = (t) => String(t).padStart(2, "0"), d = {
     YYYY: s.getFullYear(),
     YY: String(s.getFullYear()).slice(-2),
     MMMM: s.toLocaleString("en-US", { month: "long" }),
@@ -29,16 +29,16 @@ const Ue = (b, o = "DD MMM YYYY") => {
   };
   return o.replace(
     /YYYY|YY|MMMM|MMM|MM|M|DD|D|dddd|ddd|HH|hh|mm|ss|A/g,
-    (r) => d[r]
+    (t) => d[t]
   );
-}, ta = (b, o, s = []) => {
+}, ra = (b, o, s = []) => {
   if (!(o != null && o.trim())) return b;
-  const i = o.toLowerCase(), d = (r) => r == null ? [] : typeof r == "object" ? Object.values(r).flatMap(d) : [String(r)];
-  return b.filter((r) => {
+  const i = o.toLowerCase(), d = (t) => t == null ? [] : typeof t == "object" ? Object.values(t).flatMap(d) : [String(t)];
+  return b.filter((t) => {
     let g = [];
     return s.length > 0 ? s.forEach((M) => {
-      r[M] !== void 0 && g.push(...d(r[M]));
-    }) : g = d(r), g.some(
+      t[M] !== void 0 && g.push(...d(t[M]));
+    }) : g = d(t), g.some(
       (M) => M.toLowerCase().includes(i)
     );
   });
@@ -49,7 +49,7 @@ const Ue = (b, o = "DD MMM YYYY") => {
     color: s = "default",
     size: i = "default",
     fullWidth: d = !1,
-    children: r,
+    children: t,
     ...g
   }, M) => {
     var c;
@@ -94,7 +94,7 @@ const Ue = (b, o = "DD MMM YYYY") => {
         type: g.type || "button",
         className: v,
         ...g,
-        children: r
+        children: t
       }
     );
   }
@@ -106,13 +106,13 @@ function q({ label: b, required: o = !1 }) {
     o && /* @__PURE__ */ e("span", { className: "ml-1", children: "*" })
   ] }) });
 }
-const ra = ({
+const ta = ({
   options: b = [],
   value: o = "",
   defaultValue: s = "",
   onChange: i,
   placeholder: d = "Select option",
-  className: r = "",
+  className: t = "",
   disabled: g = !1,
   search: M = !1,
   label: S = "",
@@ -126,7 +126,7 @@ const ra = ({
   dependencyKey: w = ""
 }) => {
   var V;
-  const [y, k] = R(!1), [I, D] = R(""), [C, O] = R(!0), F = ee(null), P = ee(null), [L, B] = R([]);
+  const [y, k] = R(!1), [I, A] = R(""), [C, O] = R(!0), F = ee(null), T = ee(null), [L, B] = R([]);
   let E = o || o === !1 ? o : s;
   const Y = (x) => x == null || x === "" ? "" : String(typeof x == "boolean" ? x : x ?? "");
   K(
@@ -149,7 +149,7 @@ const ra = ({
   };
   K(() => {
     const x = (H) => {
-      F.current && !F.current.contains(H.target) && (k(!1), D(""));
+      F.current && !F.current.contains(H.target) && (k(!1), A(""));
     };
     return document.addEventListener("mousedown", x), () => document.removeEventListener("mousedown", x);
   }, []), K(() => {
@@ -158,9 +158,9 @@ const ra = ({
       O(J < 200);
     }
   }, [y]), K(() => {
-    y && P.current && P.current.focus();
+    y && T.current && T.current.focus();
   }, [y]);
-  const A = (x) => {
+  const D = (x) => {
     let H = x;
     if (x === "true" ? H = !0 : x === "false" && (H = !1), m) {
       const J = $.includes(Y(x));
@@ -170,7 +170,7 @@ const ra = ({
       ) : Q = [...o || [], H], i(Q);
     } else
       i(H), k(!1);
-    D("");
+    A("");
   }, U = m ? L.filter((x) => z(x.value)).map((x) => x.label).join(", ") : (V = L.find((x) => z(x.value))) == null ? void 0 : V.label;
   return K(() => {
     (E || E === !1) && setTimeout(() => {
@@ -178,7 +178,7 @@ const ra = ({
     }, 100);
   }, []), /* @__PURE__ */ h("div", { className: u || "col-span-12", children: [
     /* @__PURE__ */ e(q, { label: S, required: p }),
-    /* @__PURE__ */ h("div", { className: `relative ${r}`, ref: F, children: [
+    /* @__PURE__ */ h("div", { className: `relative ${t}`, ref: F, children: [
       /* @__PURE__ */ e(
         "select",
         {
@@ -221,10 +221,10 @@ const ra = ({
               /* @__PURE__ */ e(
                 "input",
                 {
-                  ref: P,
+                  ref: T,
                   type: "text",
                   value: I,
-                  onChange: (x) => D(x.target.value),
+                  onChange: (x) => A(x.target.value),
                   placeholder: "Search...",
                   className: "w-full pl-9 pr-3 py-2 text-sm border rounded-md bg-white dark:bg-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none"
                 }
@@ -241,7 +241,7 @@ const ra = ({
                   "button",
                   {
                     type: "button",
-                    onClick: () => A(String(x.value)),
+                    onClick: () => D(String(x.value)),
                     className: `w-full px-3 py-2 text-left text-sm flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-600 
                     ${z(x.value) ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300" : ""}`,
                     children: [
@@ -264,7 +264,7 @@ const ra = ({
   text: s,
   options: i = [],
   label: d,
-  required: r,
+  required: t,
   name: g = "",
   disabled: M = !1,
   parentClass: S = ""
@@ -274,7 +274,7 @@ const ra = ({
     { label: "Inactive", value: !1 }
   ];
   return /* @__PURE__ */ e(j, { children: /* @__PURE__ */ h("div", { className: S || "col-span-12", children: [
-    /* @__PURE__ */ e(q, { label: d, required: r }),
+    /* @__PURE__ */ e(q, { label: d, required: t }),
     /* @__PURE__ */ h("div", { className: "flex items-center justify-between h-10 gap-4 bg-gray-100 dark:bg-gray-700 px-3 rounded-md border border-gray-100 dark:border-gray-600", children: [
       s && /* @__PURE__ */ e("p", { className: "text-xs text-gray-600 dark:text-gray-400 flex-shrink overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px]", children: s }),
       /* @__PURE__ */ e("div", { className: "flex items-center gap-6", children: p.map((l, u) => /* @__PURE__ */ h(
@@ -287,7 +287,7 @@ const ra = ({
               {
                 type: "radio",
                 name: "switch-field",
-                required: r && u === 0,
+                required: t && u === 0,
                 value: l.value,
                 disabled: M,
                 checked: b === l.value,
@@ -560,7 +560,7 @@ function la({
   name: s = "",
   parentClass: i = "",
   onChange: d,
-  disabled: r = !1,
+  disabled: t = !1,
   required: g = !1,
   placeholder: M = "Phone number",
   search: S = !1,
@@ -569,7 +569,7 @@ function la({
 }) {
   const u = (L) => we.find((B) => B.code == L), [m, v] = R(
     u(l) || we[0]
-  ), [c, w] = R(""), [y, k] = R(!1), [I, D] = R(""), C = ee();
+  ), [c, w] = R(""), [y, k] = R(!1), [I, A] = R(""), C = ee();
   K(() => {
     if (typeof o == "string" && o.startsWith("+")) {
       const L = we.filter((B) => o.startsWith("+" + B.phone)).sort((B, E) => E.phone.length - B.phone.length)[0];
@@ -584,7 +584,7 @@ function la({
     const B = L.target.value.replace(/\D/g, "");
     w(B), m && d && d("+" + m.phone + B);
   }, F = (L) => {
-    v(L), d && d("+" + L.phone + c), k(!1), D("");
+    v(L), d && d("+" + L.phone + c), k(!1), A("");
   };
   K(() => {
     const L = (B) => {
@@ -592,7 +592,7 @@ function la({
     };
     return document.addEventListener("mousedown", L), () => document.removeEventListener("mousedown", L);
   }, []);
-  const P = we.filter(
+  const T = we.filter(
     (L) => L.label.toLowerCase().includes(I.toLowerCase()) || L.phone.includes(I)
   );
   return p ? /* @__PURE__ */ e(j, { children: /* @__PURE__ */ h("div", { className: i || "col-span-12", children: [
@@ -603,13 +603,13 @@ function la({
         {
           className: `h-[40px] flex items-center border rounded-md px-2 bg-white dark:bg-gray-700 transition-all
   ${y ? "ring-0.5 ring-blue-100 border-blue-300" : "border-gray-300 dark:border-gray-600"}
-  ${r ? "opacity-60 cursor-not-allowed" : ""}`,
+  ${t ? "opacity-60 cursor-not-allowed" : ""}`,
           children: [
             /* @__PURE__ */ h(
               "button",
               {
                 type: "button",
-                disabled: r,
+                disabled: t,
                 onClick: () => k(!y),
                 className: "flex items-center gap-1 pr-2 border-r border-gray-300 dark:border-gray-700 focus:outline-none",
                 children: [
@@ -636,7 +636,7 @@ function la({
                 value: c,
                 onChange: O,
                 required: g,
-                disabled: r || !m,
+                disabled: t || !m,
                 placeholder: m ? M : "Select a country",
                 className: "flex-1 ml-2 bg-transparent outline-none text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400"
               }
@@ -668,13 +668,13 @@ function la({
             {
               type: "text",
               value: I,
-              onChange: (L) => D(L.target.value),
+              onChange: (L) => A(L.target.value),
               placeholder: "Search country...",
               className: "w-full pl-9 pr-3 py-2 text-sm border rounded-md bg-white dark:bg-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none "
             }
           )
         ] }) }),
-        P.map((L) => /* @__PURE__ */ h(
+        T.map((L) => /* @__PURE__ */ h(
           "button",
           {
             type: "button",
@@ -713,7 +713,7 @@ function la({
           d(Y);
         },
         placeholder: M,
-        disabled: r,
+        disabled: t,
         required: g,
         className: `w-full h-10 px-3 text-sm border border-gray-300 dark:border-gray-600 rounded-md \r
         bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none \r
@@ -726,7 +726,7 @@ function la({
 }
 const je = Le.forwardRef(
   ({ className: b = "", label: o, required: s, ...i }, d) => {
-    const r = `
+    const t = `
       placeholder-gray-400 dark:placeholder-gray-400
       ${b}
     `.trim();
@@ -735,7 +735,7 @@ const je = Le.forwardRef(
       /* @__PURE__ */ e("div", { className: "relative", children: /* @__PURE__ */ e(
         "textarea",
         {
-          className: r,
+          className: t,
           ref: d,
           required: s,
           ...i
@@ -751,7 +751,7 @@ const oa = ({
   onChange: s,
   required: i = !1,
   accept: d = "image/*",
-  id: r,
+  id: t,
   dragDrop: g = !1,
   name: M = "",
   parentClass: S = ""
@@ -763,8 +763,8 @@ const oa = ({
   const c = (C) => {
     if (!C || C.length === 0)
       return;
-    const O = C[0], F = URL.createObjectURL(O), P = { file: O, preview: F };
-    p != null && p.preview && p.preview.startsWith("blob:") && URL.revokeObjectURL(p.preview), l(P), s == null || s(O);
+    const O = C[0], F = URL.createObjectURL(O), T = { file: O, preview: F };
+    p != null && p.preview && p.preview.startsWith("blob:") && URL.revokeObjectURL(p.preview), l(T), s == null || s(O);
   }, w = (C) => {
     C && C.stopPropagation(), p != null && p.preview && p.preview.startsWith("blob:") && URL.revokeObjectURL(p.preview), l(null), s == null || s(null), v.current && (v.current.value = "");
   }, y = (C) => {
@@ -773,7 +773,7 @@ const oa = ({
     g && (C.preventDefault(), m(!1));
   }, I = (C) => {
     g && (C.preventDefault(), m(!1), c(C.dataTransfer.files));
-  }, D = () => {
+  }, A = () => {
     v.current.click();
   };
   return /* @__PURE__ */ e(j, { children: /* @__PURE__ */ h("div", { className: S || "col-span-12", children: [
@@ -790,7 +790,7 @@ const oa = ({
             "input",
             {
               ref: v,
-              id: r,
+              id: t,
               type: "file",
               accept: d,
               onChange: (C) => c(C.target.files),
@@ -821,14 +821,14 @@ const oa = ({
                         onClick: w,
                         className: "absolute top-0 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2",
                         "aria-label": "Remove image",
-                        children: /* @__PURE__ */ e(te, { icon: "mdi:close", className: "w-3 h-3" })
+                        children: /* @__PURE__ */ e(re, { icon: "mdi:close", className: "w-3 h-3" })
                       }
                     )
                   ] })
                 ) : (
                   // Placeholder icon
                   /* @__PURE__ */ e("div", { className: "rounded-full bg-gray-100 dark:bg-gray-700 h-20 w-20 flex items-center justify-center", children: /* @__PURE__ */ e(
-                    te,
+                    re,
                     {
                       icon: "ri:image-add-fill",
                       className: "text-gray-400 w-10 h-10"
@@ -840,7 +840,7 @@ const oa = ({
                     Z,
                     {
                       type: "button",
-                      onClick: D,
+                      onClick: A,
                       variant: "outlined",
                       color: "default",
                       children: p ? "Change Image" : "Select Image"
@@ -863,7 +863,7 @@ const oa = ({
     parentClass: s = "",
     className: i = "",
     type: d = "text",
-    onKeyDown: r,
+    onKeyDown: t,
     negativeNumberAllow: g = !0,
     defaultValue: M = "",
     ...S
@@ -883,7 +883,7 @@ const oa = ({
           return;
         }
       }
-      r == null || r(c);
+      t == null || t(c);
     }, v = `
       h-10 placeholder-gray-400 dark:placeholder-gray-400
       ${d === "password" ? "pr-10" : ""}
@@ -917,7 +917,7 @@ const oa = ({
             onClick: () => u((c) => !c),
             className: "absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-200",
             children: /* @__PURE__ */ e(
-              te,
+              re,
               {
                 icon: l ? "mdi:eye-outline" : "mdi:eye-off-outline",
                 className: "w-5 h-5"
@@ -936,7 +936,7 @@ const ia = ({
   value: s = "",
   onChange: i,
   label: d = "",
-  required: r = !1,
+  required: t = !1,
   placeholder: g = "",
   parentClass: M = "col-span-12",
   height: S = 400,
@@ -950,7 +950,7 @@ const ia = ({
   imageUploadHandler: y
   // ✅ Promise function passed from parent
 }) => /* @__PURE__ */ h("div", { className: M, children: [
-  d && /* @__PURE__ */ e(q, { label: d, required: r }),
+  d && /* @__PURE__ */ e(q, { label: d, required: t }),
   /* @__PURE__ */ e(
     ea,
     {
@@ -969,11 +969,11 @@ const ia = ({
             O(`data:${C.blob().type};base64,${C.base64()}`);
             return;
           }
-          y(C).then((P) => {
-            P ? O(P) : F("Upload failed: No URL returned");
-          }).catch((P) => {
+          y(C).then((T) => {
+            T ? O(T) : F("Upload failed: No URL returned");
+          }).catch((T) => {
             F(
-              typeof P == "string" ? P : (P == null ? void 0 : P.message) || "Image upload failed"
+              typeof T == "string" ? T : (T == null ? void 0 : T.message) || "Image upload failed"
             );
           });
         }),
@@ -1019,7 +1019,7 @@ const ia = ({
   value: i = null,
   // boolean for single, array for multiple, or string for single select
   onChange: d,
-  disabled: r = !1,
+  disabled: t = !1,
   required: g = !1,
   parentClass: M = "col-span-12",
   className: S = "",
@@ -1053,7 +1053,7 @@ const ia = ({
           name: b,
           value: c.value,
           checked: u(c.value),
-          disabled: r || c.disabled,
+          disabled: t || c.disabled,
           required: g && w === 0,
           onChange: (y) => v(c.value, y.target.checked),
           className: `h-4 w-4 cursor-pointer text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 ${S}`
@@ -1076,7 +1076,7 @@ const ia = ({
         type: "checkbox",
         name: b,
         checked: u(),
-        disabled: r,
+        disabled: t,
         required: g,
         onChange: m,
         className: `h-4 w-4 text-blue-600 cursor-pointer border-gray-300 rounded focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 ${S}`
@@ -1097,7 +1097,7 @@ const ia = ({
   onChange: s,
   required: i = !1,
   accept: d = "audio/*",
-  id: r,
+  id: t,
   dragDrop: g = !1,
   name: M = "",
   parentClass: S = ""
@@ -1120,15 +1120,15 @@ const ia = ({
   }, w = (O) => {
     if (!O || O.length === 0)
       return;
-    const F = O[0], P = URL.createObjectURL(F);
-    c(), l({ file: F, preview: P }), s == null || s(F);
+    const F = O[0], T = URL.createObjectURL(F);
+    c(), l({ file: F, preview: T }), s == null || s(F);
   }, y = (O) => {
     O && O.stopPropagation(), c(), l(null), s == null || s(null), v.current && (v.current.value = "");
   }, k = (O) => {
     g && (O.preventDefault(), m(!0));
   }, I = (O) => {
     g && (O.preventDefault(), m(!1));
-  }, D = (O) => {
+  }, A = (O) => {
     g && (O.preventDefault(), m(!1), w(O.dataTransfer.files));
   }, C = () => {
     v.current.click();
@@ -1141,13 +1141,13 @@ const ia = ({
         className: `relative rounded-lg p-2 transition-all ${u ? "border-2 border-dashed border-blue-500 bg-blue-50 dark:bg-blue-900/20" : "border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"}`,
         onDragOver: k,
         onDragLeave: I,
-        onDrop: D,
+        onDrop: A,
         children: [
           /* @__PURE__ */ e(
             "input",
             {
               ref: v,
-              id: r,
+              id: t,
               type: "file",
               accept: d,
               onChange: (O) => w(O.target.files),
@@ -1170,7 +1170,7 @@ const ia = ({
                         onClick: y,
                         className: "absolute top-0 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600 transition-colors z-10 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800",
                         "aria-label": "Remove audio",
-                        children: /* @__PURE__ */ e(te, { icon: "mdi:close", className: "w-3 h-3" })
+                        children: /* @__PURE__ */ e(re, { icon: "mdi:close", className: "w-3 h-3" })
                       }
                     ),
                     /* @__PURE__ */ e(
@@ -1188,7 +1188,7 @@ const ia = ({
               ) : (
                 // Empty state with upload button
                 /* @__PURE__ */ h("div", { className: "flex items-center justify-center space-x-4", children: [
-                  /* @__PURE__ */ e("div", { className: "rounded-full bg-gray-100 dark:bg-gray-700 h-20 w-20 flex items-center justify-center", children: /* @__PURE__ */ e(te, { icon: "mdi:music", className: "text-gray-400 w-10 h-10" }) }),
+                  /* @__PURE__ */ e("div", { className: "rounded-full bg-gray-100 dark:bg-gray-700 h-20 w-20 flex items-center justify-center", children: /* @__PURE__ */ e(re, { icon: "mdi:music", className: "text-gray-400 w-10 h-10" }) }),
                   /* @__PURE__ */ e(
                     Z,
                     {
@@ -1212,7 +1212,7 @@ const ia = ({
   const {
     key: i,
     label: d,
-    type: r,
+    type: t,
     options: g,
     placeholder: M,
     rows: S,
@@ -1226,11 +1226,11 @@ const ia = ({
     parentClass: y,
     countriesList: k,
     defaultCountry: I,
-    multiple: D,
+    multiple: A,
     dropdownMaxHeight: C,
     editorKey: O,
     fontFamily: F,
-    disabled: P,
+    disabled: T,
     negativeNumberAllow: L,
     defaultValue: B,
     renderCondition: E,
@@ -1238,19 +1238,19 @@ const ia = ({
   } = b;
   let $ = o == null ? void 0 : o[i];
   $ == null && ($ = "");
-  const _ = M || (r === "select" ? `Select ${d}` : `Enter ${d}`), z = "w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 text-sm focus:outline-none focus:ring-1 focus:ring-blue-200 bg-white text-black dark:bg-gray-700 dark:text-white";
+  const _ = M || (t === "select" ? `Select ${d}` : `Enter ${d}`), z = "w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 text-sm focus:outline-none focus:ring-1 focus:ring-blue-200 bg-white text-black dark:bg-gray-700 dark:text-white";
   if (E && typeof E == "function" && !E(o))
     return null;
-  switch (r) {
+  switch (t) {
     case "select":
       return /* @__PURE__ */ e(
-        ra,
+        ta,
         {
           options: g || [],
           value: $,
           formData: o,
           dependencyKey: Y,
-          onChange: (A) => s(i, A),
+          onChange: (D) => s(i, D),
           placeholder: _,
           className: p || "",
           search: l,
@@ -1258,9 +1258,9 @@ const ia = ({
           defaultValue: B,
           label: d,
           name: i,
-          disabled: P,
+          disabled: T,
           parentClass: y,
-          multiple: D,
+          multiple: A,
           dropdownMaxHeight: C
         }
       );
@@ -1272,12 +1272,12 @@ const ia = ({
           label: d,
           options: g || [],
           value: $,
-          onChange: (A) => s(i, A),
+          onChange: (D) => s(i, D),
           required: v,
           parentClass: y,
           className: p || "",
-          multiSelect: D,
-          disabled: P
+          multiSelect: A,
+          disabled: T
         }
       );
     case "switch":
@@ -1285,13 +1285,13 @@ const ia = ({
         na,
         {
           value: $,
-          onChange: (A) => s(i, A),
+          onChange: (D) => s(i, D),
           text: m,
           options: g || [],
           label: d,
           required: v,
           name: i,
-          disabled: P,
+          disabled: T,
           parentClass: y
         }
       );
@@ -1300,7 +1300,7 @@ const ia = ({
         la,
         {
           value: $,
-          onChange: (A) => s(i, A),
+          onChange: (D) => s(i, D),
           countriesList: k,
           defaultCountry: I,
           required: v,
@@ -1308,7 +1308,7 @@ const ia = ({
           search: l,
           label: d,
           name: i,
-          disabled: P,
+          disabled: T,
           parentClass: y
         }
       );
@@ -1317,14 +1317,14 @@ const ia = ({
         je,
         {
           value: $,
-          onChange: (A) => s(i, A.target.value),
+          onChange: (D) => s(i, D.target.value),
           placeholder: _,
           rows: S || 3,
           className: `${z} ${p || ""}`,
           required: v,
           name: i,
           label: d,
-          disabled: P,
+          disabled: T,
           parentClass: y
         }
       );
@@ -1333,7 +1333,7 @@ const ia = ({
         oa,
         {
           value: $,
-          onChange: (A) => s(i, A),
+          onChange: (D) => s(i, D),
           required: v,
           accept: u || "image/*",
           id: `file-${i}`,
@@ -1348,7 +1348,7 @@ const ia = ({
         da,
         {
           value: $,
-          onChange: (A) => s(i, A),
+          onChange: (D) => s(i, D),
           required: v,
           accept: u || "audio/*",
           id: `file-${i}`,
@@ -1363,14 +1363,14 @@ const ia = ({
         ia,
         {
           value: $,
-          onChange: (A) => s(i, A),
+          onChange: (D) => s(i, D),
           required: v,
           placeholder: _,
           label: d,
           parentClass: y,
           fontFamily: F,
           editorKey: O,
-          disabled: P
+          disabled: T
         },
         `editor-${i}`
       );
@@ -1378,10 +1378,10 @@ const ia = ({
       return /* @__PURE__ */ e(
         Ee,
         {
-          type: r || "text",
+          type: t || "text",
           defaultValue: B,
           value: $,
-          onChange: (A) => s(i, A.target.value),
+          onChange: (D) => s(i, D.target.value),
           placeholder: _,
           className: `${z} ${p || ""}`,
           required: v,
@@ -1390,18 +1390,18 @@ const ia = ({
           label: d,
           negativeNumberAllow: L,
           parentClass: y,
-          disabled: P
+          disabled: T
         }
       );
   }
 }, ca = ({ isOpen: b, onClose: o, config: s, onApply: i }) => {
   var p;
-  const [d, r] = R({}), g = (l, u) => {
-    r((m) => ({ ...m, [l]: u }));
+  const [d, t] = R({}), g = (l, u) => {
+    t((m) => ({ ...m, [l]: u }));
   }, M = () => {
     i == null || i(d), o();
   }, S = () => {
-    r({}), i == null || i({}), o();
+    t({}), i == null || i({}), o();
   };
   return /* @__PURE__ */ h(j, { children: [
     /* @__PURE__ */ e(
@@ -1464,7 +1464,7 @@ const ia = ({
       }
     )
   ] });
-}, Pe = {
+}, Te = {
   blue: {
     bg: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
     border: "border border-blue-300 text-blue-700 dark:border-blue-700 dark:text-blue-300"
@@ -1493,7 +1493,7 @@ const ia = ({
     bg: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300",
     border: "border border-gray-300 text-gray-700 dark:border-gray-700 dark:text-gray-300"
   }
-}, Te = {
+}, Pe = {
   contained: "bg",
   outline: "border !bg-transparent",
   soft: "bg opacity-90"
@@ -1504,13 +1504,13 @@ const ia = ({
   color: s = "green",
   className: i = ""
 }) => {
-  const d = Pe[s] || Pe.green, r = Te[o] || Te.contained, g = o === "outline" ? d.border : d.bg;
+  const d = Te[s] || Te.green, t = Pe[o] || Pe.contained, g = o === "outline" ? d.border : d.bg;
   return /* @__PURE__ */ e(
     "span",
     {
       className: `inline-flex justify-center items-center rounded-sm text-xs font-semibold px-3 py-1 min-w-[78px]
         ${g}
-        ${r}
+        ${t}
         ${i}`,
       children: b
     }
@@ -1523,7 +1523,7 @@ const ia = ({
       "tr",
       {
         className: "border-t border-gray-200 dark:border-gray-800",
-        children: Array.from({ length: o }).map((d, r) => /* @__PURE__ */ e("td", { className: "px-4 py-6", children: /* @__PURE__ */ e("div", { className: "h-6 w-full bg-gray-300 dark:bg-gray-700 rounded animate-pulse" }) }, r))
+        children: Array.from({ length: o }).map((d, t) => /* @__PURE__ */ e("td", { className: "px-4 py-6", children: /* @__PURE__ */ e("div", { className: "h-6 w-full bg-gray-300 dark:bg-gray-700 rounded animate-pulse" }) }, t))
       },
       i
     )) })
@@ -1531,11 +1531,11 @@ const ia = ({
 ] }), _e = ({ src: b, alt: o = "preview", isOpen: s, setIsOpen: i }) => {
   const d = () => i(!1);
   return K(() => {
-    const r = (g) => {
+    const t = (g) => {
       g.key === "Escape" && d();
     };
-    return s && (document.body.style.overflow = "hidden", document.addEventListener("keydown", r)), () => {
-      document.body.style.overflow = "", document.removeEventListener("keydown", r);
+    return s && (document.body.style.overflow = "hidden", document.addEventListener("keydown", t)), () => {
+      document.body.style.overflow = "", document.removeEventListener("keydown", t);
     };
   }, [s]), /* @__PURE__ */ e(j, { children: /* @__PURE__ */ h(
     "div",
@@ -1557,7 +1557,7 @@ const ia = ({
           "div",
           {
             className: "max-w-5xl w-full px-4 transform transition-all duration-200 scale-95 animate-in zoom-in-95",
-            onClick: (r) => r.stopPropagation(),
+            onClick: (t) => t.stopPropagation(),
             children: /* @__PURE__ */ e(
               "img",
               {
@@ -1573,7 +1573,7 @@ const ia = ({
   ) });
 }, ua = ({ config: b, setShowAdd: o, title: s, buttonText: i, description: d }) => {
   const {
-    data: r = [],
+    data: t = [],
     table_head: g = [],
     loading: M = !1,
     search: S = {
@@ -1597,11 +1597,11 @@ const ia = ({
     onFilterApply: c,
     filterConfig: w = null,
     rowClick: y = null
-  } = b, [k, I] = R(""), [D, C] = R(null), [O, F] = R([]), [P, L] = R({}), [B, E] = R(!1), [Y, $] = R(null), [_, z] = R(!1), A = Re(() => !S.enabled || !k.trim() || S.useServerSideSearch ? r : ta(r, k, S.searchKeys || []), [r, k, S]), [U, V] = R(1), [x, H] = R((l == null ? void 0 : l.rows_per_page) || 50), [J, Q] = R(A.length || 0), W = l != null && l.useServerSidePagination ? l.total_pages : Math.ceil(A.length / x), oe = Re(() => {
-    if (l.useServerSidePagination) return A;
+  } = b, [k, I] = R(""), [A, C] = R(null), [O, F] = R([]), [T, L] = R({}), [B, E] = R(!1), [Y, $] = R(null), [_, z] = R(!1), D = Re(() => !S.enabled || !k.trim() || S.useServerSideSearch ? t : ra(t, k, S.searchKeys || []), [t, k, S]), [U, V] = R(1), [x, H] = R((l == null ? void 0 : l.rows_per_page) || 50), [J, Q] = R(D.length || 0), W = l != null && l.useServerSidePagination ? l.total_pages : Math.ceil(D.length / x), ie = Re(() => {
+    if (l.useServerSidePagination) return D;
     const a = (U - 1) * x;
-    return A.slice(a, a + x);
-  }, [A, U, x]), re = ee(null), ie = ee({}), ae = ee(null), se = (a) => {
+    return D.slice(a, a + x);
+  }, [D, U, x]), te = ee(null), se = ee({}), ae = ee(null), de = (a) => {
     I(a), V(1), S.useServerSideSearch && (ae.current && clearTimeout(ae.current), ae.current = setTimeout(async () => {
       try {
         await v((n) => ({
@@ -1613,26 +1613,26 @@ const ia = ({
         console.error("Search error:", n);
       }
     }, 800));
-  }, de = (a, n, f) => {
-    f.stopPropagation(), C(null), m == null || m(a.type, n);
   }, ce = (a, n, f) => {
+    f.stopPropagation(), C(null), m == null || m(a.type, n);
+  }, he = (a, n, f) => {
     n.stopPropagation(), F(f);
     const N = n.currentTarget;
-    ie.current[a] = N;
-    const T = N.getBoundingClientRect(), G = 192, X = f.length * 40, ve = window.innerWidth, Ae = window.innerHeight, ze = ve - T.right < G ? T.left - G + T.width : T.left, He = Ae - T.bottom < X && T.top > X ? T.top - X - 2 : T.bottom + 2;
+    se.current[a] = N;
+    const P = N.getBoundingClientRect(), G = 192, X = f.length * 40, ve = window.innerWidth, De = window.innerHeight, ze = ve - P.right < G ? P.left - G + P.width : P.left, He = De - P.bottom < X && P.top > X ? P.top - X - 2 : P.bottom + 2;
     L({
-      top: Math.max(8, Math.min(He, Ae - X - 8)),
+      top: Math.max(8, Math.min(He, De - X - 8)),
       left: Math.max(8, Math.min(ze, ve - G - 8))
-    }), C(D === a ? null : a);
-  }, he = (a) => (U - 1) * x + a + 1, ue = (a) => {
+    }), C(A === a ? null : a);
+  }, ue = (a) => (U - 1) * x + a + 1, be = (a) => {
     a && a.src instanceof File && (a = { ...a, src: URL.createObjectURL(a.src) }), $(a), z(!0);
   }, ne = (a, n, f, N = null) => /* @__PURE__ */ e(j, { children: a ? /* @__PURE__ */ e(
     "img",
     {
       src: a instanceof File ? URL.createObjectURL(a) : a,
       alt: n || "Avatar",
-      onClick: (T) => {
-        T.stopPropagation(), T.preventDefault(), ue({ src: a, alt: n });
+      onClick: (P) => {
+        P.stopPropagation(), P.preventDefault(), be({ src: a, alt: n });
       },
       className: `w-10 h-10 cursor-pointer shrink-0 rounded-full object-cover border border-gray-200 dark:border-gray-700 ${f || ""}`
     }
@@ -1642,7 +1642,7 @@ const ia = ({
       className: `w-10 h-10 flex items-center shrink-0 justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600 ${f || ""}`,
       children: /* @__PURE__ */ e(Be, { className: "w-6 h-6 text-gray-400 dark:text-gray-400" })
     }
-  ) }) }), be = (a, n) => /* @__PURE__ */ e(j, { children: a ? /* @__PURE__ */ e(
+  ) }) }), pe = (a, n) => /* @__PURE__ */ e(j, { children: a ? /* @__PURE__ */ e(
     "audio",
     {
       controls: !0,
@@ -1659,62 +1659,62 @@ const ia = ({
       className: `w-12 h-12 flex items-center shrink-0 justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600 ${n || ""}`,
       children: /* @__PURE__ */ e(Qe, { className: "w-6 h-6 text-gray-400 dark:text-gray-400" })
     }
-  ) }) }), pe = (a, n) => /* @__PURE__ */ h("div", { className: `flex items-center space-x-4 ${n.className || ""}`, children: [
+  ) }) }), ge = (a, n) => /* @__PURE__ */ h("div", { className: `flex items-center space-x-4 ${n.className || ""}`, children: [
     n.imageKey ? ne(a[n.imageKey], a[n.titleKey], "group-avatar") : "",
     /* @__PURE__ */ h("div", { children: [
       /* @__PURE__ */ e("p", { className: "font-medium text-gray-900 dark:text-white group-title", children: a[n.titleKey] || "" }),
       /* @__PURE__ */ e("p", { className: "text-sm text-gray-500 dark:text-gray-400 group-sub-title", children: a[n.subtitleKey] || "" })
     ] })
-  ] }), ge = (a, n) => {
+  ] }), me = (a, n) => {
     var G;
     let f = String(a);
     const N = n.variant || "contained";
-    let T = n.defaultColor;
+    let P = n.defaultColor;
     if (((G = n == null ? void 0 : n.chipOptions) == null ? void 0 : G.length) > 0) {
       let X = n == null ? void 0 : n.chipOptions.find((ve) => ve.value == a);
-      X && (f = X.label, T = X.color);
+      X && (f = X.label, P = X.color);
     }
     return /* @__PURE__ */ e(
       Ge,
       {
         label: f,
         variant: N,
-        color: T,
+        color: P,
         className: n.className || ""
       }
     );
-  }, me = (a, n, f) => {
+  }, fe = (a, n, f) => {
     const N = n[a.key];
     return a.type === "menu_actions" ? /* @__PURE__ */ e("div", { className: `text-center ${a.className || ""}`, children: /* @__PURE__ */ e(
       "button",
       {
-        ref: (T) => ie.current[n.id || n._id] = T,
-        onClick: (T) => ce(n.id || n._id, T, a.menuList),
+        ref: (P) => se.current[n.id || n._id] = P,
+        onClick: (P) => he(n.id || n._id, P, a.menuList),
         className: "p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition text-gray-700 dark:text-gray-300",
         children: /* @__PURE__ */ e(Je, { className: "h-4 w-4" })
       }
-    ) }) : a.type === "index" ? /* @__PURE__ */ e("span", { className: a.className || "", children: he(f) }) : a.type === "group" ? pe(n, a) : a.type === "chip" ? /* @__PURE__ */ e(j, { children: ge(N, a) }) : a.type === "date" ? /* @__PURE__ */ e("span", { className: a.className || "", children: Ue(N, a.format || "DD MMM YYYY") }) : a.type === "avatar" ? /* @__PURE__ */ e(j, { children: /* @__PURE__ */ e("div", { className: "min-w-[40px]", children: ne(N, a.alt, a.className, a.fallback_icon) }) }) : a.type === "audio" ? /* @__PURE__ */ e(j, { children: be(N, a.className) }) : /* @__PURE__ */ e("span", { className: a.className || "", children: N || "N/A" });
-  }, fe = (a) => {
+    ) }) : a.type === "index" ? /* @__PURE__ */ e("span", { className: a.className || "", children: ue(f) }) : a.type === "group" ? ge(n, a) : a.type === "chip" ? /* @__PURE__ */ e(j, { children: me(N, a) }) : a.type === "date" ? /* @__PURE__ */ e("span", { className: a.className || "", children: Ue(N, a.format || "DD MMM YYYY") }) : a.type === "avatar" ? /* @__PURE__ */ e(j, { children: /* @__PURE__ */ e("div", { className: "min-w-[40px]", children: ne(N, a.alt, a.className, a.fallback_icon) }) }) : a.type === "audio" ? /* @__PURE__ */ e(j, { children: pe(N, a.className) }) : /* @__PURE__ */ e("span", { className: a.className || "", children: N || "N/A" });
+  }, ye = (a) => {
     if (typeof y == "function")
       return y(a);
     if (y)
       return m == null ? void 0 : m("view", a);
-  }, ye = (a, n) => {
+  }, xe = (a, n) => {
     if (a.onClickDetails)
       return m == null ? void 0 : m("view", n);
     if (typeof a.handleClick == "function")
       return a.handleClick(n);
-  }, le = () => y || typeof y == "function", xe = (a) => a.onClickDetails || typeof a.handleClick == "function";
+  }, le = () => y || typeof y == "function", oe = (a) => a.onClickDetails || typeof a.handleClick == "function";
   return K(() => {
     const a = () => {
-      D && C(null);
+      A && C(null);
     };
     return window.addEventListener("scroll", a, !0), () => {
       window.removeEventListener("scroll", a, !0);
     };
-  }, [D]), K(() => {
+  }, [A]), K(() => {
     const a = (n) => {
-      re.current && !re.current.contains(n.target) && C(null);
+      te.current && !te.current.contains(n.target) && C(null);
     };
     return document.addEventListener("click", a), () => document.removeEventListener("click", a);
   }, []), K(() => {
@@ -1725,10 +1725,10 @@ const ia = ({
     l.current_page
   ]), K(() => {
     Q(
-      l != null && l.useServerSidePagination ? l.total_records : A.length
-    ), A.length <= x * (U - 1) && !(l != null && l.useServerSidePagination) && V((a) => a - 1 || 1);
+      l != null && l.useServerSidePagination ? l.total_records : D.length
+    ), D.length <= x * (U - 1) && !(l != null && l.useServerSidePagination) && V((a) => a - 1 || 1);
   }, [
-    A.length,
+    D.length,
     l.total_records,
     l == null ? void 0 : l.useServerSidePagination
   ]), M ? /* @__PURE__ */ e(ha, { rows: 6, columns: 6 }) : /* @__PURE__ */ h(j, { children: [
@@ -1759,7 +1759,7 @@ const ia = ({
                 type: "text",
                 placeholder: S.placeholder || "Search...",
                 value: k,
-                onChange: (a) => se(a.target.value),
+                onChange: (a) => de(a.target.value),
                 className: "w-full h-[36px] pl-9 pr-4 py-3 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-300 dark:ring-blue-200 disabled:opacity-50"
               }
             )
@@ -1781,29 +1781,29 @@ const ia = ({
           },
           a.key
         )) }) }),
-        /* @__PURE__ */ e("tbody", { className: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700", children: oe.length === 0 ? /* @__PURE__ */ e("tr", { children: /* @__PURE__ */ e(
+        /* @__PURE__ */ e("tbody", { className: "bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700", children: ie.length === 0 ? /* @__PURE__ */ e("tr", { children: /* @__PURE__ */ e(
           "td",
           {
             colSpan: g.length,
             className: "text-center py-10 text-gray-500 dark:text-gray-400",
             children: u
           }
-        ) }) : oe.map((a, n) => /* @__PURE__ */ e(
+        ) }) : ie.map((a, n) => /* @__PURE__ */ e(
           "tr",
           {
             className: `hover:bg-gray-50 dark:hover:bg-blue-800/10 transition ${le() ? "cursor-pointer" : ""}`,
             onClick: (f) => {
-              f.stopPropagation(), f.preventDefault(), le() && fe(a);
+              le() && ye(a);
             },
             children: g.map((f) => /* @__PURE__ */ e(
               "td",
               {
-                className: `px-6 py-4 text-sm text-gray-900 dark:text-gray-100 min-w-max ${f.type == "audio" ? "" : "max-w-[300px]"} truncate ${xe(f) ? "cursor-pointer" : ""}`,
+                className: `px-6 py-4 text-sm text-gray-900 dark:text-gray-100 min-w-max ${f.type == "audio" ? "" : "max-w-[300px]"} truncate ${oe(f) ? "cursor-pointer" : ""}`,
                 title: String(a[f.key] ?? ""),
                 onClick: (N) => {
-                  N.stopPropagation(), N.preventDefault(), ye(f, a);
+                  oe(f) && (N.stopPropagation(), N.preventDefault(), xe(f, a));
                 },
-                children: f.render ? f.render(a, n) : me(f, a, n)
+                children: f.render ? f.render(a, n) : fe(f, a, n)
               },
               f.key
             ))
@@ -1811,7 +1811,7 @@ const ia = ({
           a.id || a._id || n
         )) })
       ] }) }),
-      (l == null ? void 0 : l.enabled) && A.length > 0 && /* @__PURE__ */ h("div", { className: " bg-gray-50 dark:bg-gray-700/60 px-6 py-3 flex flex-wrap items-center justify-between border-t border-gray-200 dark:border-gray-600 gap-3", children: [
+      (l == null ? void 0 : l.enabled) && D.length > 0 && /* @__PURE__ */ h("div", { className: " bg-gray-50 dark:bg-gray-700/60 px-6 py-3 flex flex-wrap items-center justify-between border-t border-gray-200 dark:border-gray-600 gap-3", children: [
         /* @__PURE__ */ h("div", { className: "text-sm text-gray-700 dark:text-gray-300", children: [
           "Showing ",
           (U - 1) * x + 1,
@@ -1888,25 +1888,25 @@ const ia = ({
         ] })
       ] })
     ] }),
-    D && Xe(
+    A && Xe(
       /* @__PURE__ */ e(
         "div",
         {
-          ref: re,
+          ref: te,
           style: {
             position: "fixed",
-            top: `${P.top}px`,
-            left: `${P.left}px`,
+            top: `${T.top}px`,
+            left: `${T.left}px`,
             zIndex: 9999
           },
           className: "w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg border border-gray-200 dark:border-gray-600",
           children: O.map((a, n) => /* @__PURE__ */ h(
             "button",
             {
-              onClick: (f) => de(
+              onClick: (f) => ce(
                 a,
-                r.find(
-                  (N) => N.id === D || N._id == D
+                t.find(
+                  (N) => N.id === A || N._id == A
                 ),
                 f
               ),
@@ -1947,7 +1947,7 @@ const ia = ({
   icon: s,
   title: i,
   children: d,
-  size: r = "md",
+  size: t = "md",
   actionButtons: g = [],
   actions: M,
   showDefaultClose: S = !0,
@@ -1980,7 +1980,7 @@ const ia = ({
     /* @__PURE__ */ h(
       "div",
       {
-        className: `relative bg-white rounded-lg shadow-xl w-full ${y[r] || y.md} max-h-[90vh] flex flex-col dark:bg-gray-800`,
+        className: `relative bg-white rounded-lg shadow-xl w-full ${y[t] || y.md} max-h-[90vh] flex flex-col dark:bg-gray-800`,
         children: [
           /* @__PURE__ */ h("div", { className: "flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0", children: [
             /* @__PURE__ */ h("div", { className: "flex items-center gap-1", children: [
@@ -2003,10 +2003,10 @@ const ia = ({
               onClick: (I) => {
                 k.type == "submit" ? u(I) : c(
                   () => {
-                    var D;
-                    return (D = k == null ? void 0 : k.onClick) == null ? void 0 : D.call(k, I, w);
+                    var A;
+                    return (A = k == null ? void 0 : k.onClick) == null ? void 0 : A.call(k, I, w);
                   },
-                  (D) => o == null ? void 0 : o(D)
+                  (A) => o == null ? void 0 : o(A)
                 );
               },
               disabled: v || k.disabled,
@@ -2026,7 +2026,7 @@ const ia = ({
     )
   ] });
 }, Fe = ({ config: b, onSubmit: o, initialData: s = {}, type: i = "add" }) => {
-  const { formClass: d = "grid grid-cols-12 gap-4", formFields: r = [] } = b || {}, [g, M] = R(s);
+  const { formClass: d = "grid grid-cols-12 gap-4", formFields: t = [] } = b || {}, [g, M] = R(s);
   K(() => {
     M(s);
   }, []);
@@ -2048,7 +2048,7 @@ const ia = ({
       onSubmit: p,
       className: d,
       noValidate: !1,
-      children: r.map((l) => /* @__PURE__ */ e(j, { children: /* @__PURE__ */ e(
+      children: t.map((l) => /* @__PURE__ */ e(j, { children: /* @__PURE__ */ e(
         $e,
         {
           field: l,
@@ -2061,14 +2061,14 @@ const ia = ({
   );
 };
 function ba({ data: b, config: o }) {
-  const { fields: s, containerClass: i } = o, [d, r] = R(null), [g, M] = R(!1), S = (u) => {
-    u && u.src instanceof File && (u = { ...u, src: URL.createObjectURL(u.src) }), r(u), M(!0);
+  const { fields: s, containerClass: i } = o, [d, t] = R(null), [g, M] = R(!1), S = (u) => {
+    u && u.src instanceof File && (u = { ...u, src: URL.createObjectURL(u.src) }), t(u), M(!0);
   }, p = ({ col: u }) => {
     var I;
     let m = u == null ? void 0 : u.icon, v = u.label, c = b[u.key], w = u.type, y = u.variant || "outline", k = u.defaultColor;
     if (w === "chip" && ((I = u.chipOptions) == null ? void 0 : I.length) > 0) {
-      let D = u == null ? void 0 : u.chipOptions.find((C) => C.value == c);
-      D && (c = D.label, k = D.color);
+      let A = u == null ? void 0 : u.chipOptions.find((C) => C.value == c);
+      A && (c = A.label, k = A.color);
     }
     return /* @__PURE__ */ h(
       "div",
@@ -2102,7 +2102,7 @@ function ba({ data: b, config: o }) {
                 {
                   controls: !0,
                   src: c instanceof File ? URL.createObjectURL(c) : c,
-                  onClick: (D) => D.stopPropagation(),
+                  onClick: (A) => A.stopPropagation(),
                   className: "shadow-md rounded-full"
                 },
                 c instanceof File ? URL.createObjectURL(c) : c
@@ -2157,22 +2157,22 @@ function ba({ data: b, config: o }) {
   ] });
 }
 const Ke = ({ config: b }) => {
-  var ae, se, de, ce, he, ue, ne, be, pe, ge, me, fe, ye, le, xe, a;
+  var ae, de, ce, he, ue, be, ne, pe, ge, me, fe, ye, xe, le, oe, a;
   const {
     title: o,
     fetchData: s = async () => {
     },
     isStaticData: i = !1,
     tableConfig: d = {},
-    modalConfig: r = {},
+    modalConfig: t = {},
     filterConfig: g
   } = b, [M, S] = R(!0), [p, l] = R(!1), [u, m] = R([]), [v, c] = R(null), [w, y] = R({
     search: "",
     rows_per_page: 50,
     current_page: 1
-  }), [k, I] = R({}), [D, C] = R(!1), [O, F] = R(!1), [P, L] = R(!1), [B, E] = R(!1), [Y, $] = R(!1), [_, z] = R(null), A = (n, f) => {
+  }), [k, I] = R({}), [A, C] = R(!1), [O, F] = R(!1), [T, L] = R(!1), [B, E] = R(!1), [Y, $] = R(!1), [_, z] = R(null), D = (n, f) => {
     n === "edit" ? (z(f), L(!0)) : n === "view" ? (z(f), $(!0)) : n === "delete" && (z(f), E(!0));
-  }, U = async (n, f, N = "", T = "") => {
+  }, U = async (n, f, N = "", P = "") => {
     l(!0);
     try {
       const G = await (n == null ? void 0 : n());
@@ -2180,7 +2180,7 @@ const Ke = ({ config: b }) => {
         variant: "success"
       }), f == null || f(G);
     } catch (G) {
-      (T || G.message) && Se(T || G.message, { variant: "error" });
+      (P || G.message) && Se(P || G.message, { variant: "error" });
     } finally {
       l(!1);
     }
@@ -2196,7 +2196,7 @@ const Ke = ({ config: b }) => {
   }, x = (n) => {
     let f = n.newObject, N = n.targetObject;
     i ? m(
-      (T) => T.map(
+      (P) => P.map(
         (G) => G.id === N.id ? { ...G, ...f } : G
       )
     ) : W(), L(!1);
@@ -2214,13 +2214,13 @@ const Ke = ({ config: b }) => {
   }, J = (n) => U(
     () => {
       var f, N;
-      return (N = (f = r == null ? void 0 : r.addModal) == null ? void 0 : f.handleSubmit) == null ? void 0 : N.call(f, n);
+      return (N = (f = t == null ? void 0 : t.addModal) == null ? void 0 : f.handleSubmit) == null ? void 0 : N.call(f, n);
     },
     V
   ), Q = (n) => U(
     () => {
       var f, N;
-      return (N = (f = r == null ? void 0 : r.editModal) == null ? void 0 : f.handleSubmit) == null ? void 0 : N.call(f, n, _);
+      return (N = (f = t == null ? void 0 : t.editModal) == null ? void 0 : f.handleSubmit) == null ? void 0 : N.call(f, n, _);
     },
     x
   ), W = async () => {
@@ -2231,16 +2231,16 @@ const Ke = ({ config: b }) => {
     }).finally(() => {
       S(!1);
     });
-  }, oe = (n) => {
+  }, ie = (n) => {
     var f;
     I((N) => ({
       ...n
     })), (f = d == null ? void 0 : d.filter) != null && f.useServerSideFilters && C((N) => !N);
-  }, re = (n, f) => n.filter(
-    (N) => Object.entries(f).every(([T, G]) => N[T] === G)
-  ), ie = Re(() => {
+  }, te = (n, f) => n.filter(
+    (N) => Object.entries(f).every(([P, G]) => N[P] === G)
+  ), se = Re(() => {
     var n;
-    return (n = d == null ? void 0 : d.filter) != null && n.useServerSideFilters ? u : re(u, k);
+    return (n = d == null ? void 0 : d.filter) != null && n.useServerSideFilters ? u : te(u, k);
   }, [u, k]);
   return K(() => {
     W();
@@ -2248,7 +2248,7 @@ const Ke = ({ config: b }) => {
     w.search,
     w.rows_per_page,
     w.current_page,
-    D
+    A
   ]), /* @__PURE__ */ e(
     aa,
     {
@@ -2284,11 +2284,11 @@ const Ke = ({ config: b }) => {
                 ...d.pagination,
                 ...v
               },
-              data: ie,
+              data: se,
               setServerSidePaginationData: y,
-              onMenuAction: A,
+              onMenuAction: D,
               filterConfig: g,
-              onFilterApply: oe,
+              onFilterApply: ie,
               loading: M
             }
           }
@@ -2300,19 +2300,19 @@ const Ke = ({ config: b }) => {
             onClose: () => {
               p || F(!1);
             },
-            icon: (ae = r.addModal) == null ? void 0 : ae.icon,
-            title: ((se = r.addModal) == null ? void 0 : se.title) || "Add New",
-            size: ((de = r.addModal) == null ? void 0 : de.size) || "md",
+            icon: (ae = t.addModal) == null ? void 0 : ae.icon,
+            title: ((de = t.addModal) == null ? void 0 : de.title) || "Add New",
+            size: ((ce = t.addModal) == null ? void 0 : ce.size) || "md",
             onFormSubmit: () => {
               var n;
               return (n = document.querySelector("#addForm")) == null ? void 0 : n.requestSubmit();
             },
             loadingBtn: p,
-            actionButtons: r.addModal.actionButtons,
+            actionButtons: t.addModal.actionButtons,
             children: /* @__PURE__ */ e(
               Fe,
               {
-                config: (r == null ? void 0 : r.addModal) || [],
+                config: (t == null ? void 0 : t.addModal) || [],
                 onSubmit: J,
                 initialData: {},
                 type: "add",
@@ -2324,23 +2324,23 @@ const Ke = ({ config: b }) => {
         /* @__PURE__ */ e(
           ke,
           {
-            isOpen: P,
+            isOpen: T,
             onClose: () => {
               p || L(!1);
             },
-            icon: (ce = r.editModal) == null ? void 0 : ce.icon,
-            title: ((he = r.editModal) == null ? void 0 : he.title) || "Edit",
-            size: ((ue = r.editModal) == null ? void 0 : ue.size) || "md",
+            icon: (he = t.editModal) == null ? void 0 : he.icon,
+            title: ((ue = t.editModal) == null ? void 0 : ue.title) || "Edit",
+            size: ((be = t.editModal) == null ? void 0 : be.size) || "md",
             onFormSubmit: () => {
               var n;
               return (n = document.querySelector("#editForm")) == null ? void 0 : n.requestSubmit();
             },
-            actionButtons: r.editModal.actionButtons,
+            actionButtons: t.editModal.actionButtons,
             loadingBtn: p,
             children: /* @__PURE__ */ e(
               Fe,
               {
-                config: r.editModal || [],
+                config: t.editModal || [],
                 onSubmit: Q,
                 initialData: _,
                 type: "edit",
@@ -2356,35 +2356,35 @@ const Ke = ({ config: b }) => {
             onClose: (n) => {
               H(n);
             },
-            icon: ((ne = r.deleteModal) == null ? void 0 : ne.icon) || /* @__PURE__ */ e(te, { icon: "ph:warning-bold", className: "w-6 h-6 text-red-500" }),
-            title: ((be = r.deleteModal) == null ? void 0 : be.title) || "Confirm Delete",
-            size: ((pe = r.deleteModal) == null ? void 0 : pe.size) || "md",
+            icon: ((ne = t.deleteModal) == null ? void 0 : ne.icon) || /* @__PURE__ */ e(re, { icon: "ph:warning-bold", className: "w-6 h-6 text-red-500" }),
+            title: ((pe = t.deleteModal) == null ? void 0 : pe.title) || "Confirm Delete",
+            size: ((ge = t.deleteModal) == null ? void 0 : ge.size) || "md",
             loading: p,
-            actionButtons: r.deleteModal.actionButtons,
+            actionButtons: t.deleteModal.actionButtons,
             executeFunction: U,
             selectedItem: _,
             children: /* @__PURE__ */ e("div", { className: "flex items-center space-x-2 py-3", children: /* @__PURE__ */ h("div", { children: [
-              /* @__PURE__ */ e("p", { className: "text-md text-gray-700 dark:text-white", children: ((ge = r.deleteModal) == null ? void 0 : ge.confirmText) || "Are you sure you want to delete this item?" }),
-              ((me = r.deleteModal) == null ? void 0 : me.referenceKey) && /* @__PURE__ */ e("p", { className: "text-md font-semibold text-gray-700 dark:text-white", children: _[(fe = r.deleteModal) == null ? void 0 : fe.referenceKey] })
+              /* @__PURE__ */ e("p", { className: "text-md text-gray-700 dark:text-white", children: ((me = t.deleteModal) == null ? void 0 : me.confirmText) || "Are you sure you want to delete this item?" }),
+              ((fe = t.deleteModal) == null ? void 0 : fe.referenceKey) && /* @__PURE__ */ e("p", { className: "text-md font-semibold text-gray-700 dark:text-white", children: _[(ye = t.deleteModal) == null ? void 0 : ye.referenceKey] })
             ] }) })
           }
         ),
-        r.viewModal && /* @__PURE__ */ e(
+        t.viewModal && /* @__PURE__ */ e(
           ke,
           {
             isOpen: Y,
             onClose: () => {
               $(!1), z(null);
             },
-            icon: (ye = r.viewModal) == null ? void 0 : ye.icon,
-            title: ((le = r.viewModal) == null ? void 0 : le.title) || "View Details",
-            size: ((xe = r.viewModal) == null ? void 0 : xe.size) || "lg",
-            footerConfig: r == null ? void 0 : r.viewModal.footer,
-            children: (a = r.viewModal) != null && a.component ? /* @__PURE__ */ e(r.viewModal.component, { data: _ }) : /* @__PURE__ */ e(
+            icon: (xe = t.viewModal) == null ? void 0 : xe.icon,
+            title: ((le = t.viewModal) == null ? void 0 : le.title) || "View Details",
+            size: ((oe = t.viewModal) == null ? void 0 : oe.size) || "lg",
+            footerConfig: t == null ? void 0 : t.viewModal.footer,
+            children: (a = t.viewModal) != null && a.component ? /* @__PURE__ */ e(t.viewModal.component, { data: _ }) : /* @__PURE__ */ e(
               ba,
               {
                 data: _,
-                config: r.viewModal || {}
+                config: t.viewModal || {}
               }
             )
           }
@@ -2392,137 +2392,137 @@ const Ke = ({ config: b }) => {
       ] })
     }
   );
-}, De = t.shape({
-  value: t.oneOfType([
-    t.string,
-    t.number,
-    t.bool
+}, Ae = r.shape({
+  value: r.oneOfType([
+    r.string,
+    r.number,
+    r.bool
   ]).isRequired,
-  label: t.string.isRequired,
-  color: t.string
-}), Me = t.shape({
-  type: t.string.isRequired,
-  label: t.string.isRequired,
-  color: t.string,
-  variant: t.string,
-  onClick: t.func
-}), pa = t.shape({
-  title: t.string.isRequired,
-  type: t.string.isRequired,
-  variant: t.string,
-  icon: t.node
-}), ga = t.shape({
-  key: t.string.isRequired,
-  title: t.string,
-  type: t.string,
-  imageKey: t.string,
-  titleKey: t.string,
-  subtitleKey: t.string,
-  onClickDetails: t.bool,
-  variant: t.string,
-  chipOptions: t.arrayOf(De),
-  defaultColor: t.string,
-  className: t.string,
-  format: t.string,
-  menuList: t.arrayOf(pa)
-}), Ce = t.shape({
-  key: t.string.isRequired,
-  label: t.string,
-  type: t.string.isRequired,
-  required: t.bool,
-  minLength: t.number,
-  parentClass: t.string,
-  search: t.bool,
-  multiple: t.bool,
-  dropdownMaxHeight: t.string,
-  dragDrop: t.bool,
-  countriesList: t.bool,
-  defaultCountry: t.string,
-  placeholder: t.string,
-  rows: t.number,
-  text: t.string,
-  editorKey: t.string,
-  options: t.arrayOf(De)
-}), ma = t.shape({
-  key: t.string,
-  label: t.string,
-  type: t.string,
-  imageKey: t.string,
-  titleKey: t.string,
-  subtitleKey: t.string,
-  blockClass: t.string,
-  icon: t.node,
-  variant: t.string,
-  chipOptions: t.arrayOf(De),
-  defaultColor: t.string,
-  className: t.string,
-  format: t.string
+  label: r.string.isRequired,
+  color: r.string
+}), Me = r.shape({
+  type: r.string.isRequired,
+  label: r.string.isRequired,
+  color: r.string,
+  variant: r.string,
+  onClick: r.func
+}), pa = r.shape({
+  title: r.string.isRequired,
+  type: r.string.isRequired,
+  variant: r.string,
+  icon: r.node
+}), ga = r.shape({
+  key: r.string.isRequired,
+  title: r.string,
+  type: r.string,
+  imageKey: r.string,
+  titleKey: r.string,
+  subtitleKey: r.string,
+  onClickDetails: r.bool,
+  variant: r.string,
+  chipOptions: r.arrayOf(Ae),
+  defaultColor: r.string,
+  className: r.string,
+  format: r.string,
+  menuList: r.arrayOf(pa)
+}), Ce = r.shape({
+  key: r.string.isRequired,
+  label: r.string,
+  type: r.string.isRequired,
+  required: r.bool,
+  minLength: r.number,
+  parentClass: r.string,
+  search: r.bool,
+  multiple: r.bool,
+  dropdownMaxHeight: r.string,
+  dragDrop: r.bool,
+  countriesList: r.bool,
+  defaultCountry: r.string,
+  placeholder: r.string,
+  rows: r.number,
+  text: r.string,
+  editorKey: r.string,
+  options: r.arrayOf(Ae)
+}), ma = r.shape({
+  key: r.string,
+  label: r.string,
+  type: r.string,
+  imageKey: r.string,
+  titleKey: r.string,
+  subtitleKey: r.string,
+  blockClass: r.string,
+  icon: r.node,
+  variant: r.string,
+  chipOptions: r.arrayOf(Ae),
+  defaultColor: r.string,
+  className: r.string,
+  format: r.string
 });
 Ke.propTypes = {
-  config: t.shape({
-    title: t.string.isRequired,
-    description: t.string,
-    buttonText: t.string,
-    fetchData: t.func.isRequired,
-    isStaticData: t.bool,
+  config: r.shape({
+    title: r.string.isRequired,
+    description: r.string,
+    buttonText: r.string,
+    fetchData: r.func.isRequired,
+    isStaticData: r.bool,
     /* ================= TABLE CONFIG ================= */
-    tableConfig: t.shape({
-      table_head: t.arrayOf(ga).isRequired,
-      search: t.shape({
-        enabled: t.bool,
-        useServerSideSearch: t.bool,
-        searchKeys: t.arrayOf(t.string)
+    tableConfig: r.shape({
+      table_head: r.arrayOf(ga).isRequired,
+      search: r.shape({
+        enabled: r.bool,
+        useServerSideSearch: r.bool,
+        searchKeys: r.arrayOf(r.string)
       }),
-      pagination: t.shape({
-        enabled: t.bool,
-        useServerSidePagination: t.bool
+      pagination: r.shape({
+        enabled: r.bool,
+        useServerSidePagination: r.bool
       }),
-      filter: t.shape({
-        enabled: t.bool,
-        useServerSideFilters: t.bool
+      filter: r.shape({
+        enabled: r.bool,
+        useServerSideFilters: r.bool
       })
     }).isRequired,
     /* ================= MODAL CONFIG ================= */
-    modalConfig: t.shape({
-      addModal: t.shape({
-        title: t.string.isRequired,
-        size: t.string,
-        formClass: t.string,
-        formFields: t.arrayOf(Ce),
-        handleSubmit: t.func.isRequired,
-        actionButtons: t.arrayOf(Me)
+    modalConfig: r.shape({
+      addModal: r.shape({
+        title: r.string.isRequired,
+        size: r.string,
+        formClass: r.string,
+        formFields: r.arrayOf(Ce),
+        handleSubmit: r.func.isRequired,
+        actionButtons: r.arrayOf(Me)
       }),
-      editModal: t.shape({
-        title: t.string.isRequired,
-        size: t.string,
-        formClass: t.string,
-        formFields: t.arrayOf(Ce),
-        handleSubmit: t.func.isRequired,
-        actionButtons: t.arrayOf(Me)
+      editModal: r.shape({
+        title: r.string.isRequired,
+        size: r.string,
+        formClass: r.string,
+        formFields: r.arrayOf(Ce),
+        handleSubmit: r.func.isRequired,
+        actionButtons: r.arrayOf(Me)
       }),
-      deleteModal: t.shape({
-        title: t.string.isRequired,
-        size: t.string,
-        confirmText: t.string,
-        referenceKey: t.string,
-        actionButtons: t.arrayOf(Me)
+      deleteModal: r.shape({
+        title: r.string.isRequired,
+        size: r.string,
+        confirmText: r.string,
+        referenceKey: r.string,
+        actionButtons: r.arrayOf(Me)
       }),
-      viewModal: t.shape({
-        title: t.string.isRequired,
-        size: t.string,
+      viewModal: r.shape({
+        title: r.string.isRequired,
+        size: r.string,
         // 👇 This covers your commented code:
-        component: t.elementType,
+        component: r.elementType,
         // for custom component like TeamMemberDetail
-        fields: t.arrayOf(ma),
-        footer: t.shape({
-          cancelButton: t.bool,
-          cancelText: t.string
+        fields: r.arrayOf(ma),
+        footer: r.shape({
+          cancelButton: r.bool,
+          cancelText: r.string
         })
       })
     }),
     /* ================= FILTER CONFIG ================= */
-    filterConfig: t.shape({
-      fields: t.arrayOf(Ce)
+    filterConfig: r.shape({
+      fields: r.arrayOf(Ce)
     })
   }).isRequired
 };

@@ -466,8 +466,6 @@ const Table = ({ config, setShowAdd, title, buttonText, description }) => {
                     key={row.id || row._id || index}
                     className={`hover:bg-gray-50 dark:hover:bg-blue-800/10 transition ${isRowClickable() ? "cursor-pointer" : ""}`}
                     onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
                       isRowClickable() && handleRowClick(row);
                     }}
                   >
@@ -479,9 +477,11 @@ const Table = ({ config, setShowAdd, title, buttonText, description }) => {
                         }`}
                         title={String(row[col.key] ?? "")}
                         onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          handleColumnClick(col, row);
+                          if (isColumnClickable(col)) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            handleColumnClick(col, row);
+                          }
                         }}
                       >
                         {col.render
