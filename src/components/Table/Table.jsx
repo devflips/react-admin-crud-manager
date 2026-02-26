@@ -17,7 +17,14 @@ import Chip from "../Chip/Chip";
 import TableSkeleton from "./components/TableSkeleton";
 import ImagePreview from "./components/ImagePreview";
 
-const Table = ({ config, setShowAdd, title, buttonText, description }) => {
+const Table = ({
+  config,
+  setShowAdd,
+  title,
+  buttonText,
+  description,
+  showAddButton,
+}) => {
   const {
     data = [],
     table_head = [],
@@ -148,6 +155,7 @@ const Table = ({ config, setShowAdd, title, buttonText, description }) => {
     imageAlt,
     className,
     fallback_icon = null,
+    row = null,
   ) => {
     return (
       <>
@@ -169,7 +177,11 @@ const Table = ({ config, setShowAdd, title, buttonText, description }) => {
         ) : (
           <>
             {fallback_icon ? (
-              fallback_icon
+              typeof fallback_icon === "function" ? (
+                fallback_icon(row)
+              ) : (
+                fallback_icon
+              )
             ) : (
               <div
                 className={`w-10 h-10 flex items-center shrink-0 justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600 ${className || ""}`}
@@ -221,7 +233,13 @@ const Table = ({ config, setShowAdd, title, buttonText, description }) => {
     return (
       <div className={`flex items-center space-x-4 ${col.className || ""}`}>
         {col.imageKey
-          ? renderAvatar(row[col.imageKey], row[col.titleKey], "group-avatar")
+          ? renderAvatar(
+              row[col.imageKey],
+              row[col.titleKey],
+              "group-avatar",
+              col.fallback_icon,
+              row,
+            )
           : ""}
         <div>
           <p className="font-medium text-gray-900 dark:text-white group-title">
@@ -292,7 +310,13 @@ const Table = ({ config, setShowAdd, title, buttonText, description }) => {
       return (
         <>
           <div className="min-w-[40px]">
-            {renderAvatar(value, col.alt, col.className, col.fallback_icon)}
+            {renderAvatar(
+              value,
+              col.alt,
+              col.className,
+              col.fallback_icon,
+              row,
+            )}
           </div>
         </>
       );
@@ -400,14 +424,16 @@ const Table = ({ config, setShowAdd, title, buttonText, description }) => {
           </p>
         </div>
         <div className="flex flex-col justify-end items-end gap-2">
-          <Button
-            onClick={() => setShowAdd(true)}
-            variant="contained"
-            color="primary"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            {buttonText || "Add New"}
-          </Button>
+          {showAddButton && (
+            <Button
+              onClick={() => setShowAdd(true)}
+              variant="contained"
+              color="primary"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {buttonText || "Add New"}
+            </Button>
+          )}
           <div className="flex justify-end items-center gap-2">
             {search.enabled && (
               <div className="">

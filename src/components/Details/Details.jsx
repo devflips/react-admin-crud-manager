@@ -70,7 +70,7 @@ export default function Details({ data, config }) {
                 controls
                 src={value instanceof File ? URL.createObjectURL(value) : value}
                 onClick={(e) => e.stopPropagation()}
-                className="shadow-md rounded-full"
+                className="shadow-md rounded-full mt-1"
               />
             ) : (
               <p className="mt-1 text-sm text-gray-400">N/A</p>
@@ -94,7 +94,7 @@ export default function Details({ data, config }) {
     let title = data[col.titleKey];
     let subtitle = data[col.subtitleKey];
     let image = data[col.imageKey];
-    let fallback_icon = data[col.fallback_icon];
+    let fallback_icon = col.fallback_icon;
 
     return (
       <div
@@ -110,7 +110,11 @@ export default function Details({ data, config }) {
             className="w-16 h-16 cursor-pointer rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
           />
         ) : fallback_icon ? (
-          fallback_icon
+          fallback_icon instanceof Function ? (
+            fallback_icon(data)
+          ) : (
+            fallback_icon
+          )
         ) : (
           <div className="w-16 h-16 flex items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-700 bg-gray-200 dark:bg-gray-600">
             <User className="w-8 h-8 text-gray-400" />
@@ -139,13 +143,22 @@ export default function Details({ data, config }) {
       )}
 
       <div className={`grid grid-cols-12 gap-4 ${containerClass || ""}`}>
-        {fields.map((col) =>
-          col.type == "group" ? (
+        {fields.map((col) => {
+          if (
+            col.renderCondition &&
+            typeof col.renderCondition === "function"
+          ) {
+            const shouldRender = col.renderCondition(data);
+            if (!shouldRender) {
+              return null;
+            }
+          }
+          return col.type == "group" ? (
             <GroupRow col={col} />
           ) : (
             <DetailRow col={col} />
-          ),
-        )}
+          );
+        })}
       </div>
     </>
   );

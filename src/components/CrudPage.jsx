@@ -230,6 +230,7 @@ const CrudPage = ({ config }) => {
           setShowAdd={setShowAdd}
           description={config.description}
           buttonText={config.buttonText}
+          showAddButton={!!modalConfig.addModal}
           config={{
             ...tableConfig,
             pagination: {
@@ -260,10 +261,10 @@ const CrudPage = ({ config }) => {
             document.querySelector("#addForm")?.requestSubmit()
           }
           loadingBtn={formLoading}
-          actionButtons={modalConfig.addModal.actionButtons}
+          actionButtons={modalConfig?.addModal?.actionButtons || []}
         >
           <Form
-            config={modalConfig?.addModal || []}
+            config={modalConfig?.addModal || {}}
             onSubmit={handleAddFormSubmit}
             initialData={{}}
             type="add"
@@ -285,11 +286,11 @@ const CrudPage = ({ config }) => {
           onFormSubmit={() =>
             document.querySelector("#editForm")?.requestSubmit()
           }
-          actionButtons={modalConfig.editModal.actionButtons}
+          actionButtons={modalConfig?.editModal?.actionButtons || []}
           loadingBtn={formLoading}
         >
           <Form
-            config={modalConfig.editModal || []}
+            config={modalConfig.editModal || {}}
             onSubmit={handleEditFormSubmit}
             initialData={selectedItem}
             type="edit"
@@ -312,7 +313,7 @@ const CrudPage = ({ config }) => {
             title={modalConfig.deleteModal?.title || "Confirm Delete"}
             size={modalConfig.deleteModal?.size || "md"}
             loading={formLoading}
-            actionButtons={modalConfig.deleteModal.actionButtons}
+            actionButtons={modalConfig?.deleteModal?.actionButtons || []}
             executeFunction={executeAction}
             selectedItem={selectedItem}
           >

@@ -54,8 +54,9 @@ const Input = React.forwardRef(
 
     useEffect(() => {
       if (defaultValue) {
+        let value = props.value || defaultValue;
         setTimeout(() => {
-          props.onChange?.({ target: { value: defaultValue } });
+          props.onChange?.({ target: { value: value } });
         }, 100);
       }
     }, [defaultValue]);
