@@ -36,6 +36,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
     defaultValue,
     renderCondition,
     optionDependencyKey,
+    pattern,
   } = field;
 
   let value = formData?.[key];
@@ -191,6 +192,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
     default:
       return (
         <Input
+          field={field}
           type={type || "text"}
           defaultValue={defaultValue}
           value={value}
@@ -204,6 +206,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
           negativeNumberAllow={negativeNumberAllow}
           parentClass={parentClass}
           disabled={disabled}
+          pattern={pattern}
         />
       );
   }

@@ -13,6 +13,7 @@ const Input = React.forwardRef(
       onKeyDown,
       negativeNumberAllow = true,
       defaultValue = "",
+      field = {},
       ...props
     },
     ref,
@@ -64,7 +65,11 @@ const Input = React.forwardRef(
     return (
       <>
         <div key={props.name} className={parentClass || "col-span-12"}>
-          <InputLabel label={label} required={required} />
+          <InputLabel
+            label={label}
+            required={required}
+            infoText={field.infoText}
+          />
           <div className="relative">
             <input
               type={type === "password" && showPassword ? "text" : type}
