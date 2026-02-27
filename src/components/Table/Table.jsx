@@ -56,6 +56,7 @@ const Table = ({
   const [menuList, setMenuList] = useState([]);
   const [menuPosition, setMenuPosition] = useState({});
   const [showFilters, setShowFilters] = useState(false);
+  const [appliedFilters, setAppliedFilters] = useState({});
 
   // image preview
   const [targetImage, setTargetImage] = useState(null);
@@ -408,206 +409,219 @@ const Table = ({
     pagination?.useServerSidePagination,
   ]);
 
-  if (loading) return <TableSkeleton rows={6} columns={6} />;
-
   return (
     <>
       {/* header Bar */}
 
-      <div className="flex flex-col sm:flex-row sm:justify-between gap-4 mb-3">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {title}
-          </h1>
-          <p className="text-md text-gray-600 dark:text-gray-400">
-            {description}
-          </p>
-        </div>
-        <div className="flex flex-col justify-end items-end gap-2">
-          {showAddButton && (
-            <Button
-              onClick={() => setShowAdd(true)}
-              variant="contained"
-              color="primary"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              {buttonText || "Add New"}
-            </Button>
-          )}
-          <div className="flex justify-end items-center gap-2">
-            {search.enabled && (
-              <div className="">
-                <div className="relative min-w-[300px]">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-300" />
-                  <input
-                    type="text"
-                    placeholder={search.placeholder || "Search..."}
-                    value={searchTerm}
-                    onChange={(e) => handleSearchChange(e.target.value)}
-                    className="w-full h-[36px] pl-9 pr-4 py-3 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-300 dark:ring-blue-200 disabled:opacity-50"
-                  />
+      {loading ? (
+        <TableSkeleton rows={6} columns={6} />
+      ) : (
+        <>
+          <div className="flex flex-col sm:flex-row sm:justify-between gap-4 mb-3">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {title}
+              </h1>
+              <p className="text-md text-gray-600 dark:text-gray-400">
+                {description}
+              </p>
+            </div>
+            <div className="flex flex-col justify-end items-end gap-2">
+              {showAddButton && (
+                <Button
+                  onClick={() => setShowAdd(true)}
+                  variant="contained"
+                  color="primary"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  {buttonText || "Add New"}
+                </Button>
+              )}
+              <div className="flex justify-end items-center gap-2">
+                {search.enabled && (
+                  <div className="">
+                    <div className="relative min-w-[300px]">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-300" />
+                      <input
+                        type="text"
+                        placeholder={search.placeholder || "Search..."}
+                        value={searchTerm}
+                        onChange={(e) => handleSearchChange(e.target.value)}
+                        className="w-full h-[36px] pl-9 pr-4 py-3 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-300 dark:ring-blue-200 disabled:opacity-50"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {filterConfig && filter.enabled && (
+                  // add red dot if filter are applied
+                  <div className="relative">
+                    <Button
+                      onClick={() => setShowFilters(true)}
+                      variant="contained"
+                    >
+                      <Filter className="w-4 h-4 mr-2" />
+                      Filters
+                    </Button>
+                    {Object.keys(appliedFilters).length > 0 && (
+                      <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          {/* =========================== Table =========================== */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-700/60">
+                  <tr>
+                    {table_head.map((col) => (
+                      <th
+                        key={col.key}
+                        className={`px-6 py-4 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider min-w-max max-w-[180px] truncate ${col.headClass || ""}`}
+                      >
+                        {col.title}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  {paginatedData.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={table_head.length}
+                        className="text-center py-10 text-gray-500 dark:text-gray-400"
+                      >
+                        {emptyMessage}
+                      </td>
+                    </tr>
+                  ) : (
+                    paginatedData.map((row, index) => (
+                      <tr
+                        key={row.id || row._id || index}
+                        className={`hover:bg-gray-50 dark:hover:bg-blue-800/10 transition ${isRowClickable() ? "cursor-pointer" : ""}`}
+                        onClick={(e) => {
+                          isRowClickable() && handleRowClick(row);
+                        }}
+                      >
+                        {table_head.map((col) => (
+                          <td
+                            key={col.key}
+                            className={`px-6 py-4 text-sm text-gray-900 dark:text-gray-100 min-w-max ${col.type == "audio" ? "" : "max-w-[300px]"} truncate ${
+                              isColumnClickable(col) ? "cursor-pointer" : ""
+                            }`}
+                            title={String(row[col.key] ?? "")}
+                            onClick={(e) => {
+                              if (isColumnClickable(col)) {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                handleColumnClick(col, row);
+                              }
+                            }}
+                          >
+                            {col.render
+                              ? col.render(row, index)
+                              : handleRenderCellValue(col, row, index)}
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {pagination?.enabled && filteredData.length > 0 && (
+              <div className=" bg-gray-50 dark:bg-gray-700/60 px-6 py-3 flex flex-wrap items-center justify-between border-t border-gray-200 dark:border-gray-600 gap-3">
+                <div className="text-sm text-gray-700 dark:text-gray-300">
+                  Showing {(currentPage - 1) * pageSize + 1} to{" "}
+                  {Math.min(currentPage * pageSize, totalRecords)} of{" "}
+                  {totalRecords} results
+                </div>
+
+                <div className="flex items-center gap-4">
+                  {/* Rows per page selector */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                      Rows per page:
+                    </span>
+                    <select
+                      value={pageSize}
+                      onChange={(e) => {
+                        const newLimit = Number(e.target.value);
+                        setPageSize(newLimit);
+                        setCurrentPage(1);
+                        if (pagination.useServerSidePagination) {
+                          setServerSidePaginationData((prev) => ({
+                            ...prev,
+                            current_page: 1,
+                            rows_per_page: newLimit,
+                          }));
+                        }
+                      }}
+                      className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    >
+                      {[2, 10, 25, 50, 100].map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* ============= Pagination ============= */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        if (currentPage > 1) {
+                          const newPage = currentPage - 1;
+                          setCurrentPage(newPage);
+                          if (pagination.useServerSidePagination) {
+                            setServerSidePaginationData((prev) => ({
+                              ...prev,
+                              current_page: newPage,
+                            }));
+                          }
+                        }
+                      }}
+                      disabled={currentPage === 1}
+                      className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition text-gray-500 dark:text-gray-300 disabled:opacity-50"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+
+                    <span className="text-sm text-gray-800 dark:text-gray-200">
+                      Page {currentPage} of {totalPages}
+                    </span>
+
+                    <button
+                      onClick={() => {
+                        if (currentPage < totalPages) {
+                          const newPage = currentPage + 1;
+                          setCurrentPage(newPage);
+                          if (pagination.useServerSidePagination) {
+                            setServerSidePaginationData((prev) => ({
+                              ...prev,
+                              current_page: newPage,
+                            }));
+                          }
+                        }
+                      }}
+                      disabled={currentPage === totalPages}
+                      className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition text-gray-500 dark:text-gray-300 disabled:opacity-50"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
-
-            {filterConfig && filter.enabled && (
-              <Button onClick={() => setShowFilters(true)} variant="contained">
-                <Filter className="w-4 h-4 mr-2" />
-                Filters
-              </Button>
-            )}
           </div>
-        </div>
-      </div>
-      {/* =========================== Table =========================== */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-200 dark:border-gray-700">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700/60">
-              <tr>
-                {table_head.map((col) => (
-                  <th
-                    key={col.key}
-                    className={`px-6 py-4 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider min-w-max max-w-[180px] truncate ${col.headClass || ""}`}
-                  >
-                    {col.title}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {paginatedData.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={table_head.length}
-                    className="text-center py-10 text-gray-500 dark:text-gray-400"
-                  >
-                    {emptyMessage}
-                  </td>
-                </tr>
-              ) : (
-                paginatedData.map((row, index) => (
-                  <tr
-                    key={row.id || row._id || index}
-                    className={`hover:bg-gray-50 dark:hover:bg-blue-800/10 transition ${isRowClickable() ? "cursor-pointer" : ""}`}
-                    onClick={(e) => {
-                      isRowClickable() && handleRowClick(row);
-                    }}
-                  >
-                    {table_head.map((col) => (
-                      <td
-                        key={col.key}
-                        className={`px-6 py-4 text-sm text-gray-900 dark:text-gray-100 min-w-max ${col.type == "audio" ? "" : "max-w-[300px]"} truncate ${
-                          isColumnClickable(col) ? "cursor-pointer" : ""
-                        }`}
-                        title={String(row[col.key] ?? "")}
-                        onClick={(e) => {
-                          if (isColumnClickable(col)) {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            handleColumnClick(col, row);
-                          }
-                        }}
-                      >
-                        {col.render
-                          ? col.render(row, index)
-                          : handleRenderCellValue(col, row, index)}
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {pagination?.enabled && filteredData.length > 0 && (
-          <div className=" bg-gray-50 dark:bg-gray-700/60 px-6 py-3 flex flex-wrap items-center justify-between border-t border-gray-200 dark:border-gray-600 gap-3">
-            <div className="text-sm text-gray-700 dark:text-gray-300">
-              Showing {(currentPage - 1) * pageSize + 1} to{" "}
-              {Math.min(currentPage * pageSize, totalRecords)} of {totalRecords}{" "}
-              results
-            </div>
-
-            <div className="flex items-center gap-4">
-              {/* Rows per page selector */}
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-700 dark:text-gray-300">
-                  Rows per page:
-                </span>
-                <select
-                  value={pageSize}
-                  onChange={(e) => {
-                    const newLimit = Number(e.target.value);
-                    setPageSize(newLimit);
-                    setCurrentPage(1);
-                    if (pagination.useServerSidePagination) {
-                      setServerSidePaginationData((prev) => ({
-                        ...prev,
-                        current_page: 1,
-                        rows_per_page: newLimit,
-                      }));
-                    }
-                  }}
-                  className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                >
-                  {[2, 10, 25, 50, 100].map((n) => (
-                    <option key={n} value={n}>
-                      {n}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* ============= Pagination ============= */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    if (currentPage > 1) {
-                      const newPage = currentPage - 1;
-                      setCurrentPage(newPage);
-                      if (pagination.useServerSidePagination) {
-                        setServerSidePaginationData((prev) => ({
-                          ...prev,
-                          current_page: newPage,
-                        }));
-                      }
-                    }
-                  }}
-                  disabled={currentPage === 1}
-                  className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition text-gray-500 dark:text-gray-300 disabled:opacity-50"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-
-                <span className="text-sm text-gray-800 dark:text-gray-200">
-                  Page {currentPage} of {totalPages}
-                </span>
-
-                <button
-                  onClick={() => {
-                    if (currentPage < totalPages) {
-                      const newPage = currentPage + 1;
-                      setCurrentPage(newPage);
-                      if (pagination.useServerSidePagination) {
-                        setServerSidePaginationData((prev) => ({
-                          ...prev,
-                          current_page: newPage,
-                        }));
-                      }
-                    }
-                  }}
-                  disabled={currentPage === totalPages}
-                  className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition text-gray-500 dark:text-gray-300 disabled:opacity-50"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+        </>
+      )}
 
       {/* Portal Menu */}
       {activeMenu &&
@@ -654,7 +668,10 @@ const Table = ({
           isOpen={showFilters}
           onClose={() => setShowFilters(false)}
           config={filterConfig}
-          onApply={onFilterApply}
+          onApply={(filters) => {
+            setAppliedFilters(filters);
+            onFilterApply?.(filters);
+          }}
         />
       )}
 

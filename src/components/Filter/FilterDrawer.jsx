@@ -5,7 +5,6 @@ import RenderFields from "../Form/components/RenderFields";
 
 const FilterDrawer = ({ isOpen, onClose, config, onApply }) => {
   const [filters, setFilters] = useState({});
-
   const handleChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
@@ -54,24 +53,29 @@ const FilterDrawer = ({ isOpen, onClose, config, onApply }) => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-4 py-3">
-          {config?.component ? (
-            <config.component filters={filters} onFilterChange={handleChange} />
-          ) : (
-            <div className="space-y-4">
-              {config?.fields?.map((field) => (
-                <>
-                  <RenderFields
-                    key={field.key}
-                    field={field}
-                    formData={filters}
-                    handleChange={handleChange}
-                  />
-                </>
-              ))}
-            </div>
-          )}
-        </div>
+        {isOpen && (
+          <div className="flex-1 overflow-y-auto px-4 py-3">
+            {config?.component ? (
+              <config.component
+                filters={filters}
+                onFilterChange={handleChange}
+              />
+            ) : (
+              <div className="space-y-4">
+                {config?.fields?.map((field) => (
+                  <>
+                    <RenderFields
+                      key={field.key}
+                      field={field}
+                      formData={filters}
+                      handleChange={handleChange}
+                    />
+                  </>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Footer */}
         <div className="flex gap-2 px-4 py-3 border-t border-gray-200 dark:border-gray-700">
