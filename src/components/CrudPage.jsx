@@ -13,6 +13,7 @@ const CrudPage = ({ config }) => {
   const {
     title,
     fetchData = async () => {},
+    fetchRowDetails = null,
     isStaticData = false,
     tableConfig = {},
     modalConfig = {},
@@ -295,6 +296,7 @@ const CrudPage = ({ config }) => {
             initialData={selectedItem}
             type="edit"
             loading={formLoading}
+            fetchRowDetails={fetchRowDetails}
           />
         </Modal>
 
@@ -351,6 +353,7 @@ const CrudPage = ({ config }) => {
             ) : (
               <Details
                 data={selectedItem}
+                fetchRowDetails={fetchRowDetails}
                 config={modalConfig.viewModal || {}}
               />
             )}

@@ -1,6 +1,6 @@
 import React from "react";
 import Select from "./Select";
-import Switch from "./Switch";
+import { Switch } from "./Switch";
 import PhoneInput from "./PhoneInput";
 import { TextArea } from "./TextArea";
 import ImagePicker from "./ImagePicker";
@@ -8,6 +8,10 @@ import { Input } from "./Input";
 import TinyEditor from "./TinyEditor";
 import Checkbox from "./Checkbox";
 import AudioPicker from "./AudioPicker";
+import GroupRow from "../../Details/components/GroupRow";
+import CardGroup from "../../Details/components/CardGroup";
+import DetailRow from "../../Details/components/DetailRow";
+import Radio from "./Radio";
 
 const RenderFields = ({ field, formData, handleChange }) => {
   const {
@@ -37,6 +41,7 @@ const RenderFields = ({ field, formData, handleChange }) => {
     renderCondition,
     optionDependencyKey,
     pattern,
+    renderType,
   } = field;
 
   let value = formData?.[key];
@@ -54,6 +59,17 @@ const RenderFields = ({ field, formData, handleChange }) => {
     const shouldRender = renderCondition(formData);
     if (!shouldRender) {
       return null;
+    }
+  }
+
+  if (renderType && renderType == "details") {
+    switch (type) {
+      case "group":
+        return <GroupRow col={field} data={formData} />;
+      case "cardGroup":
+        return <CardGroup col={field} data={formData} />;
+      default:
+        return <DetailRow col={field} data={formData} />;
     }
   }
 
@@ -96,6 +112,21 @@ const RenderFields = ({ field, formData, handleChange }) => {
         />
       );
 
+    case "radio":
+      return (
+        <Radio
+          value={value}
+          onChange={(val) => handleChange(key, val)}
+          text={text}
+          options={options || []}
+          label={label}
+          required={required}
+          name={key}
+          disabled={disabled}
+          parentClass={parentClass}
+        />
+      );
+
     case "switch":
       return (
         <Switch
@@ -110,7 +141,6 @@ const RenderFields = ({ field, formData, handleChange }) => {
           parentClass={parentClass}
         />
       );
-
     case "phone":
       return (
         <PhoneInput
@@ -213,3 +243,4 @@ const RenderFields = ({ field, formData, handleChange }) => {
 };
 
 export default RenderFields;
+ 

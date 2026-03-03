@@ -1,64 +1,62 @@
 import React from "react";
 import InputLabel from "./InputLabel";
 
-const Switch = ({
-  value = true,
-  onChange,
-  text,
-  options = [],
-  label,
-  required,
-  name = "",
-  disabled = false,
-  parentClass = "",
-}) => {
-  const radioOptions =
-    options.length > 0
-      ? options
-      : [
-          { label: "Active", value: true },
-          { label: "Inactive", value: false },
-        ];
+const Switch = React.forwardRef(
+  (
+    {
+      label,
+      required,
+      parentClass = "col-span-12",
+      className = "",
+      value,
+      onChange,
+      disabled = false,
+      ...props
+    },
+    ref,
+  ) => {
+    return (
+      <div className={`flex justify-between ${parentClass}`}>
+        {label && <InputLabel label={label} required={required} />}
 
-  return (
-    <>
-      <div key={name} className={parentClass || "col-span-12"}>
-        <InputLabel label={label} required={required} />
-        <div className="flex items-center justify-between h-10 gap-4 bg-gray-100 dark:bg-gray-700 px-3 rounded-md border border-gray-100 dark:border-gray-600">
-          {/* Left Text */}
-          {text && (
-            <p className="text-xs text-gray-600 dark:text-gray-400 flex-shrink overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px]">
-              {text}
-            </p>
-          )}
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            ref={ref}
+            className="sr-only peer"
+            checked={value}
+            onChange={(e) => onChange(e.target.checked)}
+            disabled={disabled}
+            {...props}
+          />
 
-          {/* Radio Buttons */}
-          <div className="flex items-center gap-6">
-            {radioOptions.map((opt, idx) => (
-              <label
-                key={idx}
-                className="flex items-center gap-2 cursor-pointer select-none"
-              >
-                <input
-                  type="radio"
-                  name="switch-field"
-                  required={required && idx === 0}
-                  value={opt.value}
-                  disabled={disabled}
-                  checked={value === opt.value}
-                  onChange={() => onChange(opt.value)}
-                  className="w-4 h-4  border-gray-300 cursor-pointer"
-                />
-                <span className="text-sm text-gray-700 dark:text-white">
-                  {opt.label}
-                </span>
-              </label>
-            ))}
-          </div>
-        </div>
+          {/* Switch Track */}
+          <div
+            className={`
+              w-11 h-6 bg-gray-200 peer-focus:outline-none
+              rounded-full peer dark:bg-gray-700
+              peer-checked:bg-primary-600
+              peer-disabled:opacity-50 peer-disabled:cursor-not-allowed
+              transition-colors duration-200
+              ${className}
+            `}
+          ></div>
+
+          {/* Switch Thumb */}
+          <div
+            className="
+              absolute left-1 top-1
+              w-4 h-4 bg-white rounded-full
+              transition-transform duration-200
+              peer-checked:translate-x-5
+            "
+          ></div>
+        </label>
       </div>
-    </>
-  );
-};
+    );
+  },
+);
 
-export default Switch;
+Switch.displayName = "Switch";
+
+export { Switch };

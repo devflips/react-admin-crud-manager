@@ -496,6 +496,17 @@ body{
     max-width: 1536px;
   }
 }
+.sr-only{
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
 .pointer-events-none{
   pointer-events: none;
 }
@@ -526,6 +537,9 @@ body{
 }
 .left-0{
   left: 0px;
+}
+.left-1{
+  left: 0.25rem;
 }
 .left-1\/2{
   left: 50%;
@@ -656,6 +670,9 @@ body{
 .h-6{
   height: 1.5rem;
 }
+.h-64{
+  height: 16rem;
+}
 .h-8{
   height: 2rem;
 }
@@ -685,6 +702,9 @@ body{
 }
 .w-10{
   width: 2.5rem;
+}
+.w-11{
+  width: 2.75rem;
 }
 .w-12{
   width: 3rem;
@@ -1033,6 +1053,9 @@ body{
   border-color: rgb(22 163 74 / var(--tw-border-opacity, 1));
 }
 .border-primary{
+  border-color: var(--primary-500);
+}
+.border-primary-500{
   border-color: var(--primary-500);
 }
 .border-purple-300{
@@ -1768,6 +1791,28 @@ body {
 
 .group:hover .group-hover\:opacity-100{
   opacity: 1;
+}
+
+.peer:checked ~ .peer-checked\:translate-x-5{
+  --tw-translate-x: 1.25rem;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.peer:checked ~ .peer-checked\:bg-primary-600{
+  background-color: var(--primary-600);
+}
+
+.peer:focus ~ .peer-focus\:outline-none{
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.peer:disabled ~ .peer-disabled\:cursor-not-allowed{
+  cursor: not-allowed;
+}
+
+.peer:disabled ~ .peer-disabled\:opacity-50{
+  opacity: 0.5;
 }
 
 .dark\:divide-gray-700:is(.dark *) > :not([hidden]) ~ :not([hidden]){
