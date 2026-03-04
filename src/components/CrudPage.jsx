@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { X } from "lucide-react";
 import Table from "./Table/Table";
 import Modal from "./Modal/Modal";
 import Form from "./Form/Form";
@@ -7,7 +6,6 @@ import { Icon } from "@iconify/react";
 import { enqueueSnackbar } from "notistack";
 import Details from "./Details/Details";
 import PropTypes from "prop-types";
-import { SnackbarProvider } from "notistack";
 
 const CrudPage = ({ config }) => {
   const {
@@ -204,163 +202,140 @@ const CrudPage = ({ config }) => {
   ]);
 
   return (
-    <SnackbarProvider
-      maxSnack={3}
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "right",
-      }}
-      autoHideDuration={3000}
-      action={(snackbarKey) => (
-        <button
-          onClick={() => {
-            window.dispatchEvent(
-              new CustomEvent("closeSnackbar", { detail: snackbarKey }),
-            );
-          }}
-          className="p-1 hover:bg-white/20 rounded-full transition-colors duration-200 text-white flex items-center justify-center"
-        >
-          <X className="h-4 w-4" />
-        </button>
-      )}
-    >
-      <div>
-        {/* Table */}
-        <Table
-          title={title}
-          setShowAdd={setShowAdd}
-          description={config.description}
-          buttonText={config.buttonText}
-          showAddButton={!!modalConfig.addModal}
-          config={{
-            ...tableConfig,
-            pagination: {
-              ...tableConfig.pagination,
-              ...paginationData,
-            },
-            data: filteredData,
-            setServerSidePaginationData: setServerSidePaginationData,
-            onMenuAction: handleMenuAction,
-            filterConfig,
-            onFilterApply: handleFilterData,
-            loading,
-          }}
+    <div>
+      {/* Table */}
+      <Table
+        title={title}
+        setShowAdd={setShowAdd}
+        description={config.description}
+        buttonText={config.buttonText}
+        showAddButton={!!modalConfig.addModal}
+        config={{
+          ...tableConfig,
+          pagination: {
+            ...tableConfig.pagination,
+            ...paginationData,
+          },
+          data: filteredData,
+          setServerSidePaginationData: setServerSidePaginationData,
+          onMenuAction: handleMenuAction,
+          filterConfig,
+          onFilterApply: handleFilterData,
+          loading,
+        }}
+      />
+
+      {/* Add Modal */}
+      <Modal
+        isOpen={showAdd}
+        onClose={() => {
+          if (!formLoading) {
+            setShowAdd(false);
+          }
+        }}
+        icon={modalConfig.addModal?.icon}
+        title={modalConfig.addModal?.title || "Add New"}
+        size={modalConfig.addModal?.size || "md"}
+        onFormSubmit={() => document.querySelector("#addForm")?.requestSubmit()}
+        loadingBtn={formLoading}
+        actionButtons={modalConfig?.addModal?.actionButtons || []}
+      >
+        <Form
+          config={modalConfig?.addModal || {}}
+          onSubmit={handleAddFormSubmit}
+          initialData={{}}
+          type="add"
+          loading={formLoading}
         />
+      </Modal>
 
-        {/* Add Modal */}
-        <Modal
-          isOpen={showAdd}
-          onClose={() => {
-            if (!formLoading) {
-              setShowAdd(false);
-            }
-          }}
-          icon={modalConfig.addModal?.icon}
-          title={modalConfig.addModal?.title || "Add New"}
-          size={modalConfig.addModal?.size || "md"}
-          onFormSubmit={() =>
-            document.querySelector("#addForm")?.requestSubmit()
+      {/* Edit Modal */}
+      <Modal
+        isOpen={showEdit}
+        onClose={() => {
+          if (!formLoading) {
+            setShowEdit(false);
           }
-          loadingBtn={formLoading}
-          actionButtons={modalConfig?.addModal?.actionButtons || []}
-        >
-          <Form
-            config={modalConfig?.addModal || {}}
-            onSubmit={handleAddFormSubmit}
-            initialData={{}}
-            type="add"
-            loading={formLoading}
-          />
-        </Modal>
+        }}
+        icon={modalConfig.editModal?.icon}
+        title={modalConfig.editModal?.title || "Edit"}
+        size={modalConfig.editModal?.size || "md"}
+        onFormSubmit={() =>
+          document.querySelector("#editForm")?.requestSubmit()
+        }
+        actionButtons={modalConfig?.editModal?.actionButtons || []}
+        loadingBtn={formLoading}
+      >
+        <Form
+          config={modalConfig.editModal || {}}
+          onSubmit={handleEditFormSubmit}
+          initialData={selectedItem}
+          type="edit"
+          loading={formLoading}
+          fetchRowDetails={fetchRowDetails}
+        />
+      </Modal>
 
-        {/* Edit Modal */}
+      {/* Delete Modal */}
+      {showDelete && (
         <Modal
-          isOpen={showEdit}
-          onClose={() => {
-            if (!formLoading) {
-              setShowEdit(false);
-            }
+          isOpen={showDelete}
+          onClose={(resp) => {
+            handleDeleteResult(resp);
           }}
-          icon={modalConfig.editModal?.icon}
-          title={modalConfig.editModal?.title || "Edit"}
-          size={modalConfig.editModal?.size || "md"}
-          onFormSubmit={() =>
-            document.querySelector("#editForm")?.requestSubmit()
+          icon={
+            modalConfig.deleteModal?.icon || (
+              <Icon icon="ph:warning-bold" className="w-6 h-6 text-red-500" />
+            )
           }
-          actionButtons={modalConfig?.editModal?.actionButtons || []}
-          loadingBtn={formLoading}
+          title={modalConfig.deleteModal?.title || "Confirm Delete"}
+          size={modalConfig.deleteModal?.size || "md"}
+          loading={formLoading}
+          actionButtons={modalConfig?.deleteModal?.actionButtons || []}
+          executeFunction={executeAction}
+          selectedItem={selectedItem}
         >
-          <Form
-            config={modalConfig.editModal || {}}
-            onSubmit={handleEditFormSubmit}
-            initialData={selectedItem}
-            type="edit"
-            loading={formLoading}
-            fetchRowDetails={fetchRowDetails}
-          />
-        </Modal>
-
-        {/* Delete Modal */}
-        {showDelete && (
-          <Modal
-            isOpen={showDelete}
-            onClose={(resp) => {
-              handleDeleteResult(resp);
-            }}
-            icon={
-              modalConfig.deleteModal?.icon || (
-                <Icon icon="ph:warning-bold" className="w-6 h-6 text-red-500" />
-              )
-            }
-            title={modalConfig.deleteModal?.title || "Confirm Delete"}
-            size={modalConfig.deleteModal?.size || "md"}
-            loading={formLoading}
-            actionButtons={modalConfig?.deleteModal?.actionButtons || []}
-            executeFunction={executeAction}
-            selectedItem={selectedItem}
-          >
-            <div className="flex items-center space-x-2 py-3">
-              <div>
-                <p className="text-md text-gray-700 dark:text-white">
-                  {modalConfig.deleteModal?.confirmText ||
-                    "Are you sure you want to delete this item?"}
+          <div className="flex items-center space-x-2 py-3">
+            <div>
+              <p className="text-md text-gray-700 dark:text-white">
+                {modalConfig.deleteModal?.confirmText ||
+                  "Are you sure you want to delete this item?"}
+              </p>
+              {modalConfig.deleteModal?.referenceKey && (
+                <p className="text-md font-semibold text-gray-700 dark:text-white">
+                  {selectedItem[modalConfig.deleteModal?.referenceKey]}
                 </p>
-                {modalConfig.deleteModal?.referenceKey && (
-                  <p className="text-md font-semibold text-gray-700 dark:text-white">
-                    {selectedItem[modalConfig.deleteModal?.referenceKey]}
-                  </p>
-                )}
-              </div>
+              )}
             </div>
-          </Modal>
-        )}
+          </div>
+        </Modal>
+      )}
 
-        {/* View Detail Modal */}
-        {modalConfig.viewModal && (
-          <Modal
-            isOpen={showView}
-            onClose={() => {
-              setShowView(false);
-              setSelectedItem(null);
-            }}
-            icon={modalConfig.viewModal?.icon}
-            title={modalConfig.viewModal?.title || "View Details"}
-            size={modalConfig.viewModal?.size || "lg"}
-            footerConfig={modalConfig?.viewModal.footer}
-          >
-            {modalConfig.viewModal?.component ? (
-              <modalConfig.viewModal.component data={selectedItem} />
-            ) : (
-              <Details
-                data={selectedItem}
-                fetchRowDetails={fetchRowDetails}
-                config={modalConfig.viewModal || {}}
-              />
-            )}
-          </Modal>
-        )}
-      </div>
-    </SnackbarProvider>
+      {/* View Detail Modal */}
+      {modalConfig.viewModal && (
+        <Modal
+          isOpen={showView}
+          onClose={() => {
+            setShowView(false);
+            setSelectedItem(null);
+          }}
+          icon={modalConfig.viewModal?.icon}
+          title={modalConfig.viewModal?.title || "View Details"}
+          size={modalConfig.viewModal?.size || "lg"}
+          footerConfig={modalConfig?.viewModal.footer}
+        >
+          {modalConfig.viewModal?.component ? (
+            <modalConfig.viewModal.component data={selectedItem} />
+          ) : (
+            <Details
+              data={selectedItem}
+              fetchRowDetails={fetchRowDetails}
+              config={modalConfig.viewModal || {}}
+            />
+          )}
+        </Modal>
+      )}
+    </div>
   );
 };
 
