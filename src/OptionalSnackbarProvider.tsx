@@ -1,5 +1,5 @@
 import React from "react";
-import { SnackbarProvider, useSnackbar, SnackbarKey } from "notistack";
+import { SnackbarProvider, useSnackbar, type SnackbarKey } from "notistack";
 import { X } from "lucide-react";
 
 interface InnerCheckProps {

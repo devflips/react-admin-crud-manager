@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import CrudPage from "./components/CrudPage";
 import OptionalSnackbarProvider from "./OptionalSnackbarProvider";
 

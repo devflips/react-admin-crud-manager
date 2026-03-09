@@ -13,7 +13,7 @@ import DetailRow from "../../Details/components/DetailRow";
 import Radio from "./Radio";
 import VideoPicker from "./VideoPicker";
 
-interface FieldConfig {
+export interface FieldConfig {
   key: string;
   label?: string;
   type?: string;

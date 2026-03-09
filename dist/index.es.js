@@ -160,7 +160,7 @@ const or = ({
   );
   const X = s ? (_ || []).map(L) : L(_), ae = x.filter(
     (C) => C.label.toLowerCase().includes(I.toLowerCase())
-  ), H = (C) => {
+  ), W = (C) => {
     const N = L(C);
     return s ? X.includes(N) : N === X;
   };
@@ -190,7 +190,7 @@ const or = ({
     } else
       t == null || t(N), P(!1);
     T("");
-  }, q = s ? x.filter((C) => H(C.value)).map((C) => C.label).join(", ") : ($ = x.find((C) => H(C.value))) == null ? void 0 : $.label;
+  }, q = s ? x.filter((C) => W(C.value)).map((C) => C.label).join(", ") : ($ = x.find((C) => W(C.value))) == null ? void 0 : $.label;
   return U(() => {
     (_ || _ === !1) && setTimeout(() => {
       t == null || t(_);
@@ -264,10 +264,10 @@ const or = ({
                     type: "button",
                     onClick: () => R(String(C.value)),
                     className: `w-full px-3 py-2 text-left text-sm flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-600 
-                    ${H(C.value) ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300" : ""}`,
+                    ${W(C.value) ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300" : ""}`,
                     children: [
                       /* @__PURE__ */ n("span", { children: C.label }),
-                      s && H(C.value) && /* @__PURE__ */ n(Ht, { className: "w-4 h-4" })
+                      s && W(C.value) && /* @__PURE__ */ n(Ht, { className: "w-4 h-4" })
                     ]
                   },
                   String(C.value)
@@ -1773,7 +1773,7 @@ const mt = ie, Tr = (a) => new Promise((r, e) => {
     pe(M.current), M.current = Y, s({ file: B, preview: Y }), e == null || e(B);
   }, ae = (N) => {
     N && N.stopPropagation(), pe(M.current), M.current = "", s(null), e == null || e(null), y.current && (y.current.value = "");
-  }, H = (N) => {
+  }, W = (N) => {
     c && (N.preventDefault(), g(!0));
   }, R = (N) => {
     c && (N.preventDefault(), g(!1));
@@ -1791,7 +1791,7 @@ const mt = ie, Tr = (a) => new Promise((r, e) => {
         "div",
         {
           className: `relative rounded-md p-2 transition-all ${m ? "border-2 border-dashed border-blue-500 bg-blue-50 dark:bg-blue-900/20" : "border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"}`,
-          onDragOver: H,
+          onDragOver: W,
           onDragLeave: R,
           onDrop: q,
           children: [
@@ -2682,7 +2682,7 @@ const Br = ({
     pattern: L,
     renderType: X,
     cropImage: ae,
-    aspectRatio: H,
+    aspectRatio: W,
     dependencyKey: R,
     mask: q,
     maskApplyOnValue: $,
@@ -2811,7 +2811,7 @@ const Br = ({
           onChange: (F) => e(t, F),
           required: m,
           accept: h || "image/*",
-          aspect: H,
+          aspect: W,
           id: `file-${t}`,
           dragDrop: k,
           cropImage: ae,
@@ -3225,7 +3225,7 @@ const Br = ({
     onFilterApply: w,
     filterConfig: P = null,
     rowClick: I = null
-  } = a, [T, D] = S(""), [O, A] = S(null), [y, x] = S([]), [M, _] = S({ top: 0, left: 0 }), [L, X] = S(!1), [ae, H] = S({}), R = be(() => Yr(h), [h]), q = be(
+  } = a, [T, D] = S(""), [O, A] = S(null), [y, x] = S([]), [M, _] = S({ top: 0, left: 0 }), [L, X] = S(!1), [ae, W] = S({}), R = be(() => Yr(h), [h]), q = be(
     () => Vr(c),
     [c]
   ), $ = be(() => Jr(R, q), [R, q]), [C, N] = S(
@@ -3367,7 +3367,7 @@ const Br = ({
       return g == null ? void 0 : g("view", v);
     if (typeof u.handleClick == "function")
       return u.handleClick(v);
-  }, W = () => I || typeof I == "function", se = (u) => u.onClickDetails || typeof u.handleClick == "function";
+  }, H = () => I || typeof I == "function", se = (u) => u.onClickDetails || typeof u.handleClick == "function";
   return U(() => {
     const u = () => {
       O && A(null);
@@ -3506,9 +3506,9 @@ const Br = ({
           ) }) : Se.map((u, v) => /* @__PURE__ */ n(
             "tr",
             {
-              className: `table-row ${W() ? "cursor-pointer" : ""}`,
+              className: `table-row ${H() ? "cursor-pointer" : ""}`,
               onClick: () => {
-                W() && E(u);
+                H() && E(u);
               },
               children: c.map((j) => /* @__PURE__ */ n(
                 "td",
@@ -3651,7 +3651,7 @@ const Br = ({
         onClose: () => X(!1),
         config: P,
         onApply: (u) => {
-          H(u), w == null || w(u);
+          W(u), w == null || w(u);
         }
       }
     ),
@@ -3865,16 +3865,16 @@ const ta = ({ config: a }) => {
     current_page: 1,
     sort_by: "",
     sort_order: ""
-  }), [I, T] = S({}), [D, O] = S(!1), [A, y] = S(!1), [x, M] = S(!1), [_, L] = S(!1), [X, ae] = S(!1), [H, R] = S(
+  }), [I, T] = S({}), [D, O] = S(!1), [A, y] = S(!1), [x, M] = S(!1), [_, L] = S(!1), [X, ae] = S(!1), [W, R] = S(
     null
   ), q = (E, z) => {
     E === "edit" ? (R(z), M(!0)) : E === "view" ? (R(z), ae(!0)) : E === "delete" && (R(z), L(!0));
-  }, $ = async (E, z, W = "", se = "") => {
+  }, $ = async (E, z, H = "", se = "") => {
     h(!0);
     try {
       if (!E) return;
       const u = await E();
-      (W || u != null && u.message) && ge(W || u.message || "Success", {
+      (H || u != null && u.message) && ge(H || u.message || "Success", {
         variant: "success"
       }), z == null || z(u);
     } catch (u) {
@@ -3886,18 +3886,18 @@ const ta = ({ config: a }) => {
     }
   }, C = (E) => {
     const z = E.newObject;
-    o ? (m((W) => [z, ...W]), k((W) => ({
-      ...W,
+    o ? (m((H) => [z, ...H]), k((H) => ({
+      ...H,
       current_page: 1
-    }))) : (P((W) => ({
-      ...W,
+    }))) : (P((H) => ({
+      ...H,
       current_page: 1
     })), w.current_page === 1 && ne()), y(!1);
   }, N = (E) => {
-    const { newObject: z, targetObject: W } = E;
+    const { newObject: z, targetObject: H } = E;
     o ? m(
       (se) => se.map(
-        (u) => u.id === W.id ? { ...u, ...z } : u
+        (u) => u.id === H.id ? { ...u, ...z } : u
       )
     ) : ne(), M(!1);
   }, B = (E) => {
@@ -3906,7 +3906,7 @@ const ta = ({ config: a }) => {
       return;
     }
     o ? m(
-      (z) => z.filter((W) => W.id !== E.targetObject.id)
+      (z) => z.filter((H) => H.id !== E.targetObject.id)
     ) : s.length === 1 && w.current_page > 1 ? P((z) => ({
       ...z,
       current_page: z.current_page - 1
@@ -3920,7 +3920,7 @@ const ta = ({ config: a }) => {
   ), F = (E) => $(
     () => {
       var z;
-      return (z = i == null ? void 0 : i.editModal) != null && z.handleSubmit ? i.editModal.handleSubmit(E, H) : Promise.resolve({ newObject: null, targetObject: null });
+      return (z = i == null ? void 0 : i.editModal) != null && z.handleSubmit ? i.editModal.handleSubmit(E, W) : Promise.resolve({ newObject: null, targetObject: null });
     },
     N
   ), ne = async () => {
@@ -3940,9 +3940,9 @@ const ta = ({ config: a }) => {
     }
   }, me = (E) => {
     var z;
-    T((W) => ({ ...E })), (z = l == null ? void 0 : l.filter) != null && z.useServerSideFilters && O((W) => !W);
+    T(() => ({ ...E })), (z = l == null ? void 0 : l.filter) != null && z.useServerSideFilters && O((H) => !H);
   }, le = (E, z) => E.filter(
-    (W) => Object.entries(z).every(([se, u]) => W[se] === u)
+    (H) => Object.entries(z).every(([se, u]) => H[se] === u)
   ), J = be(() => {
     var E;
     return (E = l == null ? void 0 : l.filter) != null && E.useServerSideFilters ? s : le(s, I);
@@ -4029,7 +4029,7 @@ const ta = ({ config: a }) => {
           {
             config: (i == null ? void 0 : i.editModal) || {},
             onSubmit: F,
-            initialData: H,
+            initialData: W,
             type: "edit",
             loading: p,
             fetchRowDetails: t
@@ -4050,10 +4050,10 @@ const ta = ({ config: a }) => {
         loading: p,
         actionButtons: ((Le = i == null ? void 0 : i.deleteModal) == null ? void 0 : Le.actionButtons) || [],
         executeFunction: $,
-        selectedItem: H,
+        selectedItem: W,
         children: /* @__PURE__ */ n("div", { className: "flex items-center space-x-2 py-3", children: /* @__PURE__ */ f("div", { children: [
           /* @__PURE__ */ n("p", { className: "text-md text-gray-700 dark:text-white", children: ((Te = i == null ? void 0 : i.deleteModal) == null ? void 0 : Te.confirmText) || "Are you sure you want to delete this item?" }),
-          ((Re = i == null ? void 0 : i.deleteModal) == null ? void 0 : Re.referenceKey) && /* @__PURE__ */ n("p", { className: "text-md font-semibold text-gray-700 dark:text-white", children: H == null ? void 0 : H[(Fe = i == null ? void 0 : i.deleteModal) == null ? void 0 : Fe.referenceKey] })
+          ((Re = i == null ? void 0 : i.deleteModal) == null ? void 0 : Re.referenceKey) && /* @__PURE__ */ n("p", { className: "text-md font-semibold text-gray-700 dark:text-white", children: W == null ? void 0 : W[(Fe = i == null ? void 0 : i.deleteModal) == null ? void 0 : Fe.referenceKey] })
         ] }) })
       }
     ),
@@ -4068,10 +4068,10 @@ const ta = ({ config: a }) => {
         title: ((Oe = i == null ? void 0 : i.viewModal) == null ? void 0 : Oe.title) || "View Details",
         size: ((je = i == null ? void 0 : i.viewModal) == null ? void 0 : je.size) || "lg",
         footerConfig: i == null ? void 0 : i.viewModal.footer,
-        children: oe ? /* @__PURE__ */ n(oe, { data: H }) : /* @__PURE__ */ n(
+        children: oe ? /* @__PURE__ */ n(oe, { data: W }) : /* @__PURE__ */ n(
           ea,
           {
-            data: H,
+            data: W,
             fetchRowDetails: t,
             config: (i == null ? void 0 : i.viewModal) || {}
           }

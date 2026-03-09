@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, ReactNode } from "react";
+import React, { useEffect, useMemo, useState, type ReactNode } from "react";
 import Table from "./Table/Table";
 import Modal from "./Modal/Modal";
 import Form from "./Form/Form";
@@ -412,7 +412,7 @@ const CrudPage: React.FC<CrudPageProps> = ({ config }) => {
   };
 
   const handleFilterData = (data: Record<string, any>): void => {
-    setFilterData((prev) => ({ ...data }));
+    setFilterData(() => ({ ...data }));
     if (tableConfig?.filter?.useServerSideFilters) {
       setChangeFilterData((prev) => !prev);
     }

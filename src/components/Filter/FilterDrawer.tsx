@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import Button from "../Button/Button";
-import RenderFields from "../Form/components/RenderFields";
+import RenderFields, { type FieldConfig } from "../Form/components/RenderFields";
 
 interface FilterConfig {
   component: React.ComponentType<{
     filters: Record<string, any>;
     onFilterChange: (key: string, value: any) => void;
   }>;
-  fields: Array<Record<string, any>>;
+  fields: FieldConfig[];
 }
 
 interface FilterDrawerProps {

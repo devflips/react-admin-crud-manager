@@ -14,7 +14,9 @@
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
+    "declaration": true,
+    "declarationDir": "dist/types",
     "jsx": "react-jsx"
   },
   "include": ["src"]
