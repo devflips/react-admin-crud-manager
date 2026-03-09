@@ -5,8 +5,11 @@ A reusable React CRUD admin template with modular components for rapid admin das
 ## Features
 - Plug-and-play CRUD page component
 - Modular, customizable UI components (Table, Modal, Form, etc.)
-- Built with React 18+
+- Built with React 18+ and TypeScript
 - Tailwind CSS for styling
+- Server-side and client-side data handling
+- Sorting, filtering, searching, and pagination support
+- Rich form fields including text, select, image upload, rich text editor, and more
 
 
 ## Installation
@@ -60,7 +63,8 @@ Below is a complete reference of the public props accepted by this package (type
 | `title` | string | Yes | Title of the CRUD page |
 | `description` | string | No | Optional description text |
 | `buttonText` | string | No | Custom text for action buttons |
-| `fetchData` | function | Yes | Async function to fetch data. Signature: `async ({ search, rows_per_page, current_page, ...filters }) => Promise<{ data: Array, pagination?: { current_page: number, rows_per_page: number, total_pages: number, total_records: number } }>`. Component expects `resp.data` (array) and optional `resp.pagination` for server-side pagination. |
+| `fetchData` | function | Yes | Async function to fetch data. Signature: `async ({ search, rows_per_page, current_page, sort_by, sort_order, ...filters }) => Promise<{ data: Array, pagination?: { current_page: number, rows_per_page: number, total_pages: number, total_records: number } }>`. Component expects `resp.data` (array) and optional `resp.pagination` for server-side pagination. |
+| `fetchRowDetails` | function | No | Async function to fetch additional details for a row. Signature: `async (item) => Promise<any>`. Used for view modal or details. |
 | `isStaticData` | boolean | No | Default: `false`. If true, add/edit/delete apply client-side instead of re-fetching |
 | `tableConfig` | object | Yes | Table configuration — [see tableConfig](#tableconfig-configuration) |
 | `modalConfig` | object | No | Modal definitions — [see modalConfig](#modalconfig-definitions) |
@@ -80,6 +84,7 @@ Below is a complete reference of the public props accepted by this package (type
 | `search` | object | No | `{ enabled?: boolean, placeholder?: string, useServerSideSearch?: boolean, searchKeys?: string[] }` |
 | `filter` | object | No | `{ enabled?: boolean, useServerSideFilters?: boolean }` |
 | `pagination` | object | No | `{ enabled?: boolean, rows_per_page?: number, useServerSidePagination?: boolean, current_page?: number, total_pages?: number, total_records?: number }` |
+| `sort` | object | No | `{ enabled?: boolean, useServerSideSorting?: boolean, options?: Array<{ value: string, label: string, key: string, order: string, type?: string }>, fields?: string[], defaultValue?: string, autoGenerate?: boolean, clearLabel?: string, onChange?: (payload) => void }` |
 | `emptyMessage` | string | No | Message shown when table has no rows |
 | `onMenuAction` | function | No | Callback: `(actionType: string, item: object)` |
 | `setServerSidePaginationData` | function | No | Used to update server-side pagination/search state |
@@ -153,7 +158,7 @@ Used by `modalConfig.*.formFields` and `filterConfig.fields`. Form fields follow
 |-----|------|----------|-------------|
 | `key` | string | Yes | Property name for form data |
 | `label` | string | No | Human-readable label |
-| `type` | string | Yes | Field type: `text`, `number`, `email`, `password`, `select`, `checkbox`, `switch`, `phone`, `textarea`, `image`, `tinyEditor`, `audio` |
+| `type` | string | Yes | Field type: `text`, `number`, `email`, `password`, `select`, `checkbox`, `radio`, `switch`, `phone`, `textarea`, `image`, `video`, `audio`, `tinyEditor`, `group`, `cardGroup` |
 | `required` | boolean | No | Field is required for form submission |
 | `minLength` | number | No | Minimum character length |
 | `parentClass` | string | No | Tailwind grid class (e.g., `col-span-6`) |
@@ -215,6 +220,32 @@ Used by `modalConfig.*.formFields` and `filterConfig.fields`. Form fields follow
 | `fontFamily` | string | Default font family |
 | `height` | number | Editor height in pixels |
 | `imageUploadHandler` | function | `(blobInfo) => Promise<string>`. Returns image URL |
+
+##### Radio Field
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `options` | array | `{ value, label }[]` |
+
+##### Video Field
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `accept` | string | MIME type filter (default: `video/*`) |
+| `dragDrop` | boolean | Enable drag-and-drop upload |
+| `maxSize` | number | Maximum file size in bytes |
+
+##### Group Field
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `renderType` | string | Rendering type for group fields |
+
+##### CardGroup Field
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `renderType` | string | Rendering type for card group fields |
 
 #### Return Values / onSubmit Handler
 
@@ -296,8 +327,8 @@ const config = {
 Server-side listing (fetchData must return { data, pagination }):
 
 ```js
-const fetchData = async ({ search, rows_per_page, current_page }) => {
-  const resp = await api.get('/users', { params: { q: search, limit: rows_per_page, page: current_page } });
+const fetchData = async ({ search, rows_per_page, current_page, sort_by, sort_order }) => {
+  const resp = await api.get('/users', { params: { q: search, limit: rows_per_page, page: current_page, sort_by, sort_order } });
   return { data: resp.items, pagination: { current_page: resp.page, rows_per_page: resp.limit, total_pages: resp.totalPages, total_records: resp.total } };
 };
 ```
