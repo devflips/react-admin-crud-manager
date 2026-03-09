@@ -17,7 +17,7 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
     lib: {
-      entry: path.resolve(__dirname, 'src/index.jsx'),
+      entry: path.resolve(__dirname, 'src/index.tsx'),
       name: 'ReactAdminCrudManager',
       fileName: (format) => `index.${format}.js`,
       formats: ['es', 'cjs'],

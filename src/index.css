@@ -160,6 +160,77 @@ body {
   background-color: var(--scrollbar-thumb-hover);
 }
 
+h1 {
+  @apply text-2xl font-bold text-gray-900 dark:text-white;
+}
+
+p {
+  @apply text-gray-600 dark:text-gray-400;
+}
+
+.table-search-field {
+  @apply relative w-full sm:!min-w-[300px];
+}
+
+.table-search-field .search-icon {
+  @apply absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-300;
+}
+
+.table-search-field input {
+  @apply w-full h-[36px] pl-9 pr-4 py-3 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-300 dark:ring-blue-200 disabled:opacity-50;
+}
+
+.filter-button-wrapper {
+  @apply relative w-full sm:!w-auto;
+}
+
+.filter-button-wrapper .red-dot {
+  @apply absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full;
+}
+
+.table-container {
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden border border-gray-200 dark:border-gray-700;
+}
+.table-container table {
+  @apply min-w-full divide-y divide-gray-200 dark:divide-gray-700;
+}
+
+.table-container thead {
+  @apply bg-gray-50 dark:bg-gray-700/60;
+}
+.table-container tbody {
+  @apply bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700;
+}
+
+.table-container .table-head-data {
+  @apply px-6 py-4 text-left text-xs font-medium text-black dark:text-white uppercase tracking-wider min-w-max max-w-[180px] truncate;
+}
+
+.table-container .no-data-message {
+  @apply text-center py-10 text-gray-500 dark:text-gray-400;
+}
+
+.table-container .table-row {
+  @apply hover:bg-gray-50 dark:hover:bg-blue-800/10 transition;
+}
+
+.table-container .table-data {
+  @apply px-6 py-4 text-sm text-gray-900 dark:text-gray-100 min-w-max;
+}
+
+.table-container .pagination-wrapper {
+  @apply bg-gray-50 dark:bg-gray-700/60 px-6 py-3 flex flex-wrap items-center justify-between border-t border-gray-200 dark:border-gray-600 gap-3;
+}
+
+.table-container .pagination-wrapper span {
+  @apply text-sm text-gray-700 dark:text-gray-300;
+}
+.table-container .pagination-wrapper .rows-number-select {
+  @apply border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500;
+}
+.table-container .pagination-wrapper .arrow-icons {
+  @apply p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition text-gray-500 dark:text-gray-300 disabled:opacity-50;
+}
 /* Remove number input arrows */
 .no-spinner::-webkit-outer-spin-button,
 .no-spinner::-webkit-inner-spin-button {
