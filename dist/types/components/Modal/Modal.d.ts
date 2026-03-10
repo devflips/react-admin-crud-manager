@@ -1,13 +1,5 @@
 import React from "react";
-interface ActionButton {
-    type?: string;
-    variant?: string;
-    color?: string;
-    className?: string;
-    disabled?: boolean;
-    label?: string;
-    onClick?: (e?: React.MouseEvent, selectedItem?: any) => Promise<any> | any;
-}
+import { ActionButton } from "../../types/crudtypes";
 interface ModalProps {
     isOpen: boolean;
     onClose: (resp?: any) => void;

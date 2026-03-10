@@ -1,5 +1,2 @@
-interface CrudProps {
-    config: any;
-}
-export default function Crud({ config }: CrudProps): import("react/jsx-runtime").JSX.Element;
-export {};
+import { type CrudPageProps } from "./types/crudtypes";
+export default function Crud({ config }: CrudPageProps): import("react/jsx-runtime").JSX.Element;

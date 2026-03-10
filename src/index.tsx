@@ -1,10 +1,7 @@
 import { useEffect } from "react";
 import CrudPage from "./components/CrudPage";
 import OptionalSnackbarProvider from "./OptionalSnackbarProvider";
-
-interface CrudProps {
-  config: any;
-}
+import { type CrudPageProps } from "./types/crudtypes";
 
 const injectStyles = () => {
   if (typeof document === "undefined") return;
@@ -31,7 +28,7 @@ const injectStyles = () => {
   document.head.appendChild(style);
 };
 
-export default function Crud({ config }: CrudProps) {
+export default function Crud({ config }: CrudPageProps) {
   useEffect(() => {
     injectStyles();
   }, []);

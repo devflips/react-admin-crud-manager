@@ -1,16 +1,8 @@
 import React from "react";
 import { X } from "lucide-react";
 import Button from "../Button/Button";
+import { ActionButton } from "../../types/crudtypes";
 
-interface ActionButton {
-  type?: string;
-  variant?: string;
-  color?: string;
-  className?: string;
-  disabled?: boolean;
-  label?: string;
-  onClick?: (e?: React.MouseEvent, selectedItem?: any) => Promise<any> | any;
-}
 
 interface ModalProps {
   isOpen: boolean;
