@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import libraryStyles from "./index.css?inline";
 import CrudPage from "./components/CrudPage";
 import OptionalSnackbarProvider from "./OptionalSnackbarProvider";
 
@@ -8,22 +9,7 @@ const injectStyles = () => {
 
   const style = document.createElement("style");
   style.id = "react-admin-crud-manager-styles";
-  style.textContent = `
-    .no-spinner::-webkit-outer-spin-button,
-    .no-spinner::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    .no-spinner {
-      -moz-appearance: textfield;
-    }
-
-    .tox.tox-tinymce .tox-edit-area::before {
-      border: 0 !important;
-      box-shadow: none !important;
-    }
-  `;
+  style.textContent = libraryStyles;
   document.head.appendChild(style);
 };
 

@@ -1,12 +1,12 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
 
 export default defineConfig({
-  plugins: [react({ jsxRuntime: 'automatic' })],
+  plugins: [react({ jsxRuntime: "automatic" })],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      "@": path.resolve(__dirname, "./src"),
     },
   },
   server: {
@@ -14,36 +14,36 @@ export default defineConfig({
     open: true,
   },
   build: {
-    outDir: 'dist',
+    outDir: "dist",
     sourcemap: true,
     lib: {
-      entry: path.resolve(__dirname, 'src/index.jsx'),
-      name: 'ReactAdminCrudManager',
+      entry: path.resolve(__dirname, "src/index.jsx"),
+      name: "ReactAdminCrudManager",
       fileName: (format) => `index.${format}.js`,
-      formats: ['es', 'cjs'],
+      formats: ["es", "cjs"],
     },
     rollupOptions: {
       external: [
-        'react',
-        'react-dom',
-        'react/jsx-runtime',
-        'prop-types',
-        '@iconify/react',
-        '@tinymce/tinymce-react',
-        'axios',
-        'clsx',
-        'date-fns',
-        'js-cookie',
-        'lucide-react',
-        'notistack',
-        'react-router-dom',
-        'tinymce',
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "prop-types",
+        "@iconify/react",
+        "@tinymce/tinymce-react",
+        "axios",
+        "clsx",
+        "date-fns",
+        "js-cookie",
+        "lucide-react",
+        "notistack",
+        "react-router-dom",
+        "tinymce",
       ],
       output: {
         globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
-          'react/jsx-runtime': 'React',
+          react: "React",
+          "react-dom": "ReactDOM",
+          "react/jsx-runtime": "React",
         },
       },
     },
