@@ -4,14 +4,13 @@
   "description": "A reusable React CRUD admin template with modular components.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
-  "types": "dist/index.d.ts",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.es.js",
       "require": "./dist/index.cjs.js",
       "types": "./dist/types/index.d.ts"
-    },
-    "./dist/tailwind.css": "./dist/tailwind.css"
+    }
   },
   "files": [
     "dist"
@@ -38,9 +37,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && tsc --emitDeclarationOnly",
     "build:types": "tsc --emitDeclarationOnly",
-    "build:all": "npm run build && npm run build:types",
+    "build:all": "npm run build",
     "preview": "vite preview"
   },
   "dependencies": {
