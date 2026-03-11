@@ -14,8 +14,10 @@
     "./dist/tailwind.css": "./dist/tailwind.css"
   },
   "files": [
-    "dist",
-    "dist/tailwind.css"
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css"
   ],
   "keywords": [
     "react",
@@ -36,7 +38,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node build-css.js",
+    "build": "vite build",
     "build:types": "tsc --emitDeclarationOnly",
     "build:all": "npm run build && npm run build:types",
     "preview": "vite preview"
@@ -59,6 +61,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "10.4.15",
+    "postcss-cli": "^11.0.1",
     "tailwindcss": "3.3.3",
     "typescript": "^5.9.3",
     "vite": "^5.0.8"
