@@ -15,6 +15,15 @@ interface ModalProps {
     loading?: boolean;
     executeFunction?: (...args: any[]) => void;
     selectedItem?: any;
+    classNames?: {
+        overlay?: string;
+        container?: string;
+        header?: string;
+        title?: string;
+        body?: string;
+        footer?: string;
+        closeButton?: string;
+    };
 }
-declare const Modal: ({ isOpen, onClose, icon, title, children, size, actionButtons, onFormSubmit, loadingBtn, executeFunction, selectedItem, }: ModalProps) => import("react/jsx-runtime").JSX.Element | null;
+declare const Modal: ({ isOpen, onClose, icon, title, children, size, actionButtons, onFormSubmit, loadingBtn, executeFunction, selectedItem, footerConfig, classNames, }: ModalProps) => import("react/jsx-runtime").JSX.Element | null;
 export default Modal;

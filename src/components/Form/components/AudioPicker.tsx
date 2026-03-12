@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import InputLabel from "./InputLabel";
 import Button from "../../Button/Button";
 import { enqueueSnackbar } from "notistack";
+import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
 const ButtonComponent = Button as React.ComponentType<any>;
 
@@ -19,6 +20,7 @@ interface AudioPickerProps {
   name: string;
   parentClass?: string;
   maxSize?: number;
+  errorMessage?: string;
 }
 
 const AudioPicker = ({
@@ -31,6 +33,7 @@ const AudioPicker = ({
   dragDrop = false,
   name = "",
   parentClass = "",
+  errorMessage = "",
   maxSize = 0,
 }: AudioPickerProps) => {
   const [audio, setAudio] = useState<{ file?: File; preview?: string } | null>(
@@ -129,18 +132,29 @@ const AudioPicker = ({
   };
 
   return (
-    <div key={name} className={parentClass || "col-span-12"}>
+    <div
+      key={name}
+      className={joinClasses(
+        crudClasses.mediaPicker.audio,
+        crudClasses.field.wrapper,
+        parentClass || "col-span-12",
+      )}
+    >
       <InputLabel label={label} required={required} />
 
       <div
-        className={`relative rounded-lg p-2 transition-all ${
+        className={joinClasses(
+          crudClasses.mediaPicker.dropzone,
+          "relative rounded-lg p-2 transition-all",
           isDragging
             ? "border-2 border-dashed border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-            : "border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
-        }`}
+            : "border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800",
+          errorMessage ? "border-red-500" : "",
+        )}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        id={`field-${name}`}
       >
         <input
           ref={inputRef}
@@ -187,20 +201,21 @@ const AudioPicker = ({
               <div className="rounded-full bg-gray-100 dark:bg-gray-700 h-20 w-20 flex items-center justify-center">
                 <Icon icon="mdi:music" className="text-gray-400 w-10 h-10" />
               </div>
+              <div className="flex flex-col items-center space-y-1">
+                <ButtonComponent
+                  type="button"
+                  onClick={handleButtonClick}
+                  variant="outlined"
+                >
+                  <span>Choose Audio File</span>
+                </ButtonComponent>
 
-              <ButtonComponent
-                type="button"
-                onClick={handleButtonClick}
-                variant="outlined"
-              >
-                <span>Choose Audio File</span>
-              </ButtonComponent>
-
-              {dragDrop && (
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  or drag and drop your audio file here
-                </p>
-              )}
+                {dragDrop && (
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    or drag and drop your audio file here
+                  </p>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -213,6 +228,16 @@ const AudioPicker = ({
           </div>
         )}
       </div>
+      {errorMessage && (
+        <span
+          className={joinClasses(
+            crudClasses.field.error,
+            "text-red-500 text-xs mt-1",
+          )}
+        >
+          {errorMessage}
+        </span>
+      )}
     </div>
   );
 };

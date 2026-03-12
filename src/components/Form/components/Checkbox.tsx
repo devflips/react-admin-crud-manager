@@ -1,5 +1,6 @@
 import React from "react";
 import InputLabel from "./InputLabel";
+import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
 interface CheckboxOption {
   label: string;
@@ -18,6 +19,7 @@ interface CheckboxProps {
   parentClass?: string;
   className?: string;
   multiSelect?: boolean;
+  errorMessage?: string;
 }
 
 const Checkbox = ({
@@ -30,6 +32,7 @@ const Checkbox = ({
   required = false,
   parentClass = "col-span-12",
   className = "",
+  errorMessage = "",
   multiSelect = false,
 }: CheckboxProps) => {
   const multiple = Array.isArray(options) && options.length > 0;
@@ -70,7 +73,7 @@ const Checkbox = ({
   if (multiple) {
     return (
       <>
-        <div className={`${parentClass}`}>
+        <div className={joinClasses(crudClasses.field.wrapper, parentClass)}>
           <InputLabel label={label} required={required} />
           <div className="flex flex-col space-y-2">
             {options.map((opt, idx) => (
@@ -78,6 +81,7 @@ const Checkbox = ({
                 <input
                   type="checkbox"
                   name={name}
+                  id={`field-${name}`}
                   value={opt.value}
                   checked={isChecked(opt.value)}
                   disabled={disabled || Boolean(opt.disabled)}
@@ -86,7 +90,11 @@ const Checkbox = ({
                     handleMultipleChange(opt.value, e.target.checked)
                   }
                   key={name}
-                  className={`h-4 w-4 cursor-pointer text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 ${className}`}
+                  className={joinClasses(
+                    crudClasses.field.input,
+                    "h-4 w-4 cursor-pointer text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400",
+                    className,
+                  )}
                 />
                 {opt.label && (
                   <label
@@ -99,13 +107,29 @@ const Checkbox = ({
               </div>
             ))}
           </div>
+          {errorMessage && (
+            <span
+              className={joinClasses(
+                crudClasses.field.error,
+                "text-red-500 text-xs mt-1",
+              )}
+            >
+              {errorMessage}
+            </span>
+          )}
         </div>
       </>
     );
   }
 
   return (
-    <div className={`flex items-center ${parentClass}`}>
+    <div
+      className={joinClasses(
+        crudClasses.field.wrapper,
+        "flex items-center",
+        parentClass,
+      )}
+    >
       <input
         type="checkbox"
         name={name}
@@ -113,7 +137,11 @@ const Checkbox = ({
         disabled={disabled}
         required={required}
         onChange={handleSingleChange}
-        className={`h-4 w-4 text-blue-600 cursor-pointer border-gray-300 rounded focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 ${className}`}
+        className={joinClasses(
+          crudClasses.field.input,
+          "h-4 w-4 text-blue-600 cursor-pointer border-gray-300 rounded focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400",
+          className,
+        )}
       />
       {label && (
         <label

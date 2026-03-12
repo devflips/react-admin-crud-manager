@@ -14,6 +14,7 @@ interface ImagePickerProps {
     cropImage?: boolean;
     name: string;
     parentClass?: string;
+    errorMessage?: string;
 }
-declare const ImagePicker: ({ label, value, onChange, required, accept, aspect, id, dragDrop, cropImage, name, parentClass, }: ImagePickerProps) => import("react/jsx-runtime").JSX.Element;
+declare const ImagePicker: ({ label, value, onChange, required, accept, aspect, id, dragDrop, cropImage, name, parentClass, errorMessage, }: ImagePickerProps) => import("react/jsx-runtime").JSX.Element;
 export default ImagePicker;

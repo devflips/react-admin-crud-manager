@@ -13,6 +13,7 @@ interface VideoPickerProps {
     name: string;
     parentClass?: string;
     maxSize?: number;
+    errorMessage?: string;
 }
-declare const VideoPicker: ({ label, value, onChange, required, accept, id, dragDrop, name, parentClass, maxSize, }: VideoPickerProps) => import("react/jsx-runtime").JSX.Element;
+declare const VideoPicker: ({ label, value, onChange, required, accept, id, dragDrop, name, parentClass, maxSize, errorMessage, }: VideoPickerProps) => import("react/jsx-runtime").JSX.Element;
 export default VideoPicker;

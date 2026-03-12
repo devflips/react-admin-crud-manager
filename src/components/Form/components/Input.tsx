@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import InputLabel from "./InputLabel";
+import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -16,6 +17,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   onChange: (value: any) => void;
   mask?: string;
   maskApplyOnValue?: boolean;
+  errorMessage?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -23,6 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     {
       label,
       value,
+      name,
       required,
       parentClass = "",
       className = "",
@@ -33,6 +36,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       field = {},
       onChange,
       mask = "",
+      errorMessage = "",
       maskApplyOnValue = true,
       ...props
     },
@@ -63,12 +67,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       onKeyDown?.(e);
     };
 
-    const combinedClassName = `
-      h-10 placeholder-gray-400 dark:placeholder-gray-400
-      ${type === "password" ? "pr-10" : ""}
-      ${type === "number" ? "no-spinner" : ""}
-      ${className}
-    `.trim();
+    const combinedClassName = joinClasses(
+      crudClasses.field.input,
+      "h-10 placeholder-gray-400 dark:placeholder-gray-400",
+      type === "password" ? "pr-10" : "",
+      type === "number" ? "no-spinner" : "",
+      className,
+      errorMessage ? "border-red-500" : "",
+    );
 
     function applyMask(rawValue: any, maskValue: string) {
       if (!rawValue) return rawValue;
@@ -134,7 +140,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <>
-        <div key={props.name} className={parentClass || "col-span-12"}>
+        <div
+          key={name}
+          className={joinClasses(
+            crudClasses.field.wrapper,
+            parentClass || "col-span-12",
+          )}
+        >
           <InputLabel
             label={label}
             required={required}
@@ -144,6 +156,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <input
               type={type === "password" && showPassword ? "text" : type}
               ref={ref}
+              id={`field-${name}`}
               required={required}
               onKeyDown={handleKeyDown}
               className={combinedClassName}
@@ -155,6 +168,17 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               }}
               {...props}
             />
+
+            {errorMessage && (
+              <span
+                className={joinClasses(
+                  crudClasses.field.error,
+                  "text-red-500 text-xs mt-1",
+                )}
+              >
+                {errorMessage}
+              </span>
+            )}
 
             {type === "password" && (
               <button

@@ -71,6 +71,7 @@ export interface FormField {
     maskApplyOnValue?: boolean;
     maxSize?: number;
     [key: string]: any;
+    customValidation?: (value: any) => boolean | string;
 }
 export interface ViewField {
     key?: string;
@@ -86,6 +87,25 @@ export interface ViewField {
     defaultColor?: string;
     className?: string;
     format?: string;
+}
+export interface ViewStyleConfig {
+    containerClass?: string;
+    rowClass?: string;
+    groupClass?: string;
+    cardGroupClass?: string;
+    labelClass?: string;
+    valueClass?: string;
+    iconClass?: string;
+    mediaGridClass?: string;
+}
+export interface ModalClassNames {
+    overlay?: string;
+    container?: string;
+    header?: string;
+    title?: string;
+    body?: string;
+    footer?: string;
+    closeButton?: string;
 }
 export interface SearchConfig {
     enabled?: boolean;
@@ -129,12 +149,37 @@ export interface SortConfig {
     clearLabel?: string;
     onChange?: (payload: SortChangePayload) => void;
 }
+export interface exportCSVConfig {
+    enabled?: boolean;
+    fileName?: string;
+    fields?: Array<{
+        label: string;
+        key: string;
+    }>;
+}
+export interface SortConfig {
+    enabled?: boolean;
+    useServerSideSorting?: boolean;
+    options?: Array<{
+        value: string;
+        label: string;
+        key: string;
+        order: string;
+        type?: string;
+    }>;
+    fields?: string[];
+    defaultValue?: string;
+    autoGenerate?: boolean;
+    clearLabel?: string;
+    onChange?: (payload: SortChangePayload) => void;
+}
 export interface TableConfig {
     table_head: TableHead[];
     search?: SearchConfig;
     pagination?: PaginationConfig;
     filter?: FilterConfig;
     sort?: SortConfig;
+    exportCSV?: exportCSVConfig;
 }
 export interface ModalConfig {
     addModal?: {
@@ -168,6 +213,9 @@ export interface ModalConfig {
         confirmText?: string;
         referenceKey?: string;
         actionButtons?: ActionButton[];
+        action: (item: any) => Promise<{
+            targetObject: any;
+        } | null>;
         icon?: ReactNode;
     };
     viewModal?: {
@@ -177,6 +225,9 @@ export interface ModalConfig {
             data: any;
         }>;
         fields?: ViewField[];
+        variant?: "default" | "card" | "split";
+        styles?: ViewStyleConfig;
+        modalClassNames?: ModalClassNames;
         footer?: {
             cancelButton?: boolean;
             cancelText?: string;

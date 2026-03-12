@@ -1,11 +1,11 @@
 import React from "react";
-import { type FieldConfig } from "../Form/components/RenderFields";
+import { FormField } from "../../types/crudtypes";
 interface FilterConfig {
     component: React.ComponentType<{
         filters: Record<string, any>;
         onFilterChange: (key: string, value: any) => void;
     }>;
-    fields: FieldConfig[];
+    fields: Array<FormField>;
 }
 interface FilterDrawerProps {
     isOpen: boolean;

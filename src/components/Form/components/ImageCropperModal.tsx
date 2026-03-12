@@ -3,6 +3,7 @@ import { Icon } from "@iconify/react";
 import Cropper from "react-easy-crop";
 import type { Area } from "react-easy-crop";
 import Button from "../../Button/Button";
+import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
 const ButtonComponent = Button as React.ComponentType<any>;
 
@@ -159,7 +160,12 @@ const ImageCropperModal = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div
+      className={joinClasses(
+        crudClasses.mediaPicker.cropModal,
+        "fixed inset-0 z-50 flex items-center justify-center p-4",
+      )}
+    >
       <div
         className="fixed inset-0 bg-gray-500 opacity-75"
         onClick={onClose}

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { X } from "lucide-react";
+import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
 interface ImagePreviewProps {
   src: string;
@@ -35,8 +36,10 @@ const ImagePreview = ({
   return (
     <>
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 dark:bg-black/80 
-                   backdrop-blur-sm animate-in fade-in duration-200"
+        className={joinClasses(
+          crudClasses.imagePreview.root,
+          "fixed inset-0 z-50 flex items-center justify-center bg-black/70 dark:bg-black/80 backdrop-blur-sm animate-in fade-in duration-200",
+        )}
         onClick={closePreview}
       >
         <button
@@ -48,13 +51,19 @@ const ImagePreview = ({
         </button>
 
         <div
-          className="max-w-5xl w-full px-4 transform transition-all duration-200 scale-95 animate-in zoom-in-95"
+          className={joinClasses(
+            crudClasses.imagePreview.container,
+            "max-w-5xl w-full px-4 transform transition-all duration-200 scale-95 animate-in zoom-in-95",
+          )}
           onClick={(e) => e.stopPropagation()}
         >
           <img
             src={src}
             alt={alt}
-            className="w-full max-h-[90vh] object-contain rounded-xl"
+            className={joinClasses(
+              crudClasses.imagePreview.image,
+              "w-full max-h-[90vh] object-contain rounded-xl",
+            )}
           />
         </div>
       </div>

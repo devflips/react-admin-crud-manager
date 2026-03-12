@@ -1,3 +1,5 @@
+import { crudClasses, joinClasses } from "../../../lib/crudClasses";
+
 interface TableSkeletonProps {
   rows: number;
   columns: number;
@@ -10,7 +12,13 @@ const TableSkeleton = ({ rows = 5, columns = 5 }: TableSkeletonProps) => {
         <div className="h-8 w-80 bg-gray-300 dark:bg-gray-700 rounded animate-pulse" />
       </div>
       <div className="overflow-hidden rounded-md border border-gray-200 dark:border-gray-800">
-        <table className="w-full border-collapse">
+        <table
+          className={joinClasses(
+            crudClasses.tableSkeleton.root,
+            crudClasses.tableSkeleton.table,
+            "w-full border-collapse",
+          )}
+        >
           <thead>
             <tr className="bg-gray-50 dark:bg-gray-900">
               {Array.from({ length: columns }).map((_, i) => (

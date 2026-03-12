@@ -10,6 +10,7 @@ interface PhoneInputProps {
     search?: boolean;
     countriesList?: boolean;
     defaultCountry?: string;
+    errorMessage?: string;
 }
-export default function PhoneInput({ label, value, name, parentClass, onChange, disabled, required, placeholder, search, countriesList, defaultCountry, }: PhoneInputProps): import("react/jsx-runtime").JSX.Element;
+export default function PhoneInput({ label, value, name, parentClass, onChange, disabled, required, placeholder, search, countriesList, defaultCountry, errorMessage, }: PhoneInputProps): import("react/jsx-runtime").JSX.Element;
 export {};

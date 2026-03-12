@@ -1,5 +1,6 @@
 import { Info } from "lucide-react";
 import React from "react";
+import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
 interface InputLabelProps {
   label: React.ReactNode;
@@ -14,7 +15,12 @@ export default function InputLabel({
 }: InputLabelProps) {
   return (
     <>
-      <label className="flex text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+      <label
+        className={joinClasses(
+          crudClasses.field.label,
+          "flex text-sm font-medium text-gray-700 dark:text-gray-300 mb-1",
+        )}
+      >
         {label}
         {required && <span className="ml-1">*</span>}
 

@@ -1,4 +1,4 @@
-export interface FieldConfig {
+interface FieldConfig {
     key: string;
     label?: string;
     type?: string;
@@ -35,8 +35,9 @@ export interface FieldConfig {
 }
 interface RenderFieldsProps {
     field: FieldConfig;
+    errorMessage?: string;
     formData: Record<string, any>;
     handleChange: (key: string, value: any) => void;
 }
-declare const RenderFields: ({ field, formData, handleChange }: RenderFieldsProps) => import("react/jsx-runtime").JSX.Element | null;
+declare const RenderFields: ({ field, formData, handleChange, errorMessage, }: RenderFieldsProps) => import("react/jsx-runtime").JSX.Element | null;
 export default RenderFields;

@@ -72,39 +72,41 @@ Below is a complete reference of the public props accepted by this package (type
 
 #### Table Configuration Keys
 
-| Key                           | Type                    | Required | Description                                                                                                                                                                                                                                                                |
-| ----------------------------- | ----------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `table_head`                  | array of column objects | Yes      | Column definitions — [see Table column object](#table-column-object-table_head)                                                                                                                                                                                            |
-| `data`                        | array                   | No       | Rows shown in the table                                                                                                                                                                                                                                                    |
-| `loading`                     | boolean                 | No       | Show skeleton loader when true                                                                                                                                                                                                                                             |
-| `search`                      | object                  | No       | `{ enabled?: boolean, placeholder?: string, useServerSideSearch?: boolean, searchKeys?: string[] }`                                                                                                                                                                        |
-| `filter`                      | object                  | No       | `{ enabled?: boolean, useServerSideFilters?: boolean }`                                                                                                                                                                                                                    |
-| `pagination`                  | object                  | No       | `{ enabled?: boolean, rows_per_page?: number, useServerSidePagination?: boolean, current_page?: number, total_pages?: number, total_records?: number }`                                                                                                                    |
-| `sort`                        | object                  | No       | `{ enabled?: boolean, useServerSideSorting?: boolean, options?: Array<{ value: string, label: string, key: string, order: string, type?: string }>, fields?: string[], defaultValue?: string, autoGenerate?: boolean, clearLabel?: string, onChange?: (payload) => void }` |
-| `emptyMessage`                | string                  | No       | Message shown when table has no rows                                                                                                                                                                                                                                       |
-| `onMenuAction`                | function                | No       | Callback: `(actionType: string, item: object)`                                                                                                                                                                                                                             |
-| `setServerSidePaginationData` | function                | No       | Used to update server-side pagination/search state                                                                                                                                                                                                                         |
-| `onFilterApply`               | function                | No       | Callback: `(filters: object)`                                                                                                                                                                                                                                              |
-| `filterConfig`                | object                  | No       | Fields array rendered in the FilterDrawer                                                                                                                                                                                                                                  |
+| Key                           | Type                    | Description                                                                                                                                                                                                       | Accepted Values / Example                                                                                                                                   |
+| ----------------------------- | ----------------------- | ------------------------------- | ------- |
+| `table_head`                  | array of column objects | Column definitions | Array of table column objects (see [Table column object](#table-column-object-table_head))                                                                           |
+| `data`                        | array                   | Rows displayed in the table | Array of objects (e.g., `[{ id: 1, name: "John" }, ...]`)                                                                                                                                                                                    |
+| `loading`                     | boolean                 | Show skeleton loader when true | `true`, `false`; default: `false`                                                                                                                                                                                                          |
+| `search`                      | object                  | Search functionality config | `{ enabled: true, placeholder: "Search...", useServerSideSearch?: false, searchKeys?: ["name", "email"] }`                                                                                                                                                                        |
+| `filter`                      | object                  | Filter drawer config | `{ enabled: true, useServerSideFilters?: false }`                                                                                                                                                                                                                    |
+| `pagination` | object | Pagination controls | `{ enabled: true, rows_per_page: 10, useServerSidePagination?: false, current_page?: 1, total_pages?: 5, total_records?: 50 }`                                                                                                    |
+| `sort`                        | object                  | Sorting configuration | `{ enabled: true, useServerSideSorting?: false, autoGenerate: true, onChange?: (payload) => void, options?: [...], clearLabel?: "Clear Sort" }`                                                                                                                                                                                                     |
+| `exportCSV`                   | object                  | Export data as CSV | `{ enabled: true, fileName: "users.csv", fields: [{ label: "Name", key: "name" }, ...] }`                                                                                                                                                                            |
+| `emptyMessage`                | string                  | Message when no rows exist | `"No data available"`, `"No records found"`, etc.                                                                                                                                                                                                          |
+| `onMenuAction`                | function                | Callback for menu actions (edit/view/delete) | `(actionType: string, item: object) => void`; actionType: `"edit"`, `"view"`, `"delete"`                                                                                                                                                           |
+| `setServerSidePaginationData` | function                | Update pagination/search state | `(data: { search, rows_per_page, current_page, sort_by, sort_order, ...filters }) => void`                                                                                                                                                                                                         |
+| `onFilterApply`               | function                | Callback when filter applied | `(filters: object) => void`                                                                                                                                                                                                              |
+| `filterConfig`                | object                  | Filter drawer form fields | `{ fields: [{ key: "status", type: "select", options: [...] }, ...] }`; uses [Form Field Schema](#form-field-schema)                                                                                                                                                                                  |
+| `rowClick`                    | function                | Callback on table row click | `(row: object, rowIndex: number) => void` |
 
 #### Table Column Object (`table_head[]`)
 
-| Key              | Type     | Required | Description                                                                                |
-| ---------------- | -------- | -------- | ------------------------------------------------------------------------------------------ | ------ | ----------------------------------------- |
-| `key`            | string   | Yes      | Property name in row objects                                                               |
-| `title`          | string   | No       | Column header text                                                                         |
-| `type`           | string   | No       | Column type: `plain` (default), `index`, `group`, `chip`, `date`, `avatar`, `menu_actions` |
-| `imageKey`       | string   | No       | Used with `group`/`avatar` types                                                           |
-| `titleKey`       | string   | No       | Used with `group`/`avatar` types                                                           |
-| `subtitleKey`    | string   | No       | Used with `group`/`avatar` types                                                           |
-| `onClickDetails` | boolean  | No       | If true, clicking cell triggers view action                                                |
-| `variant`        | string   | No       | For chips: `contained`, `outline`, `soft`                                                  |
-| `chipOptions`    | array    | No       | Array of `{ value: string                                                                  | number | boolean, label: string, color?: string }` |
-| `defaultColor`   | string   | No       | Default chip color key (e.g., `green`)                                                     |
-| `className`      | string   | No       | Custom CSS class for cell                                                                  |
-| `format`         | string   | No       | Date format (e.g., `DD MMM YYYY`)                                                          |
-| `menuList`       | array    | No       | Menu action objects: `{ title, type, variant?, icon? }`                                    |
-| `render`         | function | No       | Custom renderer: `(row, rowIndex) => ReactNode`. Overrides built-in renderers              |
+| Key              | Type     | Description                                                                                | Accepted Values / Example |
+| ---------------- | -------- | ---------------------------------------------------------------- | ------------------------------------- |
+| `key`            | string   | Property name in row objects                                                               | `"id"`, `"name"`, `"email"` (must exist in data objects)|
+| `title`          | string   | Column header text                                                                         | `"User ID"`, `"Full Name"`, `"Email Address"` |
+| `type`           | string   | Column renderer type                                                                       | `"plain"` (default), `"index"` (row number), `"group"` (avatar+text), `"chip"` (badge), `"date"`, `"avatar"`, `"menu_actions"` |
+| `imageKey`       | string   | Image property for avatar/group types                                                      | `"profileImage"`, `"avatarUrl"` (path to image in data object)  |
+| `titleKey`       | string   | Title property for group/avatar types                                                      | `"name"`, `"fullName"` (property key in data object)  |
+| `subtitleKey`    | string   | Subtitle property for group/avatar types                                                   | `"email"`, `"department"` (property key in data object)  |
+| `onClickDetails` | boolean  | Clicking cell opens view details modal                                                     | `true`, `false` (default: `false`)  |
+| `variant`        | string   | Chip styling variant                                                                       | `"contained"`, `"outline"`, `"soft"` (used with `type: "chip"`)  |
+| `chipOptions`    | array    | Map values to chip labels and colors; array of `{ value: string\|number\|boolean, label: string, color?: string }` | `[{ value: "active", label: "Active", color: "green" }, { value: "inactive", label: "Inactive", color: "red" }]` |
+| `defaultColor`   | string   | Default color for chips (if no match in chipOptions)                                       | `"green"`, `"red"`, `"blue"`, `"yellow"`, `"purple"`, `"gray"`, etc. |
+| `className`      | string   | Custom CSS class for cell content                                                          | Tailwind classes: `"font-bold text-sm text-gray-600"`  |
+| `format`         | string   | Date format pattern                                                                        | `"DD MMM YYYY"`, `"YYYY-MM-DD"`, `"DD/MM/YYYY HH:mm"` (uses date-fns patterns)  |
+| `render`         | function | Custom cell renderer (overrides built-in logic)                                            | `(row: object, rowIndex: number) => ReactNode`; e.g., `(row) => <span>{row.name.toUpperCase()}</span>` |
+| `menuList`       | array    | Action menu items; array of `{ title: string, type: string, variant?: string, icon?: ReactNode }` | `[{ title: "Edit", type: "edit", icon: <EditIcon /> }, { title: "Delete", type: "delete", icon: <TrashIcon /> }]` |
 
 ---
 
@@ -112,252 +114,1336 @@ Below is a complete reference of the public props accepted by this package (type
 
 #### Add & Edit Modal (`addModal`, `editModal`)
 
-| Property        | Type     | Required | Description                                                                                                                                            |
-| --------------- | -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `title`         | string   | Yes      | Modal title                                                                                                                                            |
-| `size`          | string   | No       | Modal size: `sm`, `md` (default), `lg`, `xl`, `full`                                                                                                   |
-| `formClass`     | string   | No       | Custom CSS class for form                                                                                                                              |
-| `formFields`    | array    | Yes      | Form field objects — [see Form Field Schema](#form-field-schema)                                                                                       |
-| `handleSubmit`  | function | Yes      | Async callback: `(formData) => Promise<{ newObject, targetObject? }>`. For add: return `{ newObject }`. For edit: return `{ newObject, targetObject }` |
-| `actionButtons` | array    | No       | Action button objects: `[{ type, label, color, variant, onClick, disabled, className }]`                                                               |
+| Property        | Type     | Required | Description                                                                                                                                            | Accepted Values / Example |
+| --------------- | -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------ |
+| `title`         | string   | Yes      | Modal title                                                                                                                                            | `"Add New User"`, `"Edit User Profile"` |
+| `icon`          | ReactNode | No      | Icon element displayed in modal header                                                                                                                 | `<PlusIcon />`, `<EditIcon />` |
+| `size`          | string   | No       | Modal width                                                                                                                                            | `"sm"`, `"md"` (default), `"lg"`, `"xl"`, `"full"` |
+| `formClass`     | string   | No       | Custom CSS class for form wrapper                                                                                                                      | Tailwind classes: `"grid grid-cols-12 gap-4"` |
+| `formFields`    | array    | Yes      | Form field objects                                                                                                                                     | Array of form field objects (see [Form Field Schema](#form-field-schema)) |
+| `handleSubmit`  | function | Yes      | Async callback on form submission                                                                                                                     | `async (formData) => Promise<{ newObject, message?: string }>` (add), `async (formData, item) => Promise<{ newObject, targetObject, message?: string }>` (edit) |
+| `actionButtons` | array    | No       | Custom action buttons                                                                                                                                 | `[{ type: "submit", label: "Save", color: "primary", variant: "contained", onClick?: (e, item) => void, disabled?: boolean }]` |
 
 #### Delete Modal (`deleteModal`)
 
-| Property        | Type     | Required | Description                                                                                  |
-| --------------- | -------- | -------- | -------------------------------------------------------------------------------------------- |
-| `title`         | string   | No       | Modal title                                                                                  |
-| `size`          | string   | No       | Modal size: `sm`, `md` (default), `lg`, `xl`, `full`                                         |
-| `confirmText`   | string   | No       | Confirmation message text                                                                    |
-| `referenceKey`  | string   | No       | Property key of selectedItem to display as reference                                         |
-| `action`        | function | Yes      | Async callback: `(selectedItem) => Promise<{ targetObject }>`. Should return the deleted row |
-| `actionButtons` | array    | No       | Action button objects: `[{ type, label, color, variant, onClick, disabled, className }]`     |
+| Property        | Type     | Required | Description                                                                                  | Accepted Values / Example |
+| --------------- | -------- | -------- | -------------------------------- | ---------------------- |
+| `title`         | string   | No       | Modal title                                                                                  | `"Delete User"`, `"Confirm Delete"` |
+| `icon`          | ReactNode | No      | Icon element displayed in modal header                                                       | `<TrashIcon />`, `<WarningIcon />` |
+| `size`          | string   | No       | Modal width                                                                                  | `"sm"` (default), `"md"`, `"lg"`, `"xl"`, `"full"` |
+| `confirmText`   | string   | No       | Confirmation message text                                                                   | `"Are you sure you want to delete this user?"`, `"This action cannot be undone."` |
+| `referenceKey`  | string   | No       | Property key to display as confirmation reference                                           | `"name"`, `"email"` (shows the value from selected item) |
+| `action`        | function | Yes      | Async callback to delete item                                                                | `async (selectedItem) => Promise<{ targetObject }>` (returns the deleted row) |
+| `actionButtons` | array    | No       | Custom action buttons                                                                       | `[{ type: "submit", label: "Delete", color: "error", variant: "contained" }]` |
 
 #### View Modal (`viewModal`)
 
-| Property    | Type            | Required | Description                                                    |
-| ----------- | --------------- | -------- | -------------------------------------------------------------- |
-| `title`     | string          | Yes      | Modal title                                                    |
-| `size`      | string          | No       | Modal size: `sm`, `md` (default), `lg`, `xl`, `full`           |
-| `component` | React component | No       | Custom component to render. Receives `data` prop with row data |
-| `fields`    | array           | No       | View field objects for displaying data                         |
-| `footer`    | object          | No       | `{ cancelButton?: boolean, cancelText?: string }`              |
+| Property    | Type            | Required | Description                                                    | Accepted Values / Example |
+| ----------- | --------------- | -------- | -------------------- | -------------------- |
+| `title`     | string          | Yes      | Modal title                                                    | `"User Details"`, `"View Profile"` |
+| `icon`      | ReactNode       | No       | Icon element displayed in modal header                         | `<EyeIcon />`, `<InfoIcon />` |
+| `size`      | string          | No       | Modal width                                                    | `"sm"`, `"md"` (default), `"lg"`, `"xl"`, `"full"` |
+| `component` | React component | No       | Custom component to render (receives `data` prop)             | `(props) => <CustomViewComponent data={props.data} />` |
+| `variant`   | string          | No       | View layout style                                              | `"default"`, `"card"`, `"split"` |
+| `fields`    | array           | No       | View field objects (if not using custom component)             | Array of field objects (see [View Field Schema](#view-field-schema)) |
+| `styles`    | object          | No       | Custom CSS classes for various view elements                   | `{ containerClass: "...", rowClass: "...", labelClass: "...", valueClass: "...", ... }` |
+| `modalClassNames` | object    | No       | Custom classes for modal structure                             | `{ overlay: "...", container: "...", header: "...", body: "...", footer: "...", closeButton: "..." }` |
+| `footer`    | object          | No       | Footer configuration                                           | `{ cancelButton: true, cancelText: "Close" }` |
 
 ---
 
 ### Form Field Schema
 
-Used by `modalConfig.*.formFields` and `filterConfig.fields`. Form fields follow the `formFieldType` shape used throughout the UI.
+Used by `modalConfig.*.formFields`, `filterConfig.fields`, and `viewModal.fields`. All form fields follow the `FormField` shape.
 
-#### Common Field Keys (All Types)
+#### Common Field Properties (All Types)
 
-| Key           | Type    | Required | Description                                                                                                                                                                    |
-| ------------- | ------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `key`         | string  | Yes      | Property name for form data                                                                                                                                                    |
-| `label`       | string  | No       | Human-readable label                                                                                                                                                           |
-| `type`        | string  | Yes      | Field type: `text`, `number`, `email`, `password`, `select`, `checkbox`, `radio`, `switch`, `phone`, `textarea`, `image`, `video`, `audio`, `tinyEditor`, `group`, `cardGroup` |
-| `required`    | boolean | No       | Field is required for form submission                                                                                                                                          |
-| `minLength`   | number  | No       | Minimum character length                                                                                                                                                       |
-| `parentClass` | string  | No       | Tailwind grid class (e.g., `col-span-6`)                                                                                                                                       |
-| `placeholder` | string  | No       | Placeholder text                                                                                                                                                               |
-| `disabled`    | boolean | No       | Field is disabled                                                                                                                                                              |
+| Key               | Type      | Required | Description                                          | Accepted Values / Example |
+| ---------------- | -------- | --- | ----------------------- | -------------------- |
+| `key`             | string    | Yes      | Property name/identifier for form data               | `"username"`, `"email"`, `"birth_date"` |
+| `label`           | string    | No       | Human-readable label for the field                   | `"User Name"`, `"Email Address"`, `"Date of Birth"` |
+| `type`            | string    | Yes      | Field type determining the input/renderer            | `"text"`, `"number"`, `"email"`, `"password"`, `"select"`, `"checkbox"`, `"radio"`, `"switch"`, `"phone"`, `"textarea"`, `"image"`, `"video"`, `"audio"`, `"tinyEditor"`, `"group"`, `"cardGroup"` |
+| `required`        | boolean   | No       | Field must have a value for form submission          | `true`, `false` (default: `false`) |
+| `minLength`       | number    | No       | Minimum character length (for text fields)           | `5`, `10`, `50` |
+| `placeholder`     | string    | No       | Placeholder text shown in empty field                | `"Enter your name"`, `"user@example.com"` |
+| `disabled`        | boolean   | No       | Field is disabled and read-only                      | `true`, `false` (default: `false`) |
+| `parentClass`     | string    | No       | Custom CSS classes for field wrapper (grid)          | Tailwind classes: `"col-span-6"`, `"col-span-12"` |
+| `defaultValue`    | any       | No       | Initial value for the field                          | Depends on field type; e.g., `"John"`, `25`, `true`, `["option1", "option2"]` |
+| `renderCondition` | function  | No       | Show field based on form data                        | `(formData: Record<string, any>) => boolean`; e.g., `(data) => data.userType === 'admin'` |
+| `customValidation`| function  | No       | Custom validation logic                              | `(value: any) => boolean \| string`; return `false` for invalid, error message string, or `true` for valid |
+| `pattern`         | string    | No       | Regex pattern for validation (HTML5)                 | Regex: `"^[a-zA-Z0-9]*$"`, `"^[0-9]{10}$"` |
+| `className`       | string    | No       | Custom CSS class for input element                   | Tailwind classes: `"bg-gray-100 rounded-lg"` |
 
-#### Type-Specific Keys
+#### Type-Specific Properties
 
-##### Select Field
+##### `"text"` Field
 
-| Key                 | Type    | Description                       |
-| ------------------- | ------- | --------------------------------- | ------ | --------------------------- |
-| `options`           | array   | `{ value: string                  | number | boolean, label: string }[]` |
-| `multiple`          | boolean | Allow multiple selections         |
-| `search`            | boolean | Show search input inside dropdown |
-| `dropdownMaxHeight` | string  | CSS height value (e.g., `300px`)  |
+| Property  | Type    | Description                      | Example |
+| ---- | --- | -------------------- | --- |
+| `minLength` | number  | Minimum character length         | `5` |
+| `placeholder` | string | Placeholder text                 | `"Enter your name"` |
+| `pattern` | string | Regex validation pattern         | `"^[a-zA-Z ]*$"` (letters and spaces only) |
+| `mask` | string | Input mask pattern               | `"(99) 99999-9999"` (format: 9=digit, A=letter, X=alphanumeric, *=any char) |
+| `maskApplyOnValue` | boolean | Apply mask to initial value      | `true`, `false` (default: `true`) |
 
-##### Checkbox Field
+##### `"number"` Field
 
-| Key        | Type    | Description                                                     |
-| ---------- | ------- | --------------------------------------------------------------- |
-| `options`  | array   | `{ value, label }[]`                                            |
-| `multiple` | boolean | Allow selecting multiple values (component prop: `multiSelect`) |
+| Property  | Type    | Description                      | Example |
+| --- | --- | ------------- | --- |
+| `negativeNumberAllow` | boolean | Allow negative numbers           | `true`, `false` (default: `false`) |
 
-##### Switch Field
+##### `"email"` Field
 
-| Key       | Type   | Description                                       |
-| --------- | ------ | ------------------------------------------------- |
-| `options` | array  | Optional radio-like options: `[{ label, value }]` |
-| `text`    | string | Description text shown next to switch             |
+| Property  | Type    | Description                      | Example |
+| ------ | ------- | -------------------- | --- |
+| `placeholder` | string | Placeholder text                 | `"user@example.com"` |
 
-##### Phone Field
+##### `"password"` Field
 
-| Key              | Type    | Description                   |
-| ---------------- | ------- | ----------------------------- |
-| `countriesList`  | boolean | Show country selector         |
-| `defaultCountry` | string  | ISO country code (e.g., `US`) |
-| `search`         | boolean | Enable searching countries    |
-| `placeholder`    | string  | Placeholder text              |
+| Property  | Type    | Description                      | Example |
+| --- | --- | -- | -- |
+| `minLength` | number  | Minimum character length         | `8` |
 
-##### Textarea Field
+##### `"select"` Field
 
-| Key    | Type   | Description            |
-| ------ | ------ | ---------------------- |
-| `rows` | number | Number of visible rows |
+| Property        | Type    | Description                                 | Accepted Values / Example |
+| ----- | --- | -------------------- | -- |
+| `options`       | array   | Select options; `{ value, label, color? }[]` | `[{ value: "active", label: "Active", color: "green" }, { value: "inactive", label: "Inactive", color: "red" }]` |
+| `multiple`      | boolean | Allow selecting multiple options             | `true`, `false` (default: `false`) |
+| `search`        | boolean | Enable searchable dropdown                   | `true`, `false` (default: `false`) |
+| `dropdownMaxHeight` | number | Max height of dropdown in pixels             | `300`, `400` |
 
-##### Image Field
+##### `"checkbox"` Field
 
-| Key        | Type    | Description                           |
-| ---------- | ------- | ------------------------------------- |
-| `accept`   | string  | MIME type filter (default: `image/*`) |
-| `dragDrop` | boolean | Enable drag-and-drop upload           |
+| Property  | Type    | Description                                  | Accepted Values / Example |
+| -- | --- | -------------------- | -- |
+| `options`  | array   | Checkbox options; `{ value, label }[]`       | `[{ value: "read", label: "Can Read" }, { value: "write", label: "Can Write" }]` |
+| `multiple` | boolean | Allow selecting multiple values              | `true` (default: `true`); affects how data is stored |
 
-##### TinyEditor Field
+##### `"radio"` Field
 
-| Key                  | Type     | Description                                        |
-| -------------------- | -------- | -------------------------------------------------- |
-| `editorKey`          | string   | TinyMCE API key                                    |
-| `fontFamily`         | string   | Default font family                                |
-| `height`             | number   | Editor height in pixels                            |
-| `imageUploadHandler` | function | `(blobInfo) => Promise<string>`. Returns image URL |
+| Property  | Type    | Description                                  | Accepted Values / Example |
+| -- | -- | -------------------- | -- |
+| `options`  | array   | Radio button options; `{ value, label }[]`   | `[{ value: "male", label: "Male" }, { value: "female", label: "Female" }, { value: "other", label: "Other" }]` |
 
-##### Radio Field
+##### `"switch"` Field
 
-| Key       | Type  | Description          |
-| --------- | ----- | -------------------- |
-| `options` | array | `{ value, label }[]` |
+| Property  | Type    | Description                                  | Accepted Values / Example |
+| -- | -- | --------- | -- |
+| `text`    | string  | Description/label shown next to switch       | `"Enable notifications"`, `"Is admin"` |
+| `options` | array   | Optional radio-like options (radio fallback) | `[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }]` |
 
-##### Video Field
+##### `"phone"` Field
 
-| Key        | Type    | Description                           |
-| ---------- | ------- | ------------------------------------- |
-| `accept`   | string  | MIME type filter (default: `video/*`) |
-| `dragDrop` | boolean | Enable drag-and-drop upload           |
-| `maxSize`  | number  | Maximum file size in bytes            |
+| Property        | Type    | Description                                 | Accepted Values / Example |
+| ---- | -- | --------- | - |
+| `countriesList` | boolean | Show country selector dropdown              | `true`, `false` (default: `false`) |
+| `defaultCountry` | string | Default country ISO code                    | `"US"`, `"GB"`, `"IN"`, `"CA"`, `"AU"` |
+| `search`        | boolean | Enable searching countries in selector      | `true`, `false` (default: `false`) |
+| `placeholder`   | string  | Placeholder text                            | `"+1 (555) 000-0000"` |
 
-##### Group Field
+##### `"textarea"` Field
 
-| Key          | Type   | Description                     |
-| ------------ | ------ | ------------------------------- |
-| `renderType` | string | Rendering type for group fields |
+| Property  | Type    | Description                                  | Accepted Values / Example |
+| - | -- | -- | - |
+| `rows`    | number  | Number of visible rows                       | `3`, `5`, `10` |
 
-##### CardGroup Field
+##### `"image"` Field
 
-| Key          | Type   | Description                          |
-| ------------ | ------ | ------------------------------------ |
-| `renderType` | string | Rendering type for card group fields |
+| Property  | Type    | Description                                  | Accepted Values / Example |
+| - | -- | -- | - |
+| `accept`  | string  | MIME type filter                             | `"image/*"` (default), `"image/jpeg,image/png"` |
+| `dragDrop` | boolean | Enable drag-and-drop upload                  | `true`, `false` (default: `false`) |
+| `cropImage` | boolean | Enable image cropping modal                  | `true`, `false` (default: `false`) |
+| `aspectRatio` | number | Crop aspect ratio (width:height)             | `1` (1:1 square), `16/9`, `4/3`, `1.5` |
 
-#### Return Values / onSubmit Handler
+##### `"video"` Field
 
-`onSubmit(formData)` receives an object keyed by `field.key` values.
+| Property  | Type    | Description                                  | Accepted Values / Example |
+| - | -- | -- | - |
+| `accept`  | string  | MIME type filter                             | `"video/*"` (default), `"video/mp4,video/webm"` |
+| `dragDrop` | boolean | Enable drag-and-drop upload                  | `true`, `false` (default: `false`) |
+| `maxSize` | number  | Maximum file size in bytes                   | `5242880` (5MB), `10485760` (10MB) |
 
----
+##### `"audio"` Field
 
-### Small/UI components (props summary)
+| Property  | Type    | Description                                  | Accepted Values / Example |
+| - | -- | -- | - |
+| `accept`  | string  | MIME type filter                             | `"audio/*"` (default), `"audio/mpeg,audio/wav"` |
+| `dragDrop` | boolean | Enable drag-and-drop upload                  | `true`, `false` (default: `false`) |
+| `maxSize` | number  | Maximum file size in bytes                   | `5242880` (5MB), `10485760` (10MB) |
 
-| Component        | Key Props                                                                           | Purpose                                                                                   |
-| ---------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| **Button**       | `variant`, `color`, `size`, `fullWidth`, `className`, `onClick`, `type`, `disabled` | Reusable button with multiple style variants (`contained`, `outlined`, `text`) and colors |
-| **Chip**         | `label`, `variant`, `color`                                                         | Display small labeled badges with `contained`, `outline`, or `soft` styles                |
-| **Modal**        | `isOpen`, `onClose`, `icon`, `title`, `size`, `actionButtons`, `loadingBtn`         | Modal dialog for forms, confirmations, and views with flexible sizing                     |
-| **FilterDrawer** | `isOpen`, `onClose`, `config`, `onApply`                                            | Side panel for applying filters with customizable form fields                             |
+##### `"tinyEditor"` Field
 
-#### Button Props
+| Property           | Type     | Description                                  | Accepted Values / Example |
+| --------- | ------ | ------------ | - |
+| `editorKey`        | string   | TinyMCE API key (required)                   | Get from `import.meta.env.VITE_EDITOR_KEY` or pass directly |
+| `fontFamily`       | string   | Default font family in editor                | `"Arial"`, `"Georgia"`, `"Courier New"` |
+| `height`           | number   | Editor height in pixels                      | `300`, `500` |
+| `imageUploadHandler` | function | Async image upload handler                   | `async (blobInfo) => Promise<string>` (returns image URL) |
 
-| Prop        | Type     | Default     | Description                                     |
-| ----------- | -------- | ----------- | ----------------------------------------------- |
-| `variant`   | string   | `contained` | Style variant: `contained`, `outlined`, `text`  |
-| `color`     | string   | `primary`   | Color: `primary`, `success`, `error`, `default` |
-| `size`      | string   | `default`   | Size: `sm`, `md`, `lg`, `xl`, `default`         |
-| `fullWidth` | boolean  | `false`     | Stretch button to full width                    |
-| `className` | string   | —           | Custom CSS class                                |
-| `onClick`   | function | —           | Click event handler                             |
-| `type`      | string   | `button`    | HTML button type: `button`, `submit`, `reset`   |
-| `disabled`  | boolean  | `false`     | Disable button interaction                      |
+##### `"group"` & `"cardGroup"` Fields
 
-#### Chip Props
-
-| Prop      | Type   | Default     | Description                                                       |
-| --------- | ------ | ----------- | ----------------------------------------------------------------- |
-| `label`   | string | Required    | Badge text                                                        |
-| `variant` | string | `contained` | Style variant: `contained`, `outline`, `soft`                     |
-| `color`   | string | `blue`      | Color: `blue`, `teal`, `purple`, `yellow`, `green`, `red`, `gray` |
-
-#### Modal Props (Direct Usage)
-
-| Prop            | Type       | Description                                            |
-| --------------- | ---------- | ------------------------------------------------------ |
-| `isOpen`        | boolean    | Show/hide modal                                        |
-| `onClose`       | function   | Callback when modal closes                             |
-| `icon`          | React node | Icon element displayed in modal header                 |
-| `title`         | string     | Modal title                                            |
-| `size`          | string     | Size: `sm`, `md`, `lg`, `xl`, `full`                   |
-| `actionButtons` | array      | `[{ type, label, color, variant, onClick, disabled }]` |
-| `loadingBtn`    | boolean    | Show loading state on action button                    |
-
-#### FilterDrawer Props
-
-| Prop      | Type     | Description                               |
-| --------- | -------- | ----------------------------------------- |
-| `isOpen`  | boolean  | Show/hide filter drawer                   |
-| `onClose` | function | Callback when drawer closes               |
-| `config`  | object   | Fields array using `formFieldType` schema |
-| `onApply` | function | Callback: `(filters: object) => void`     |
+| Property  | Type    | Description                                  | Accepted Values / Example |
+| -- | -- | -- | - |
+| `renderType` | string | Rendering type for grouped fields            | `"default"`, `"card"`, or custom layout type |
+| (nested fields) | array | Child form fields within group               | Array of FormField objects |
 
 ---
 
-### Examples
+### View Field Schema
 
-Minimal CRUD config (client-side):
+Used by `viewModal.fields` to display data in view/details modals.
+
+| Key              | Type    | Description                                  | Accepted Values / Example |
+| ----- | -- | - | - |
+| `key`            | string  | Property name to display                     | `"username"`, `"email"`, `"birth_date"` |
+| `label`          | string  | Display label for the field                  | `"User Name"`, `"Email Address"` |
+| `type`           | string  | Display type (similar to form field types)   | `"text"`, `"date"`, `"chip"`, `"image"`, `"avatar"`, `"group"`, `"cardGroup"` |
+| `format`         | string  | Date format pattern                          | `"DD MMM YYYY"`, `"YYYY-MM-DD"`, `"DD/MM/YYYY HH:mm"` |
+| `imageKey`       | string  | Image property for avatar types              | `"profileImage"`, `"avatarUrl"` |
+| `titleKey`       | string  | Title property for group/avatar types        | `"name"`, `"fullName"` |
+| `subtitleKey`    | string  | Subtitle property for group/avatar types     | `"email"`, `"department"` |
+| `variant`        | string  | Chip display variant                         | `"contained"`, `"outline"`, `"soft"` |
+| `chipOptions`    | array   | Map values to chip labels and colors         | `[{ value: "active", label: "Active", color: "green" }]` |
+| `defaultColor`   | string  | Default chip color                           | `"green"`, `"red"`, `"blue"`, `"yellow"`, `"purple"`, `"gray"` |
+| `className`      | string  | Custom CSS class for display element         | Tailwind classes |
+| `blockClass`     | string  | Custom CSS class for field block/wrapper     | Tailwind classes |
+| `icon`           | ReactNode | Icon element to display with field           | `<UserIcon />`, `<MailIcon />` |
+| `renderCondition` | function | Show field based on data                     | `(data: Record<string, any>) => boolean` |
+
+---
+
+### Standalone UI Components
+
+In addition to the main CRUD component, the library exports reusable UI components that can be used independently:
+
+#### Button Component
+
+```jsx
+import { Button } from 'react-admin-crud-manager';
+
+// Basic button
+<Button onClick={() => console.log('Clicked')}>Click Me</Button>
+
+// Variants
+<Button variant="contained" color="primary">Primary</Button>
+<Button variant="outlined" color="success">Success</Button>
+<Button variant="text" color="error">Error</Button>
+
+// Sizes
+<Button size="sm">Small</Button>
+<Button size="md">Medium</Button>
+<Button size="lg">Large</Button>
+
+// States
+<Button disabled>Disabled</Button>
+<Button fullWidth>Full Width</Button>
+
+// Submit button
+<Button type="submit">Submit Form</Button>
+```
+
+| Prop        | Type     | Default     | Description                                     | Accepted Values |
+| ----------- | -------- | ----------- | ----------------------------------------------- | ----------- |
+| `variant`   | string   | `contained` | Style variant                                   | `"contained"`, `"outlined"`, `"text"` |
+| `color`     | string   | `primary`   | Button color theme                              | `"primary"`, `"success"`, `"error"`, `"warning"`, `"default"` |
+| `size`      | string   | `md`        | Button size                                     | `"sm"`, `"md"`, `"lg"`, `"xl"` |
+| `fullWidth` | boolean  | `false`     | Stretch to full width                           | `true`, `false` |
+| `className` | string   | —           | Additional CSS classes                          | Tailwind classes |
+| `onClick`   | function | —           | Click handler (can be async)                    | `(e) => void \| Promise<any>` |
+| `type`      | string   | `button`    | HTML button type                                | `"button"`, `"submit"`, `"reset"` |
+| `disabled`  | boolean  | `false`     | Disable interaction                             | `true`, `false` |
+
+#### Chip Component
+
+```jsx
+import { Chip } from 'react-admin-crud-manager';
+
+// Basic chip
+<Chip label="Active" />
+
+// Variants with colors
+<Chip label="Active" color="green" variant="contained" />
+<Chip label="Pending" color="yellow" variant="outline" />
+<Chip label="Inactive" color="red" variant="soft" />
+
+// All available colors
+<Chip label="Blue" color="blue" />
+<Chip label="Teal" color="teal" />
+<Chip label="Purple" color="purple" />
+<Chip label="Green" color="green" />
+<Chip label="Red" color="red" />
+<Chip label="Yellow" color="yellow" />
+<Chip label="Gray" color="gray" />
+```
+
+| Prop      | Type   | Default     | Description                           | Accepted Values |
+| --------- | ------ | ----------- | ------------------------------------- | --------- |
+| `label`   | string | Required    | Badge text content                    | Any string |
+| `variant` | string | `contained` | Display style                         | `"contained"`, `"outline"`, `"soft"` |
+| `color`   | string | `blue`      | Color scheme                          | `"blue"`, `"teal"`, `"purple"`, `"green"`, `"red"`, `"yellow"`, `"gray"` |
+
+#### Modal Component
+
+```jsx
+import { Modal } from 'react-admin-crud-manager';
+import { AlertIcon } from 'lucide-react';
+
+// Basic modal
+<Modal
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  title="Confirm Action"
+  icon={<AlertIcon />}
+  actionButtons={[
+    { type: "submit", label: "Confirm", color: "primary" },
+    { type: "cancel", label: "Cancel", color: "default" }
+  ]}
+>
+  <p>Are you sure you want to continue?</p>
+</Modal>
+
+// Modal sizes
+<Modal isOpen={true} size="sm" title="Small Modal" />
+<Modal isOpen={true} size="md" title="Medium Modal" />
+<Modal isOpen={true} size="lg" title="Large Modal" />
+<Modal isOpen={true} size="xl" title="Extra Large Modal" />
+<Modal isOpen={true} size="full" title="Full Screen Modal" />
+```
+
+| Prop            | Type       | Description                                  | Accepted Values |
+| --------------- | ---------- | -------------------------------------------- | --------- --– |
+| `isOpen`        | boolean    | Show/hide modal                              | `true`, `false` |
+| `onClose`       | function   | Callback when modal closes                   | `() => void` |
+| `icon`          | ReactNode  | Icon displayed in header                     | Any React component or JSX element |
+| `title`         | string     | Modal title text                             | Any string |
+| `size`          | string     | Modal width                                  | `"sm"`, `"md"`, `"lg"`, `"xl"`, `"full"` |
+| `actionButtons` | array      | Footer action buttons                        | Array of `{ type, label, color, variant, onClick, disabled }` |
+| `loadingBtn`    | boolean    | Show loading spinner on action button        | `true`, `false` |
+| `children`      | ReactNode  | Modal content                                | Any React components |
+
+#### FilterDrawer Component
+
+```jsx
+import { FilterDrawer } from 'react-admin-crud-manager';
+
+<FilterDrawer
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  config={{
+    fields: [
+      {
+        key: "status",
+        label: "Status",
+        type: "select",
+        options: [
+          { value: "active", label: "Active" },
+          { value: "inactive", label: "Inactive" }
+        ]
+      },
+      {
+        key: "dateFrom",
+        label: "From Date",
+        type: "date"
+      }
+    ]
+  }}
+  onApply={(filters) => {
+    console.log("Applied filters:", filters);
+    setIsOpen(false);
+  }}
+/>
+```
+
+| Prop      | Type     | Description                          | Accepted Values |
+| --------- | -------- | ---------------- | --|
+| `isOpen`  | boolean  | Show/hide filter drawer              | `true`, `false` |
+| `onClose` | function | Callback when drawer closes          | `() => void` |
+| `config`  | object   | Filter field configuration           | `{ fields: [...] }` (uses Form Field Schema) |
+| `onApply` | function | Callback with applied filter values  | `(filters: object) => void` |
+
+---
+
+## Advanced Features
+
+### 1. Export CSV
+
+Export table data as a CSV file with custom field selection:
 
 ```js
 const config = {
-  title: "Users",
-  fetchData: async () => ({ data: users, pagination: null }),
-  isStaticData: true,
+  // ... other config
   tableConfig: {
-    table_head: [
-      { key: "id", title: "ID", type: "index" },
-      { key: "name", title: "Name" },
-    ],
-    pagination: { enabled: true },
-  },
-  modalConfig: {
-    addModal: {
-      title: "Add user",
-      handleSubmit: async (formData) => ({ newObject: formData }),
-      formFields: [
-        { key: "name", label: "Name", type: "text", required: true },
-      ],
-    },
-  },
+    table_head: [...],
+    data: [...]
+    exportCSV: {
+      enabled: true,
+      fileName: "users_export.csv",
+      fields: [
+        { label: "ID", key: "id" },
+        { label: "Name", key: "name" },
+        { label: "Email", key: "email" },
+        { label: "Status", key: "status" }
+      ]
+    }
+  }
 };
 ```
 
-Server-side listing (fetchData must return { data, pagination }):
+### 2. Conditional Field Rendering
+
+Show/hide form fields based on other field values using `renderCondition`:
 
 ```js
-const fetchData = async ({
-  search,
-  rows_per_page,
-  current_page,
-  sort_by,
-  sort_order,
-}) => {
-  const resp = await api.get("/users", {
-    params: {
-      q: search,
-      limit: rows_per_page,
-      page: current_page,
+const formFields = [
+  {
+    key: "userType",
+    label: "User Type",
+    type: "select",
+    options: [
+      { value: "admin", label: "Administrator" },
+      { value: "user", label: "Regular User" }
+    ]
+  },
+  {
+    key: "adminLevel",
+    label: "Admin Level",
+    type: "select",
+    renderCondition: (formData) => formData.userType === "admin", // Only show if userType is admin
+    options: [
+      { value: "superadmin", label: "Super Admin" },
+      { value: "moderator", label: "Moderator" }
+    ]
+  },
+  {
+    key: "department",
+    label: "Department",
+    type: "text",
+    renderCondition: (formData) => formData.userType === "user", // Only show if userType is user
+  }
+];
+```
+
+### 3. Custom Field Validation
+
+Add custom validation logic to form fields:
+
+```js
+const formFields = [
+  {
+    key: "email",
+    label: "Email",
+    type: "email",
+    customValidation: (value) => {
+      // Return true/false or custom error message
+      if (!value.includes("@company.com")) {
+        return "Email must be a company email"; // Error message
+      }
+      return true; // Valid
+    }
+  },
+  {
+    key: "age",
+    label: "Age",
+    type: "number",
+    customValidation: (value) => {
+      if (value < 18) return "Must be 18 or older";
+      if (value > 120) return "Please enter a valid age";
+      return true;
+    }
+  }
+];
+```
+
+### 4. Custom Table Cell Rendering
+
+Use the `render` function for complex cell display:
+
+```js
+const tableConfig = {
+  table_head: [
+    { key: "id", title: "ID", type: "index" },
+    {
+      key: "name",
+      title: "Name",
+      render: (row, rowIndex) => (
+        <div className="font-bold text-blue-600">{row.name.toUpperCase()}</div>
+      )
+    },
+    {
+      key: "price",
+      title: "Price",
+      render: (row) => (
+        <span className="text-green-600 font-semibold">
+          ${row.price.toFixed(2)}
+        </span>
+      )
+    },
+    {
+      key: "actions",
+      title: "Actions",
+      render: (row) => (
+        <button onClick={() => console.log(row)}>
+          Custom Action
+        </button>
+      )
+    }
+  ],
+  data: [...]
+};
+```
+
+### 5. View Modal Variants
+
+Display details in different layouts with view modal variants:
+
+```js
+// Default variant - standard grid layout
+const config = {
+  modalConfig: {
+    viewModal: {
+      title: "User Details",
+      variant: "default", // Standard grid layout
+      fields: [
+        { key: "name", label: "Full Name", type: "text" },
+        { key: "email", label: "Email", type: "text" }
+      ]
+    }
+  }
+};
+
+// Card variant - each field in an elevated card
+const cardConfig = {
+  modalConfig: {
+    viewModal: {
+      title: "User Details",
+      variant: "card", // Each field is a separate card
+      styles: {
+        containerClass: "grid grid-cols-12 gap-4",
+        cardGroupClass: "col-span-6 bg-white rounded-lg shadow p-4"
+      },
+      fields: [...]
+    }
+  }
+};
+
+// Split variant - property sheet style with dividing lines
+const splitConfig = {
+  modalConfig: {
+    viewModal: {
+      title: "User Details",
+      variant: "split", // Clean property-sheet layout
+      fields: [...]
+    }
+  }
+};
+```
+
+### 6. Custom View Component
+
+Use a fully custom component for the view modal:
+
+```js
+const CustomUserView = ({ data }) => (
+  <div className="space-y-4">
+    <div className="flex items-center gap-4">
+      <img 
+        src={data.avatarUrl} 
+        alt={data.name}
+        className="w-16 h-16 rounded-full"
+      />
+      <div>
+        <h2 className="text-xl font-bold">{data.name}</h2>
+        <p className="text-gray-600">{data.email}</p>
+      </div>
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+      <div>
+        <label className="text-sm font-semibold">Phone</label>
+        <p>{data.phone}</p>
+      </div>
+      <div>
+        <label className="text-sm font-semibold">Status</label>
+        <p>{data.status}</p>
+      </div>
+    </div>
+  </div>
+);
+
+const config = {
+  modalConfig: {
+    viewModal: {
+      title: "User Details",
+      component: CustomUserView // Use custom component
+    }
+  }
+};
+```
+
+### 7. Row Click Handler
+
+Handle clicks on table rows:
+
+```js
+const config = {
+  tableConfig: {
+    table_head: [...],
+    data: [...],
+    rowClick: (row, rowIndex) => {
+      console.log(`Row ${rowIndex} clicked:`, row);
+      // Open custom drawer, navigate, or perform any action
+    }
+  }
+};
+```
+
+### 8. Server-Side Filtering
+
+Implement server-side filtering with custom filter fields:
+
+```js
+const config = {
+  tableConfig: {
+    filter: {
+      enabled: true,
+      useServerSideFilters: true // Enable server-side filtering
+    },
+    filterConfig: {
+      fields: [
+        {
+          key: "status",
+          label: "Status",
+          type: "select",
+          options: [
+            { value: "active", label: "Active" },
+            { value: "inactive", label: "Inactive" }
+          ]
+        },
+        {
+          key: "createdFrom",
+          label: "Created From",
+          type: "date"
+        },
+        {
+          key: "createdTo",
+          label: "Created To",
+          type: "date"
+        }
+      ]
+    },
+    onFilterApply: (filters) => {
+      console.log("Filters applied:", filters);
+      // Filters will be passed to fetchData as additional params
+    }
+  },
+  fetchData: async ({
+    search,
+    rows_per_page,
+    current_page,
+    sort_by,
+    sort_order,
+    ...filters // Additional filter params passed here
+  }) => {
+    const resp = await api.get("/users", {
+      params: {
+        q: search,
+        limit: rows_per_page,
+        page: current_page,
+        sort_by,
+        sort_order,
+        ...filters // Include filters in API call
+      }
+    });
+    return { data: resp.items, pagination: resp.pagination };
+  }
+};
+```
+
+### 9. Input Masking
+
+Format input with masks using pattern syntax:
+
+```js
+const formFields = [
+  {
+    key: "phone",
+    label: "Phone Number",
+    type: "text",
+    mask: "(99) 99999-9999", // Mask pattern
+    maskApplyOnValue: true, // Apply mask to default value
+    placeholder: "(00) 00000-0000"
+  },
+  {
+    key: "zipCode",
+    label: "ZIP Code",
+    type: "text",
+    mask: "99999-999", // Pattern: 9 = digit, A = letter, X = alphanumeric, * = any
+    placeholder: "00000-000"
+  },
+  {
+    key: "creditCard",
+    label: "Credit Card",
+    type: "text",
+    mask: "9999 9999 9999 9999",
+    placeholder: "0000 0000 0000 0000"
+  }
+];
+```
+
+**Mask Pattern Reference:**
+- `9` — Digit (0-9)
+- `A` — Letter (a-zA-Z)
+- `X` — Alphanumeric (a-zA-Z0-9)
+- `*` — Any character
+- Any other character is literal (e.g., `-`, `/`, ` `)
+
+### 10. Image Cropping
+
+Enable image cropping in image picker:
+
+```js
+const formFields = [
+  {
+    key: "profileImage",
+    label: "Profile Picture",
+    type: "image",
+    cropImage: true, // Enable cropping modal
+    aspectRatio: 1, // 1:1 square ratio
+    dragDrop: true
+  },
+  {
+    key: "bannerImage",
+    label: "Banner Image",
+    type: "image",
+    cropImage: true,
+    aspectRatio: 16 / 9, // 16:9 widescreen ratio
+    dragDrop: true
+  }
+];
+```
+
+### 11. Notifications/Snackbar
+
+Display success/error messages automatically:
+
+Notifications are handled internally by the library using the `notistack` library. Success and error messages are shown automatically:
+
+- **Success messages**: Shown when add/edit/delete operations complete successfully
+- **Error messages**: Shown when operations fail
+- **Custom messages**: Handlers can return `{ newObject, message: "Custom message" }`
+
+```js
+const config = {
+  modalConfig: {
+    addModal: {
+      title: "Add User",
+      formFields: [...],
+      handleSubmit: async (formData) => {
+        const resp = await api.post("/users", formData);
+        return {
+          newObject: resp.user,
+          message: "User created successfully!" // Custom success message
+        };
+      }
+    }
+  }
+};
+```
+
+### 12. Sortable Columns
+
+Configure sorting with custom options and auto-generation:
+
+```js
+const config = {
+  tableConfig: {
+    sort: {
+      enabled: true,
+      useServerSideSorting: false, // Client-side sorting
+      autoGenerate: true, // Auto-generate sort options from table headers
+      fields: ["name", "email", "createdAt"], // Fields to make sortable
+      defaultValue: "name", // Default sort field
+      clearLabel: "Clear Sort",
+      onChange: (payload) => {
+        console.log("Sort changed:", payload);
+        // payload contains: { value, option, key, order, type }
+      }
+    },
+    table_head: [
+      { key: "name", title: "Name" },
+      { key: "email", title: "Email" },
+      { key: "createdAt", title: "Created Date" }
+    ]
+  }
+};
+```
+
+### Examples
+
+#### Example 1: Minimal Client-Side CRUD
+
+```js
+import Crud from 'react-admin-crud-manager';
+
+const users = [
+  { id: 1, name: "John Doe", email: "john@example.com", status: "active" },
+  { id: 2, name: "Jane Smith", email: "jane@example.com", status: "inactive" }
+];
+
+function App() {
+  const config = {
+    title: "Users",
+    fetchData: async () => ({ data: users, pagination: null }),
+    isStaticData: true,
+    tableConfig: {
+      table_head: [
+        { key: "id", title: "ID", type: "index" },
+        { key: "name", title: "Name" },
+        { key: "email", title: "Email" },
+        { key: "status", title: "Status", type: "chip", chipOptions: [
+          { value: "active", label: "Active", color: "green" },
+          { value: "inactive", label: "Inactive", color: "red" }
+        ]}
+      ],
+      search: { enabled: true },
+      pagination: { enabled: true, rows_per_page: 10 }
+    },
+    modalConfig: {
+      addModal: {
+        title: "Add User",
+        formFields: [
+          { key: "name", label: "Name", type: "text", required: true },
+          { key: "email", label: "Email", type: "email", required: true },
+          {
+            key: "status",
+            label: "Status",
+            type: "select",
+            options: [
+              { value: "active", label: "Active" },
+              { value: "inactive", label: "Inactive" }
+            ]
+          }
+        ],
+        handleSubmit: async (formData) => ({
+          newObject: { ...formData, id: Math.max(...users.map(u => u.id)) + 1 }
+        })
+      }
+    }
+  };
+
+  return <Crud config={config} />;
+}
+
+export default App;
+```
+
+#### Example 2: Server-Side CRUD with Advanced Features
+
+```js
+import Crud from 'react-admin-crud-manager';
+import axios from 'axios';
+import { PlusIcon, EditIcon, TrashIcon } from 'lucide-react';
+
+function App() {
+  const api = axios.create({ baseURL: 'https://api.example.com' });
+
+  const config = {
+    title: "Products",
+    description: "Manage your products inventory",
+    buttonText: "Add Product",
+    fetchData: async ({
+      search,
+      rows_per_page,
+      current_page,
       sort_by,
       sort_order,
+      category,
+      minPrice,
+      maxPrice
+    }) => {
+      const resp = await api.get("/products", {
+        params: {
+          q: search,
+          limit: rows_per_page,
+          page: current_page,
+          sort_by,
+          sort_order,
+          category,
+          minPrice,
+          maxPrice
+        }
+      });
+      return {
+        data: resp.data.items,
+        pagination: {
+          current_page: resp.data.page,
+          rows_per_page: resp.data.limit,
+          total_pages: resp.data.totalPages,
+          total_records: resp.data.total
+        }
+      };
     },
-  });
-  return {
-    data: resp.items,
-    pagination: {
-      current_page: resp.page,
-      rows_per_page: resp.limit,
-      total_pages: resp.totalPages,
-      total_records: resp.total,
+    tableConfig: {
+      table_head: [
+        { key: "id", title: "ID", type: "index" },
+        { key: "image", title: "Image", type: "avatar", imageKey: "image", titleKey: "name" },
+        { key: "name", title: "Product Name" },
+        { key: "price", title: "Price", render: (row) => `$${row.price.toFixed(2)}` },
+        {
+          key: "category",
+          title: "Category",
+          type: "chip",
+          variant: "soft",
+          chipOptions: [
+            { value: "electronics", label: "Electronics", color: "blue" },
+            { value: "clothing", label: "Clothing", color: "purple" }
+          ]
+        }
+      ],
+      search: { enabled: true, useServerSideSearch: true, searchKeys: ["name", "sku"] },
+      filter: { enabled: true, useServerSideFilters: true },
+      pagination: { enabled: true, useServerSidePagination: true },
+      sort: { enabled: true, useServerSideSorting: true, autoGenerate: true },
+      exportCSV: {
+        enabled: true,
+        fileName: "products.csv",
+        fields: [
+          { label: "ID", key: "id" },
+          { label: "Name", key: "name" },
+          { label: "Price", key: "price" }
+        ]
+      },
+      filterConfig: {
+        fields: [
+          {
+            key: "category",
+            label: "Category",
+            type: "select",
+            options: [
+              { value: "electronics", label: "Electronics" },
+              { value: "clothing", label: "Clothing" }
+            ]
+          },
+          { key: "minPrice", label: "Min Price", type: "number" },
+          { key: "maxPrice", label: "Max Price", type: "number" }
+        ]
+      }
     },
+    modalConfig: {
+      addModal: {
+        title: "Add Product",
+        size: "lg",
+        icon: <PlusIcon />,
+        formFields: [
+          { key: "name", label: "Product Name", type: "text", required: true, parentClass: "col-span-12" },
+          { key: "price", label: "Price", type: "number", required: true, parentClass: "col-span-6" },
+          {
+            key: "category",
+            label: "Category",
+            type: "select",
+            required: true,
+            parentClass: "col-span-6",
+            options: [
+              { value: "electronics", label: "Electronics" },
+              { value: "clothing", label: "Clothing" }
+            ]
+          },
+          { key: "stock", label: "Stock", type: "number", required: true, parentClass: "col-span-6" },
+          { key: "description", label: "Description", type: "textarea", rows: 4, parentClass: "col-span-12" },
+          {
+            key: "image",
+            label: "Product Image",
+            type: "image",
+            cropImage: true,
+            aspectRatio: 1,
+            dragDrop: true,
+            parentClass: "col-span-12"
+          }
+        ],
+        handleSubmit: async (formData) => {
+          const resp = await api.post("/products", formData);
+          return { newObject: resp.data, message: "Product added successfully!" };
+        }
+      },
+      editModal: {
+        title: "Edit Product",
+        size: "lg",
+        icon: <EditIcon />,
+        formFields: [
+          { key: "name", label: "Product Name", type: "text", required: true, parentClass: "col-span-12" },
+          { key: "price", label: "Price", type: "number", required: true, parentClass: "col-span-6" },
+          { key: "stock", label: "Stock", type: "number", required: true, parentClass: "col-span-6" }
+        ],
+        handleSubmit: async (formData, item) => {
+          const resp = await api.put(`/products/${item.id}`, formData);
+          return { newObject: resp.data, targetObject: item };
+        }
+      },
+      deleteModal: {
+        title: "Delete Product",
+        icon: <TrashIcon />,
+        confirmText: "Are you sure you want to delete this product?",
+        referenceKey: "name",
+        action: async (item) => {
+          await api.delete(`/products/${item.id}`);
+          return { targetObject: item };
+        }
+      },
+      viewModal: {
+        title: "Product Details",
+        variant: "card",
+        fields: [
+          { key: "id", label: "ID" },
+          { key: "name", label: "Product Name" },
+          { key: "price", label: "Price" },
+          { key: "stock", label: "Stock" },
+          { key: "category", label: "Category", type: "chip" }
+        ]
+      }
+    }
   };
+
+  return <Crud config={config} />;
+}
+
+export default App;
+```
+
+#### Example 3: Complex Form with Conditional Fields and Validation
+
+```js
+const config = {
+  title: "Advanced User Registration",
+  tableConfig: {
+    table_head: [
+      { key: "id", title: "ID", type: "index" },
+      { key: "name", title: "Full Name" },
+      { key: "email", title: "Email" },
+      { key: "userType", title: "Type", type: "chip" }
+    ]
+  },
+  modalConfig: {
+    addModal: {
+      title: "Register New User",
+      formFields: [
+        {
+          key: "name",
+          label: "Full Name",
+          type: "text",
+          required: true,
+          parentClass: "col-span-12",
+          customValidation: (value) => {
+            if (value.trim().split(" ").length < 2) {
+              return "Please enter your full name";
+            }
+            return true;
+          }
+        },
+        {
+          key: "email",
+          label: "Email Address",
+          type: "email",
+          required: true,
+          parentClass: "col-span-12",
+          customValidation: (value) => {
+            if (!value.includes("@company.com")) {
+              return "Must use company email";
+            }
+            return true;
+          }
+        },
+        {
+          key: "phone",
+          label: "Phone",
+          type: "phone",
+          countriesList: true,
+          mask: "(99) 99999-9999",
+          parentClass: "col-span-12"
+        },
+        {
+          key: "userType",
+          label: "User Type",
+          type: "select",
+          required: true,
+          parentClass: "col-span-6",
+          options: [
+            { value: "admin", label: "Administrator" },
+            { value: "user", label: "Regular User" }
+          ]
+        },
+        {
+          key: "adminLevel",
+          label: "Admin Level",
+          type: "select",
+          parentClass: "col-span-6",
+          renderCondition: (data) => data.userType === "admin",
+          options: [
+            { value: "superadmin", label: "Super Admin" },
+            { value: "moderator", label: "Moderator" }
+          ]
+        },
+        {
+          key: "permissions",
+          label: "Permissions",
+          type: "checkbox",
+          parentClass: "col-span-12",
+          multiple: true,
+          renderCondition: (data) => data.userType === "admin",
+          options: [
+            { value: "read", label: "Can Read" },
+            { value: "write", label: "Can Write" },
+            { value: "delete", label: "Can Delete" }
+          ]
+        }
+      ],
+      handleSubmit: async (formData) => {
+        const resp = await api.post("/users", formData);
+        return {
+          newObject: resp.data,
+          message: `User ${formData.name} created successfully!`
+        };
+      }
+    }
+  }
+};
+```
+
+---
+
+## Best Practices & Common Patterns
+
+### 1. State Management with Static Data
+
+For client-side CRUD operations, use `isStaticData: true` and manage data updates through modal handlers:
+
+```js
+const [users, setUsers] = useState(initialUsers);
+
+const config = {
+  fetchData: async () => ({ data: users, pagination: null }),
+  isStaticData: true,
+  modalConfig: {
+    addModal: {
+      handleSubmit: async (formData) => {
+        const newUser = { ...formData, id: Date.now() };
+        setUsers([...users, newUser]);
+        return { newObject: newUser };
+      }
+    },
+    editModal: {
+      handleSubmit: async (formData, item) => {
+        const updated = { ...item, ...formData };
+        setUsers(users.map(u => u.id === item.id ? updated : u));
+        return { newObject: updated, targetObject: item };
+      }
+    }
+  }
+};
+```
+
+### 2. Server-Side Operations Best Practices
+
+```js
+// Always provide pagination info back to the component
+const fetchData = async (params) => {
+  const resp = await api.get("/items", { params });
+  return {
+    data: resp.data.items || [],
+    pagination: {
+      current_page: resp.data.meta.currentPage,
+      rows_per_page: resp.data.meta.perPage,
+      total_pages: resp.data.meta.totalPages,
+      total_records: resp.data.meta.total
+    }
+  };
+};
+```
+
+### 3. Error Handling in Modal Submissions
+
+```js
+const handleSubmit = async (formData) => {
+  try {
+    const resp = await api.post("/items", formData);
+    return {
+      newObject: resp.data,
+      message: "Item created successfully!" // Optional success message
+    };
+  } catch (error) {
+    // Throw error to trigger snackbar error notification
+    throw new Error(error.response?.data?.message || "Failed to create item");
+  }
+};
+```
+
+### 4. Dynamic Form Fields Based on Data
+
+Combine `renderCondition` and `defaultValue` for dynamic forms:
+
+```js
+const formFields = [
+  {
+    key: "type",
+    type: "select",
+    options: [
+      { value: "personal", label: "Personal" },
+      { value: "business", label: "Business" }
+    ]
+  },
+  {
+    key: "companyName",
+    label: "Company Name",
+    type: "text",
+    renderCondition: (data) => data.type === "business",
+    required: (data) => data.type === "business"
+  },
+  {
+    key: "phone",
+    type: "phone",
+    renderCondition: (data) => data.type === "personal"
+  }
+];
+```
+
+### 5. Custom Table Rendering for Complex Data
+
+```js
+const tableConfig = {
+  table_head: [
+    {
+      key: "user",
+      title: "User",
+      render: (row) => (
+        <div className="flex items-center gap-3">
+          <img src={row.avatar} className="w-8 h-8 rounded-full" />
+          <div>
+            <p className="font-semibold">{row.name}</p>
+            <p className="text-xs text-gray-500">{row.email}</p>
+          </div>
+        </div>
+      )
+    },
+    {
+      key: "metrics",
+      title: "Performance",
+      render: (row) => (
+        <div className="flex gap-2">
+          <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
+            {row.completed}%
+          </span>
+        </div>
+      )
+    }
+  ]
+};
+```
+
+### 6. Validation Patterns
+
+```js
+const formFields = [
+  {
+    key: "email",
+    type: "email",
+    customValidation: async (value) => {
+      // Async validation example
+      const exists = await checkEmailExists(value);
+      if (exists) return "Email already in use";
+      return true;
+    }
+  },
+  {
+    key: "password",
+    type: "password",
+    customValidation: (value) => {
+      if (value.length < 8) return "Password must be at least 8 characters";
+      if (!/[A-Z]/.test(value)) return "Must contain uppercase letter";
+      if (!/[0-9]/.test(value)) return "Must contain a number";
+      return true;
+    }
+  }
+];
+```
+
+### 7. Handling File Uploads
+
+```js
+const handleImageUpload = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  const resp = await api.post("/upload", formData);
+  return resp.data.url;
+};
+
+const config = {
+  modalConfig: {
+    addModal: {
+      formFields: [
+        {
+          key: "image",
+          type: "image",
+          dragDrop: true,
+          cropImage: true,
+          aspectRatio: 1
+        }
+      ],
+      handleSubmit: async (formData) => {
+        // Image data includes base64 or file data
+        const imageUrl = await handleImageUpload(formData.image);
+        const resp = await api.post("/items", {
+          ...formData,
+          image: imageUrl
+        });
+        return { newObject: resp.data };
+      }
+    }
+  }
+};
+```
+
+### 8. Conditional Rendering with Row Data
+
+```js
+const viewModal = {
+  fields: [
+    {
+      key: "status",
+      label: "Status",
+      type: "chip",
+      renderCondition: (data) => data.status !== null,
+      chipOptions: [
+        { value: "active", label: "Active", color: "green" },
+        { value: "suspended", label: "Suspended", color: "red" }
+      ]
+    },
+    {
+      key: "suspendReason",
+      label: "Suspension Reason",
+      renderCondition: (data) => data.status === "suspended" // Only show if suspended
+    }
+  ]
+};
+```
+
+### 9. Multiple Sort Options (Server-Side)
+
+```js
+const tableConfig = {
+  sort: {
+    enabled: true,
+    useServerSideSorting: true,
+    options: [
+      { value: "recent", label: "Most Recent", key: "createdAt", order: "desc" },
+      { value: "oldest", label: "Oldest", key: "createdAt", order: "asc" },
+      { value: "name-asc", label: "Name (A-Z)", key: "name", order: "asc" },
+      { value: "name-desc", label: "Name (Z-A)", key: "name", order: "desc" },
+      { value: "popular", label: "Most Popular", key: "views", order: "desc" }
+    ],
+    onChange: (payload) => {
+      console.log(`Sorted by: ${payload.option?.label}`);
+    }
+  }
 };
 ```
 

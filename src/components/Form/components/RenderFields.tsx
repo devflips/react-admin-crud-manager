@@ -7,13 +7,14 @@ import { Input } from "./Input";
 import TinyEditor from "./TinyEditor";
 import Checkbox from "./Checkbox";
 import AudioPicker from "./AudioPicker";
+import MultiImagePicker from "./MultiImagePicker";
 import GroupRow from "../../Details/components/GroupRow";
 import CardGroup from "../../Details/components/CardGroup";
 import DetailRow from "../../Details/components/DetailRow";
 import Radio from "./Radio";
 import VideoPicker from "./VideoPicker";
 
-export interface FieldConfig {
+interface FieldConfig {
   key: string;
   label?: string;
   type?: string;
@@ -51,11 +52,17 @@ export interface FieldConfig {
 
 interface RenderFieldsProps {
   field: FieldConfig;
+  errorMessage?: string;
   formData: Record<string, any>;
   handleChange: (key: string, value: any) => void;
 }
 
-const RenderFields = ({ field, formData, handleChange }: RenderFieldsProps) => {
+const RenderFields = ({
+  field,
+  formData,
+  handleChange,
+  errorMessage,
+}: RenderFieldsProps) => {
   const {
     key,
     label,
@@ -136,27 +143,32 @@ const RenderFields = ({ field, formData, handleChange }: RenderFieldsProps) => {
           defaultValue={defaultValue}
           label={label || ""}
           name={key}
+          countriesList={countriesList}
           disabled={disabled}
           parentClass={parentClass || ""}
           multiple={multiple}
           dropdownMaxHeight={dropdownMaxHeight}
+          errorMessage={errorMessage}
         />
       );
 
     case "checkbox":
       return (
-        <Checkbox
-          name={key}
-          label={label || ""}
-          options={options || []}
-          value={value}
-          onChange={(val) => handleChange(key, val)}
-          required={required}
-          parentClass={parentClass || ""}
-          className={inputClass || ""}
-          multiSelect={multiple}
-          disabled={disabled}
-        />
+        <>
+          <Checkbox
+            name={key}
+            label={label || ""}
+            options={options || []}
+            value={value}
+            onChange={(val) => handleChange(key, val)}
+            required={required}
+            parentClass={parentClass || ""}
+            className={inputClass || ""}
+            multiSelect={multiple}
+            disabled={disabled}
+            errorMessage={errorMessage}
+          />
+        </>
       );
 
     case "radio":
@@ -171,6 +183,7 @@ const RenderFields = ({ field, formData, handleChange }: RenderFieldsProps) => {
           name={key}
           disabled={disabled}
           parentClass={parentClass || ""}
+          errorMessage={errorMessage}
         />
       );
 
@@ -185,6 +198,7 @@ const RenderFields = ({ field, formData, handleChange }: RenderFieldsProps) => {
           disabled={disabled}
           className=""
           parentClass={parentClass || ""}
+          errorMessage={errorMessage}
         />
       );
     case "phone":
@@ -200,6 +214,7 @@ const RenderFields = ({ field, formData, handleChange }: RenderFieldsProps) => {
           label={label || ""}
           name={key}
           disabled={disabled}
+          errorMessage={errorMessage}
           parentClass={parentClass || ""}
         />
       );
@@ -217,10 +232,32 @@ const RenderFields = ({ field, formData, handleChange }: RenderFieldsProps) => {
           label={label || ""}
           disabled={disabled}
           parentClass={parentClass || ""}
+          errorMessage={errorMessage}
         />
       );
 
     case "image":
+    case "multiImage":
+      if (multiple || type === "multiImage") {
+        return (
+          <MultiImagePicker
+            value={Array.isArray(value) ? value : []}
+            onChange={(imgList) => handleChange(key, imgList)}
+            required={required}
+            accept={accept || "image/*"}
+            aspect={aspectRatio}
+            id={`file-${key}`}
+            dragDrop={dragDrop}
+            cropImage={cropImage}
+            label={label || ""}
+            name={key}
+            parentClass={parentClass || ""}
+            maxImages={field.maxImages}
+            errorMessage={errorMessage}
+          />
+        );
+      }
+
       return (
         <ImagePicker
           value={value}
@@ -234,8 +271,10 @@ const RenderFields = ({ field, formData, handleChange }: RenderFieldsProps) => {
           label={label || ""}
           name={key}
           parentClass={parentClass || ""}
+          errorMessage={errorMessage}
         />
       );
+
     case "audio":
       return (
         <AudioPicker
@@ -249,6 +288,7 @@ const RenderFields = ({ field, formData, handleChange }: RenderFieldsProps) => {
           name={key}
           parentClass={parentClass || ""}
           maxSize={maxSize}
+          errorMessage={errorMessage}
         />
       );
     case "video":
@@ -264,6 +304,7 @@ const RenderFields = ({ field, formData, handleChange }: RenderFieldsProps) => {
           name={key}
           maxSize={maxSize}
           parentClass={parentClass || ""}
+          errorMessage={errorMessage}
         />
       );
 
@@ -271,6 +312,7 @@ const RenderFields = ({ field, formData, handleChange }: RenderFieldsProps) => {
       return (
         <TinyEditor
           value={value}
+          name={key}
           onChange={(newValue) => handleChange(key, newValue)}
           required={required}
           placeholder={finalPlaceholder}
@@ -279,6 +321,7 @@ const RenderFields = ({ field, formData, handleChange }: RenderFieldsProps) => {
           fontFamily={fontFamily}
           editorKey={editorKey || ""}
           disabled={disabled}
+          errorMessage={errorMessage}
         />
       );
 
@@ -301,6 +344,7 @@ const RenderFields = ({ field, formData, handleChange }: RenderFieldsProps) => {
           disabled={disabled}
           pattern={pattern}
           mask={mask}
+          errorMessage={errorMessage}
           maskApplyOnValue={maskApplyOnValue}
         />
       );

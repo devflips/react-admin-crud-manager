@@ -1,3 +1,5 @@
+import { crudClasses, joinClasses } from "../../lib/crudClasses";
+
 interface SpinnerProps {
   size?: string;
   className?: string;
@@ -18,7 +20,12 @@ const Spinner = ({
 
   return (
     <div
-      className={`rounded-full border-4 border-blue-500 border-t-gray-200 animate-spin ${sizeClasses[size] || sizeClasses.lg} ${className}`}
+      className={joinClasses(
+        crudClasses.spinner.root,
+        "rounded-full border-4 border-blue-500 border-t-gray-200 animate-spin",
+        sizeClasses[size] || sizeClasses.lg,
+        className,
+      )}
       style={{
         borderTopColor: color,
       }}

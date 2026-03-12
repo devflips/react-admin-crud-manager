@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import RenderFields from "./components/RenderFields";
 import { enqueueSnackbar } from "notistack";
+import { crudClasses, joinClasses } from "../../lib/crudClasses";
 
 interface FormField {
   key: string;
@@ -38,6 +39,7 @@ const Form: React.FC<FormProps> = ({
   const [formData, setFormData] =
     useState<Record<string, any>>(safeInitialData);
   const [dataLoading, setDataLoading] = useState<boolean>(true);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleGetDetails = async (): Promise<void> => {
     fetchRowDetails?.(safeInitialData)
@@ -63,6 +65,10 @@ const Form: React.FC<FormProps> = ({
 
   const handleChange = (key: string, value: any): void => {
     setFormData((prev) => ({ ...prev, [key]: value }));
+    setErrors((prev) => ({
+      ...prev,
+      [key]: "",
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
@@ -74,12 +80,41 @@ const Form: React.FC<FormProps> = ({
       return;
     }
 
+    const newErrors: Record<string, string> = {};
+    let firstInvalidFocused = false;
+
+    for (const field of formFields) {
+      const value = formData[field.key] || "";
+      if (field.customValidation) {
+        const isValid = field.customValidation(value);
+        if (isValid !== false) {
+          newErrors[field.key] = isValid;
+          if (!firstInvalidFocused) {
+            const input = form.querySelector(
+              `[id="field-${field.key}"]`,
+            ) as HTMLElement | null;
+            input?.focus();
+            firstInvalidFocused = true;
+          }
+        }
+      }
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) return;
+
     onSubmit(formData);
   };
 
   if (dataLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div
+        className={joinClasses(
+          crudClasses.form.loading,
+          "flex items-center justify-center h-64",
+        )}
+      >
         <div
           className="rounded-full border-4 border-blue-500 border-t-gray-200 animate-spin w-8 h-8"
           style={{
@@ -100,7 +135,7 @@ const Form: React.FC<FormProps> = ({
             : "defaultForm"
       }
       onSubmit={handleSubmit}
-      className={formClass}
+      className={joinClasses(crudClasses.form.root, formClass)}
       noValidate={false}
     >
       {formFields.map((field) => (
@@ -108,6 +143,7 @@ const Form: React.FC<FormProps> = ({
           key={field.key}
           field={field}
           formData={formData}
+          errorMessage={errors[field.key] || ""}
           handleChange={handleChange}
         />
       ))}

@@ -1,3 +1,5 @@
+import { crudClasses, joinClasses } from "../../lib/crudClasses";
+
 const BADGE_COLORS: Record<string, { bg: string; border: string }> = {
   blue: {
     bg: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
@@ -63,10 +65,13 @@ const Chip = ({
 
   return (
     <span
-      className={`inline-flex justify-center items-center rounded-sm text-xs font-semibold px-3 py-1 min-w-[78px]
-        ${variantClasses}
-        ${variantKey}
-        ${className}`}
+      className={joinClasses(
+        crudClasses.chip.root,
+        "inline-flex justify-center items-center rounded-sm text-xs font-semibold px-3 py-1 min-w-[78px]",
+        variantClasses,
+        variantKey,
+        className,
+      )}
     >
       {label}
     </span>

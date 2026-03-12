@@ -3,6 +3,17 @@ interface DetailsProps {
     config: {
         fields?: Array<Record<string, any>>;
         containerClass?: string;
+        variant?: "default" | "card" | "split";
+        styles?: {
+            containerClass?: string;
+            rowClass?: string;
+            groupClass?: string;
+            cardGroupClass?: string;
+            labelClass?: string;
+            valueClass?: string;
+            iconClass?: string;
+            mediaGridClass?: string;
+        };
     };
     fetchRowDetails?: (payload: Record<string, any>) => Promise<{
         data: Record<string, any>;

@@ -3,12 +3,24 @@ import DetailRow from "./components/DetailRow";
 import CardGroup from "./components/CardGroup";
 import GroupRow from "./components/GroupRow";
 import { enqueueSnackbar } from "notistack";
+import { crudClasses, joinClasses } from "../../lib/crudClasses";
 
 interface DetailsProps {
   data: Record<string, any> | null;
   config: {
     fields?: Array<Record<string, any>>;
     containerClass?: string;
+    variant?: "default" | "card" | "split";
+    styles?: {
+      containerClass?: string;
+      rowClass?: string;
+      groupClass?: string;
+      cardGroupClass?: string;
+      labelClass?: string;
+      valueClass?: string;
+      iconClass?: string;
+      mediaGridClass?: string;
+    };
   };
   fetchRowDetails?: (
     payload: Record<string, any>,
@@ -20,7 +32,12 @@ export default function Details({
   config,
   fetchRowDetails,
 }: DetailsProps) {
-  const { fields = [], containerClass } = config || {};
+  const {
+    fields = [],
+    containerClass,
+    variant = "default",
+    styles = {},
+  } = config || {};
 
   const safeData = data || {};
 
@@ -52,7 +69,12 @@ export default function Details({
 
   if (dataLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div
+        className={joinClasses(
+          crudClasses.form.loading,
+          "flex items-center justify-center h-64",
+        )}
+      >
         <div
           className="rounded-full border-4 border-blue-500 border-t-gray-200 animate-spin w-8 h-8"
           style={{
@@ -63,9 +85,26 @@ export default function Details({
     );
   }
 
+  const variantContainerClass: Record<string, string> = {
+    default: "grid grid-cols-12 gap-4",
+    // card: each field is a standalone elevated card in a 12-col grid
+    card: "grid grid-cols-12 gap-3",
+    // split: clean property-sheet — bordered box, rows divided by hairlines
+    split:
+      "rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden divide-y divide-gray-100 dark:divide-gray-800",
+  };
+
   return (
     <>
-      <div className={`grid grid-cols-12 gap-4 ${containerClass || ""}`}>
+      <div
+        className={joinClasses(
+          crudClasses.details.root,
+          crudClasses.details.container,
+          variantContainerClass[variant] || variantContainerClass.default,
+          containerClass || "",
+          styles.containerClass || "",
+        )}
+      >
         {fields.map((col) => {
           if (
             col.renderCondition &&
@@ -81,18 +120,24 @@ export default function Details({
               key={col.key || col.titleKey}
               col={col}
               data={detailsData}
+              uiVariant={variant}
+              styleConfig={styles}
             />
           ) : col.type == "cardGroup" ? (
             <CardGroup
               key={col.key || col.titleKey}
               col={col}
               data={detailsData}
+              uiVariant={variant}
+              styleConfig={styles}
             />
           ) : (
             <DetailRow
               key={col.key || col.label}
               col={col}
               data={detailsData}
+              uiVariant={variant}
+              styleConfig={styles}
             />
           );
         })}

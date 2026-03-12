@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import InputLabel from "./InputLabel";
 import Button from "../../Button/Button";
 import ImageCropperModal from "./ImageCropperModal";
+import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
 const ButtonComponent = Button as React.ComponentType<any>;
 
@@ -26,6 +27,7 @@ interface ImagePickerProps {
   cropImage?: boolean;
   name: string;
   parentClass?: string;
+  errorMessage?: string;
 }
 
 const ImagePicker = ({
@@ -40,6 +42,7 @@ const ImagePicker = ({
   cropImage = false,
   name = "",
   parentClass = "",
+  errorMessage = "",
 }: ImagePickerProps) => {
   const [image, setImage] = useState<ImageValue>(value);
   const [isDragging, setIsDragging] = useState(false);
@@ -172,17 +175,28 @@ const ImagePicker = ({
 
   return (
     <>
-      <div key={name} className={parentClass || "col-span-12"}>
+      <div
+        key={name}
+        className={joinClasses(
+          crudClasses.mediaPicker.image,
+          crudClasses.field.wrapper,
+          parentClass || "col-span-12",
+        )}
+      >
         <InputLabel label={label} required={required} />
         <div
-          className={`relative rounded-md p-2 transition-all ${
+          className={joinClasses(
+            crudClasses.mediaPicker.dropzone,
+            "relative rounded-md p-2 transition-all",
             isDragging
               ? "border-2 border-dashed border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-              : "border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
-          }`}
+              : "border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800",
+            errorMessage ? "border-red-500" : "",
+          )}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
+          id={`field-${name}`}
         >
           <input
             ref={inputRef}
@@ -252,6 +266,16 @@ const ImagePicker = ({
             </div>
           )}
         </div>
+        {errorMessage && (
+          <span
+            className={joinClasses(
+              crudClasses.field.error,
+              "text-red-500 text-xs mt-1",
+            )}
+          >
+            {errorMessage}
+          </span>
+        )}
       </div>
 
       <ImageCropperModal

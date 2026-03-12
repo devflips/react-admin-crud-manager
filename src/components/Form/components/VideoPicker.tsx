@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import InputLabel from "./InputLabel";
 import Button from "../../Button/Button";
 import { enqueueSnackbar } from "notistack";
+import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
 const ButtonComponent = Button as React.ComponentType<any>;
 
@@ -19,6 +20,7 @@ interface VideoPickerProps {
   name: string;
   parentClass?: string;
   maxSize?: number;
+  errorMessage?: string;
 }
 
 const VideoPicker = ({
@@ -32,6 +34,7 @@ const VideoPicker = ({
   name = "",
   parentClass = "",
   maxSize = 0,
+  errorMessage = "",
 }: VideoPickerProps) => {
   const [video, setVideo] = useState<{ file?: File; preview?: string } | null>(
     null,
@@ -122,17 +125,28 @@ const VideoPicker = ({
   };
 
   return (
-    <div key={name} className={parentClass || "col-span-12"}>
+    <div
+      key={name}
+      className={joinClasses(
+        crudClasses.mediaPicker.video,
+        crudClasses.field.wrapper,
+        parentClass || "col-span-12",
+      )}
+    >
       <InputLabel label={label} required={required} />
       <div
-        className={`relative rounded-lg p-2 transition-all ${
+        className={joinClasses(
+          crudClasses.mediaPicker.dropzone,
+          "relative rounded-lg p-2 transition-all",
           isDragging
             ? "border-2 border-dashed border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-            : "border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
-        }`}
+            : "border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800",
+          errorMessage ? "border-red-500" : "",
+        )}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        id={`field-${name}`}
       >
         <input
           ref={inputRef}
@@ -179,19 +193,21 @@ const VideoPicker = ({
                 <Icon icon="mdi:video" className="text-gray-400 w-10 h-10" />
               </div>
 
-              <ButtonComponent
-                type="button"
-                onClick={handleButtonClick}
-                variant="outlined"
-              >
-                Choose Video File
-              </ButtonComponent>
+              <div className="flex flex-col items-center space-y-1">
+                <ButtonComponent
+                  type="button"
+                  onClick={handleButtonClick}
+                  variant="outlined"
+                >
+                  Choose Video File
+                </ButtonComponent>
 
-              {dragDrop && (
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  or drag and drop your video here
-                </p>
-              )}
+                {dragDrop && (
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    or drag and drop your video here
+                  </p>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -204,6 +220,16 @@ const VideoPicker = ({
           </div>
         )}
       </div>
+      {errorMessage && (
+        <span
+          className={joinClasses(
+            crudClasses.field.error,
+            "text-red-500 text-xs mt-1",
+          )}
+        >
+          {errorMessage}
+        </span>
+      )}
     </div>
   );
 };

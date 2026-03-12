@@ -13,6 +13,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     onChange: (value: any) => void;
     mask?: string;
     maskApplyOnValue?: boolean;
+    errorMessage?: string;
 }
 declare const Input: React.ForwardRefExoticComponent<InputProps & React.RefAttributes<HTMLInputElement>>;
 export { Input };

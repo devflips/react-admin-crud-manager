@@ -1,9 +1,11 @@
 import { Editor } from "@tinymce/tinymce-react";
 import InputLabel from "./InputLabel";
+import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
 interface TinyEditorProps {
   editorKey: string;
   value: string;
+  name: string;
   onChange: (content: string) => void;
   label?: string;
   required?: boolean;
@@ -17,12 +19,14 @@ interface TinyEditorProps {
   menubar?: boolean;
   fontFamily?: string;
   initConfig?: Record<string, any>;
+  errorMessage?: string;
   imageUploadHandler?: (blobInfo: any) => Promise<string>;
 }
 
 const TinyEditor = ({
   editorKey = "",
   value = "",
+  name = "",
   onChange,
   label = "",
   required = false,
@@ -37,6 +41,7 @@ const TinyEditor = ({
   fontFamily = "Inter, sans-serif",
   initConfig = {},
   imageUploadHandler,
+  errorMessage = "",
 }: TinyEditorProps) => {
   const defaultPlugins = [
     "advlist",
@@ -90,7 +95,10 @@ const TinyEditor = ({
   };
 
   return (
-    <div className={parentClass}>
+    <div
+      className={joinClasses(crudClasses.field.wrapper, parentClass)}
+      id={`field-${name}`}
+    >
       {label && <InputLabel label={label} required={required} />}
 
       <Editor
@@ -111,6 +119,7 @@ const TinyEditor = ({
           content_style: `
             body {
                 font-family: ${fontFamily};
+                border: ${errorMessage ? "1px solid blue" : ""};
             }
             `,
           ...initConfig,
@@ -119,6 +128,16 @@ const TinyEditor = ({
           onChange?.(content);
         }}
       />
+      {errorMessage && (
+        <span
+          className={joinClasses(
+            crudClasses.field.error,
+            "text-red-500 text-xs mt-1",
+          )}
+        >
+          {errorMessage}
+        </span>
+      )}
     </div>
   );
 };

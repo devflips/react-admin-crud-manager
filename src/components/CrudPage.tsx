@@ -6,9 +6,10 @@ import { Icon } from "@iconify/react";
 import { enqueueSnackbar } from "notistack";
 import Details from "./Details/Details";
 import type {
-  ServerSidePaginationData,
   CrudPageProps,
+  ServerSidePaginationData,
 } from "../types/crudtypes";
+import { crudClasses, joinClasses } from "../lib/crudClasses";
 
 const CrudPage: React.FC<CrudPageProps> = ({ config }) => {
   const {
@@ -187,7 +188,7 @@ const CrudPage: React.FC<CrudPageProps> = ({ config }) => {
   };
 
   const handleFilterData = (data: Record<string, any>): void => {
-    setFilterData(() => ({ ...data }));
+    setFilterData((prev) => ({ ...data }));
     if (tableConfig?.filter?.useServerSideFilters) {
       setChangeFilterData((prev) => !prev);
     }
@@ -221,7 +222,7 @@ const CrudPage: React.FC<CrudPageProps> = ({ config }) => {
   ]);
 
   return (
-    <div>
+    <div className={crudClasses.crudPage.root}>
       <Table
         title={title}
         setShowAdd={setShowAdd}
@@ -314,7 +315,12 @@ const CrudPage: React.FC<CrudPageProps> = ({ config }) => {
           executeFunction={executeAction}
           selectedItem={selectedItem}
         >
-          <div className="flex items-center space-x-2 py-3">
+          <div
+            className={joinClasses(
+              crudClasses.crudPage.deleteContent,
+              "flex items-center space-x-2 py-3",
+            )}
+          >
             <div>
               <p className="text-md text-gray-700 dark:text-white">
                 {modalConfig?.deleteModal?.confirmText ||
@@ -341,7 +347,8 @@ const CrudPage: React.FC<CrudPageProps> = ({ config }) => {
           icon={modalConfig?.viewModal?.icon}
           title={modalConfig?.viewModal?.title || "View Details"}
           size={modalConfig?.viewModal?.size || "lg"}
-          footerConfig={modalConfig?.viewModal.footer}
+          footerConfig={modalConfig?.viewModal?.footer}
+          classNames={modalConfig?.viewModal?.modalClassNames}
         >
           {ViewComponent ? (
             <ViewComponent data={selectedItem} />

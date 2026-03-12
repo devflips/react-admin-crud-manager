@@ -1,4 +1,5 @@
 import React from "react";
+import { crudClasses, joinClasses } from "../../lib/crudClasses";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
@@ -68,13 +69,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       colorVariants[color]?.[variant] || colorVariants.default.contained;
     const sizeStyles = sizes[size] || sizes.default;
 
-    const combinedClassName = `
-      ${baseStyles} 
-      ${colorStyles} 
-      ${sizeStyles} 
-      ${fullWidth ? "w-full" : ""} 
-      ${className}
-    `.trim();
+    const combinedClassName = joinClasses(
+      crudClasses.button.root,
+      baseStyles,
+      colorStyles,
+      sizeStyles,
+      fullWidth ? "w-full" : "",
+      className,
+    );
 
     return (
       <button

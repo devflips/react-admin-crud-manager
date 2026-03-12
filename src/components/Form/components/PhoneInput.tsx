@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { countries } from "../../../data/countries";
 import { ChevronDown, Search } from "lucide-react";
 import InputLabel from "./InputLabel";
+import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
 interface Country {
   label: string;
@@ -21,6 +22,7 @@ interface PhoneInputProps {
   search?: boolean;
   countriesList?: boolean;
   defaultCountry?: string;
+  errorMessage?: string;
 }
 
 export default function PhoneInput({
@@ -35,6 +37,7 @@ export default function PhoneInput({
   search = false,
   countriesList = false,
   defaultCountry = "",
+  errorMessage = "",
 }: PhoneInputProps) {
   const find_country_with_code = (countryCode: string) => {
     return (countries as Country[]).find((obj) => obj.code == countryCode);
@@ -106,7 +109,13 @@ export default function PhoneInput({
 
     return (
       <>
-        <div key={name} className={parentClass || "col-span-12"}>
+        <div
+          key={name}
+          className={joinClasses(
+            crudClasses.field.wrapper,
+            parentClass || "col-span-12",
+          )}
+        >
           <InputLabel label={label} required={required} />
           <input
             type="text"
@@ -128,7 +137,13 @@ export default function PhoneInput({
 
   return (
     <>
-      <div key={name} className={parentClass || "col-span-12"}>
+      <div
+        key={name}
+        className={joinClasses(
+          crudClasses.field.wrapper,
+          parentClass || "col-span-12",
+        )}
+      >
         <InputLabel label={label} required={required} />
         <div className="relative " ref={dropdownRef}>
           <div
@@ -138,7 +153,8 @@ export default function PhoneInput({
       ? "ring-0.5 ring-blue-100 border-blue-300"
       : "border-gray-300 dark:border-gray-600"
   }
-  ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
+  ${disabled ? "opacity-60 cursor-not-allowed" : ""}
+    ${errorMessage ? "border-red-500" : ""}`}
           >
             <button
               type="button"
@@ -169,6 +185,7 @@ export default function PhoneInput({
               value={fullNumber}
               onChange={handleNumberChange}
               required={required}
+              id={`field-${name}`}
               disabled={disabled || !selectedCountry}
               placeholder={!selectedCountry ? "Select a country" : placeholder}
               className="flex-1 ml-2 bg-transparent outline-none text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400"
@@ -231,6 +248,16 @@ export default function PhoneInput({
             </div>
           )}
         </div>
+        {errorMessage && (
+          <span
+            className={joinClasses(
+              crudClasses.field.error,
+              "text-red-500 text-xs mt-1",
+            )}
+          >
+            {errorMessage}
+          </span>
+        )}
       </div>
     </>
   );

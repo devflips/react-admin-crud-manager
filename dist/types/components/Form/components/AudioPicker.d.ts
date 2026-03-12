@@ -13,6 +13,7 @@ interface AudioPickerProps {
     name: string;
     parentClass?: string;
     maxSize?: number;
+    errorMessage?: string;
 }
-declare const AudioPicker: ({ label, value, onChange, required, accept, id, dragDrop, name, parentClass, maxSize, }: AudioPickerProps) => import("react/jsx-runtime").JSX.Element;
+declare const AudioPicker: ({ label, value, onChange, required, accept, id, dragDrop, name, parentClass, errorMessage, maxSize, }: AudioPickerProps) => import("react/jsx-runtime").JSX.Element;
 export default AudioPicker;

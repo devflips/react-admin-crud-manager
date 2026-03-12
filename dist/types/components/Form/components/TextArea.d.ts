@@ -4,6 +4,8 @@ interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
     required?: boolean;
     parentClass?: string;
     className?: string;
+    errorMessage?: string;
+    name: string;
 }
 declare const TextArea: React.ForwardRefExoticComponent<TextAreaProps & React.RefAttributes<HTMLTextAreaElement>>;
 export { TextArea };

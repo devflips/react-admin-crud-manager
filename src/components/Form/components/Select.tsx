@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown, Search, Check } from "lucide-react";
 import InputLabel from "./InputLabel";
+import { countries } from "../../../data/countries";
+import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
 interface SelectOption {
   label: string;
   value: any;
+  code?: string;
 }
 
 interface SelectProps {
-  options:
+  options?:
     | SelectOption[]
     | ((
         formData: Record<string, any>,
@@ -28,6 +31,8 @@ interface SelectProps {
   dropdownMaxHeight?: string | number;
   formData: Record<string, any>;
   dependencyKey?: string;
+  countriesList?: boolean;
+  errorMessage?: string;
 }
 
 const Select = ({
@@ -46,7 +51,9 @@ const Select = ({
   multiple = false,
   dropdownMaxHeight = "",
   formData = {},
+  countriesList = false,
   dependencyKey = "",
+  errorMessage = "",
 }: SelectProps) => {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -64,10 +71,21 @@ const Select = ({
     return typeof val === "boolean" ? String(val) : String(val ?? "");
   };
 
+  const getCountrieslist = () => {
+    const list = countries.map((obj) => ({
+      value: obj.code,
+      label: obj.label,
+      code: obj.code,
+    }));
+    return list;
+  };
+
   useEffect(
     () => {
       const loadOptions = async () => {
-        if (typeof options === "function") {
+        if (countriesList == true) {
+          setNormalizedOptions(getCountrieslist());
+        } else if (typeof options === "function") {
           const result = await options(formData);
           setNormalizedOptions(result || []);
         } else {
@@ -170,15 +188,25 @@ const Select = ({
   }, []);
 
   return (
-    <div key={name} className={parentClass || "col-span-12"}>
+    <div
+      key={name}
+      className={joinClasses(
+        crudClasses.field.wrapper,
+        parentClass || "col-span-12",
+      )}
+    >
       <InputLabel label={label} required={required} />
 
-      <div className={`relative ${className}`} ref={dropdownRef}>
+      <div
+        className={joinClasses(crudClasses.field.input, "relative", className)}
+        ref={dropdownRef}
+      >
         <select
           name="hidden_select_for_validation"
           value={selectedLabels || ""}
           required={required}
           multiple={multiple}
+          id={`field-${name}`}
           className="absolute opacity-0 right-1/2 top-[80%] -translate-x-1/2 -translate-y-1/2 pointer-events-none h-[10px]"
           onChange={() => {}}
         >
@@ -196,7 +224,8 @@ const Select = ({
               ? "text-gray-500 dark:text-gray-400"
               : "dark:text-white"
           } 
-          ${disabled ? "opacity-50 cursor-not-allowed" : "dark:bg-gray-700"}`}
+          ${disabled ? "opacity-50 cursor-not-allowed" : "dark:bg-gray-700"}
+          ${errorMessage ? "border-red-500" : ""}`}
         >
           <span className="truncate">{selectedLabels || placeholder}</span>
 
@@ -247,7 +276,16 @@ const Select = ({
                         : ""
                     }`}
                   >
-                    <span>{option.label}</span>
+                    <div className="flex gap-2 items-center">
+                      {countriesList && option?.code && (
+                        <img
+                          src={`https://flagcdn.com/w20/${option?.code.toLowerCase()}.png`}
+                          alt={option.code}
+                          className="w-5 h-3 object-cover"
+                        />
+                      )}
+                      <span>{option.label}</span>
+                    </div>
 
                     {multiple && isSelected(option.value) && (
                       <Check className="w-4 h-4" />
@@ -263,6 +301,16 @@ const Select = ({
           </div>
         )}
       </div>
+      {errorMessage && (
+        <span
+          className={joinClasses(
+            crudClasses.field.error,
+            "text-red-500 text-xs mt-1",
+          )}
+        >
+          {errorMessage}
+        </span>
+      )}
     </div>
   );
 };

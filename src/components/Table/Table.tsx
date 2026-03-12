@@ -8,6 +8,7 @@ import {
   User,
   Music,
   Plus,
+  Download,
 } from "lucide-react";
 import { createPortal } from "react-dom";
 import { formatDate, searchLocalData } from "../../lib/utils";
@@ -23,6 +24,7 @@ import {
   getNormalizedSortOptions,
   sortTableData,
 } from "./utils/sortUtils";
+import { crudClasses, joinClasses } from "../../lib/crudClasses";
 
 interface TableProps {
   config: Record<string, any>;
@@ -31,6 +33,11 @@ interface TableProps {
   buttonText?: string;
   description?: string;
   showAddButton?: boolean;
+}
+
+interface CSVField {
+  label: string;
+  key: string;
 }
 
 const Table = ({
@@ -59,6 +66,11 @@ const Table = ({
       enabled: false,
       rows_per_page: 10,
       useServerSidePagination: false,
+    },
+    exportCSV = {
+      enabled: false,
+      fileName: "",
+      fields: [],
     },
     emptyMessage = "No data available",
     onMenuAction,
@@ -216,6 +228,82 @@ const Table = ({
     setIsOpen(true);
   };
 
+  const getImageSource = (image: any): string => {
+    if (!image) return "";
+
+    if (typeof image === "string") {
+      return image;
+    }
+
+    if (image instanceof File) {
+      return URL.createObjectURL(image);
+    }
+
+    if (typeof image === "object") {
+      if (typeof image.preview === "string") {
+        return image.preview;
+      }
+      if (typeof image.src === "string") {
+        return image.src;
+      }
+      if (image.src instanceof File) {
+        return URL.createObjectURL(image.src);
+      }
+      if (image.file instanceof File) {
+        return URL.createObjectURL(image.file);
+      }
+    }
+
+    return "";
+  };
+
+  const renderMultiImageCell = (value: any, col: any) => {
+    const images = Array.isArray(value) ? value : [];
+
+    if (images.length === 0) {
+      return <span className={col.className || ""}>N/A</span>;
+    }
+
+    const maxPreview = col.maxPreview || 3;
+    const visibleImages = images.slice(0, maxPreview);
+    const remaining = images.length - visibleImages.length;
+
+    return (
+      <div className="flex items-center">
+        <div className="flex -space-x-2">
+          {visibleImages.map((image: any, idx: number) => {
+            const src = getImageSource(image);
+            if (!src) return null;
+
+            return (
+              <button
+                key={`${src}-${idx}`}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openPreview({ src, alt: `Gallery ${idx + 1}` });
+                }}
+                className="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800 overflow-hidden"
+              >
+                <img
+                  src={src}
+                  alt={`gallery-${idx + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            );
+          })}
+        </div>
+
+        {remaining > 0 && (
+          <span className="ml-2 text-xs font-medium text-gray-600 dark:text-gray-300">
+            +{remaining}
+          </span>
+        )}
+      </div>
+    );
+  };
+
   const renderAvatar = (
     imageSrc: any,
     imageAlt: string,
@@ -354,7 +442,10 @@ const Table = ({
             onClick={(e) =>
               handleMenuToggle(row.id || row._id, e, col.menuList)
             }
-            className="p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition text-gray-700 dark:text-gray-300"
+            className={joinClasses(
+              crudClasses.table.actionButton,
+              "p-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition text-gray-700 dark:text-gray-300",
+            )}
           >
             <EllipsisVertical className="h-4 w-4" />
           </button>
@@ -390,6 +481,8 @@ const Table = ({
       );
     } else if (col.type === "audio") {
       return <>{renderAudio(value, col.className)}</>;
+    } else if (col.type === "multiImage") {
+      return <>{renderMultiImageCell(value, col)}</>;
     } else {
       return <span className={col.className || ""}>{value || "N/A"}</span>;
     }
@@ -417,6 +510,47 @@ const Table = ({
   const isRowClickable = () => rowClick || typeof rowClick === "function";
   const isColumnClickable = (col: any) =>
     col.onClickDetails || typeof col.handleClick === "function";
+
+  const handleExportCSV = () => {
+    if (!data?.length || !exportCSV?.fields?.length) return;
+
+    // Create headers
+    const headers = exportCSV.fields.map((field: CSVField) => field.label);
+
+    // Create rows
+    const rows = paginatedData.map((row: Record<string, any>) =>
+      exportCSV.fields.map((field: CSVField) => {
+        const value = row?.[field.key];
+        return `"${value !== undefined && value !== null ? value : ""}"`;
+      }),
+    );
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((r) => r.join(",")),
+    ].join("\n");
+
+    // Filename
+    const now = new Date();
+    const defaultName = `export-${formatDate(now, "YYYY-MM-DD_HH-mm-ss")}.csv`;
+    const finalName = exportCSV.fileName || defaultName;
+
+    // Create blob
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+    // Download file
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+
+    link.href = url;
+    link.download = finalName;
+
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -522,7 +656,12 @@ const Table = ({
         <TableSkeleton rows={6} columns={6} />
       ) : (
         <>
-          <div className="flex flex-col lg:!flex-row lg:!justify-between gap-4 mb-3">
+          <div
+            className={joinClasses(
+              crudClasses.table.toolbar,
+              "flex flex-col lg:!flex-row lg:!justify-between gap-4 mb-3",
+            )}
+          >
             <div className="table-heading">
               <h1>{title}</h1>
               <p>{description}</p>
@@ -541,13 +680,19 @@ const Table = ({
               <div className="flex flex-col sm:!flex-row sm:!flex-wrap justify-end items-stretch sm:!items-center gap-2 w-full">
                 {search.enabled && (
                   <div className="w-full sm:!w-auto">
-                    <div className="table-search-field">
+                    <div
+                      className={joinClasses(
+                        crudClasses.table.searchField,
+                        "table-search-field",
+                      )}
+                    >
                       <Search className="search-icon" />
                       <input
                         type="text"
                         placeholder={search.placeholder || "Search..."}
                         value={searchTerm}
                         onChange={(e) => handleSearchChange(e.target.value)}
+                        className={crudClasses.table.searchInput}
                       />
                     </div>
                   </div>
@@ -555,7 +700,8 @@ const Table = ({
 
                 {(normalizedSortConfig?.enabled &&
                   normalizedSortOptions?.length > 0) ||
-                (filterConfig && filter.enabled) ? (
+                (filterConfig && filter.enabled) ||
+                (exportCSV && exportCSV.enabled) ? (
                   <div className="flex items-center justify-end gap-2 w-full sm:!w-auto">
                     {filterConfig && filter.enabled && (
                       <div className="filter-button-wrapper">
@@ -570,6 +716,18 @@ const Table = ({
                         {Object.keys(appliedFilters).length > 0 && (
                           <span className="red-dot"></span>
                         )}
+                      </div>
+                    )}
+                    {exportCSV && exportCSV.enabled && (
+                      <div className="filter-button-wrapper">
+                        <Button
+                          onClick={() => handleExportCSV()}
+                          variant="contained"
+                          className="w-full sm:!w-auto"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Export CSV
+                        </Button>
                       </div>
                     )}
                     {normalizedSortConfig?.enabled &&
@@ -587,15 +745,25 @@ const Table = ({
             </div>
           </div>
 
-          <div className="table-container">
+          <div
+            className={joinClasses(
+              crudClasses.table.root,
+              crudClasses.table.container,
+              "table-container",
+            )}
+          >
             <div className="overflow-x-auto">
-              <table>
-                <thead>
-                  <tr>
+              <table className={crudClasses.table.element}>
+                <thead className={crudClasses.table.head}>
+                  <tr className={crudClasses.table.headRow}>
                     {table_head.map((col: any) => (
                       <th
                         key={col.key}
-                        className={`table-head-data ${col.headClass || ""}`}
+                        className={joinClasses(
+                          crudClasses.table.headCell,
+                          "table-head-data",
+                          col.headClass || "",
+                        )}
                       >
                         {col.title}
                       </th>
@@ -603,12 +771,15 @@ const Table = ({
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody className={crudClasses.table.body}>
                   {paginatedData.length === 0 ? (
                     <tr>
                       <td
                         colSpan={table_head.length}
-                        className="no-data-message"
+                        className={joinClasses(
+                          crudClasses.table.noData,
+                          "no-data-message",
+                        )}
                       >
                         {emptyMessage}
                       </td>
@@ -617,7 +788,11 @@ const Table = ({
                     paginatedData.map((row: any, index: number) => (
                       <tr
                         key={row.id || row._id || index}
-                        className={`table-row ${isRowClickable() ? "cursor-pointer" : ""}`}
+                        className={joinClasses(
+                          crudClasses.table.row,
+                          "table-row",
+                          isRowClickable() ? "cursor-pointer" : "",
+                        )}
                         onClick={() => {
                           isRowClickable() && handleRowClick(row);
                         }}
@@ -625,9 +800,13 @@ const Table = ({
                         {table_head.map((col: any) => (
                           <td
                             key={col.key}
-                            className={`table-data ${col.type == "audio" ? "" : "max-w-[300px]"} truncate ${
-                              isColumnClickable(col) ? "cursor-pointer" : ""
-                            }`}
+                            className={joinClasses(
+                              crudClasses.table.cell,
+                              "table-data",
+                              col.type == "audio" ? "" : "max-w-[300px]",
+                              "truncate",
+                              isColumnClickable(col) ? "cursor-pointer" : "",
+                            )}
                             title={String(row[col.key] ?? "")}
                             onClick={(e) => {
                               if (isColumnClickable(col)) {
@@ -650,7 +829,12 @@ const Table = ({
             </div>
 
             {pagination?.enabled && sortedData.length > 0 && (
-              <div className="pagination-wrapper">
+              <div
+                className={joinClasses(
+                  crudClasses.table.pagination,
+                  "pagination-wrapper",
+                )}
+              >
                 <span>
                   Showing {(currentPage - 1) * pageSize + 1} to{" "}
                   {Math.min(currentPage * pageSize, totalRecords)} of{" "}
@@ -750,7 +934,10 @@ const Table = ({
               left: `${menuPosition.left}px`,
               zIndex: 9999,
             }}
-            className="w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg border border-gray-200 dark:border-gray-600"
+            className={joinClasses(
+              crudClasses.table.menu,
+              "w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg border border-gray-200 dark:border-gray-600",
+            )}
           >
             {menuList.map((action: any, i: number) => (
               <button
@@ -764,11 +951,13 @@ const Table = ({
                     e,
                   )
                 }
-                className={`w-full flex items-center gap-2 px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-600 ${
+                className={joinClasses(
+                  crudClasses.table.menuItem,
+                  "w-full flex items-center gap-2 px-4 py-2 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-600",
                   action.variant === "danger"
                     ? "text-red-600 dark:text-red-500"
-                    : "text-gray-700 dark:text-gray-200"
-                }`}
+                    : "text-gray-700 dark:text-gray-200",
+                )}
               >
                 {action.icon && <span className="shrink-0">{action.icon}</span>}
                 {action.title}

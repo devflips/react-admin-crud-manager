@@ -8,6 +8,7 @@ interface SwitchProps {
     onChange: (checked: boolean) => void;
     disabled?: boolean;
     name: string;
+    errorMessage?: string;
 }
 declare const Switch: React.ForwardRefExoticComponent<SwitchProps & React.RefAttributes<HTMLInputElement>>;
 export { Switch };
