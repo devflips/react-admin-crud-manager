@@ -20,8 +20,10 @@ export default function Crud({ config }: CrudPageProps) {
   }, []);
 
   return (
-    <OptionalSnackbarProvider>
-      <CrudPage config={config} />
-    </OptionalSnackbarProvider>
+    <div className="racm-root">
+      <OptionalSnackbarProvider>
+        <CrudPage config={config} />
+      </OptionalSnackbarProvider>
+    </div>
   );
 }
