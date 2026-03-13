@@ -38,7 +38,6 @@ function App() {
 ## Components
 
 - `Crud`: Main CRUD page component
-- `Table`, `Modal`, `Form`, etc.: Available for advanced use
 
 ## Props
 
@@ -58,7 +57,7 @@ Below is a complete reference of the public props accepted by this package (type
 | ----------------- | -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `title`           | string   | Yes      | Title of the CRUD page                                                                                                                                                                                                                                                                                                                                              |
 | `description`     | string   | No       | Optional description text                                                                                                                                                                                                                                                                                                                                           |
-| `buttonText`      | string   | No       | Custom text for action buttons                                                                                                                                                                                                                                                                                                                                      |
+| `buttonText`      | string   | No       | Custom text for add button                                                                                                                                                                                                                                                                                                                                          |
 | `fetchData`       | function | Yes      | Async function to fetch data. Signature: `async ({ search, rows_per_page, current_page, sort_by, sort_order, ...filters }) => Promise<{ data: Array, pagination?: { current_page: number, rows_per_page: number, total_pages: number, total_records: number } }>`. Component expects `resp.data` (array) and optional `resp.pagination` for server-side pagination. |
 | `fetchRowDetails` | function | No       | Async function to fetch additional details for a row. Signature: `async (item) => Promise<any>`. Used for view modal or details.                                                                                                                                                                                                                                    |
 | `isStaticData`    | boolean  | No       | Default: `false`. If true, add/edit/delete apply client-side instead of re-fetching                                                                                                                                                                                                                                                                                 |
@@ -72,41 +71,36 @@ Below is a complete reference of the public props accepted by this package (type
 
 #### Table Configuration Keys
 
-| Key                           | Type                    | Description                                                                                                                                                                                                       | Accepted Values / Example                                                                                                                                   |
-| ----------------------------- | ----------------------- | ------------------------------- | ------- |
-| `table_head`                  | array of column objects | Column definitions | Array of table column objects (see [Table column object](#table-column-object-table_head))                                                                           |
-| `data`                        | array                   | Rows displayed in the table | Array of objects (e.g., `[{ id: 1, name: "John" }, ...]`)                                                                                                                                                                                    |
-| `loading`                     | boolean                 | Show skeleton loader when true | `true`, `false`; default: `false`                                                                                                                                                                                                          |
-| `search`                      | object                  | Search functionality config | `{ enabled: true, placeholder: "Search...", useServerSideSearch?: false, searchKeys?: ["name", "email"] }`                                                                                                                                                                        |
-| `filter`                      | object                  | Filter drawer config | `{ enabled: true, useServerSideFilters?: false }`                                                                                                                                                                                                                    |
-| `pagination` | object | Pagination controls | `{ enabled: true, rows_per_page: 10, useServerSidePagination?: false, current_page?: 1, total_pages?: 5, total_records?: 50 }`                                                                                                    |
-| `sort`                        | object                  | Sorting configuration | `{ enabled: true, useServerSideSorting?: false, autoGenerate: true, onChange?: (payload) => void, options?: [...], clearLabel?: "Clear Sort" }`                                                                                                                                                                                                     |
-| `exportCSV`                   | object                  | Export data as CSV | `{ enabled: true, fileName: "users.csv", fields: [{ label: "Name", key: "name" }, ...] }`                                                                                                                                                                            |
-| `emptyMessage`                | string                  | Message when no rows exist | `"No data available"`, `"No records found"`, etc.                                                                                                                                                                                                          |
-| `onMenuAction`                | function                | Callback for menu actions (edit/view/delete) | `(actionType: string, item: object) => void`; actionType: `"edit"`, `"view"`, `"delete"`                                                                                                                                                           |
-| `setServerSidePaginationData` | function                | Update pagination/search state | `(data: { search, rows_per_page, current_page, sort_by, sort_order, ...filters }) => void`                                                                                                                                                                                                         |
-| `onFilterApply`               | function                | Callback when filter applied | `(filters: object) => void`                                                                                                                                                                                                              |
-| `filterConfig`                | object                  | Filter drawer form fields | `{ fields: [{ key: "status", type: "select", options: [...] }, ...] }`; uses [Form Field Schema](#form-field-schema)                                                                                                                                                                                  |
-| `rowClick`                    | function                | Callback on table row click | `(row: object, rowIndex: number) => void` |
+| Key          | Type                    | Description                 | Accepted Values / Example                                                                                                                       |
+| ------------ | ----------------------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `table_head` | array of column objects | Column definitions          | Array of table column objects (see [Table column object](#table-column-object-table_head))                                                      |
+| `search`     | object                  | Search functionality config | `{ enabled: true, useServerSideSearch?: false, searchKeys?: ["name", "email"] }`                                                                |
+| `filter`     | object                  | Filter drawer config        | `{ enabled: true, useServerSideFilters?: false }`                                                                                               |
+| `pagination` | object                  | Pagination controls         | `{ enabled: true, useServerSidePagination?: false }`                                                                                            |
+| `sort`       | object                  | Sorting configuration       | `{ enabled: true, useServerSideSorting?: false, autoGenerate: true, onChange?: (payload) => void, options?: [...], clearLabel?: "Clear Sort" }` |
+| `exportCSV`  | object                  | Export data as CSV          | `{ enabled: true, fileName: "users.csv", fields: [{ label: "Name", key: "name" }, ...] }`                                                       |
+| `rowClick`   | function or boolean     | Callback on table row click | `(row: object, rowIndex: number) => void` or `true` (setting true will open details)                                                            |
+
+<br>
 
 #### Table Column Object (`table_head[]`)
 
-| Key              | Type     | Description                                                                                | Accepted Values / Example |
-| ---------------- | -------- | ---------------------------------------------------------------- | ------------------------------------- |
-| `key`            | string   | Property name in row objects                                                               | `"id"`, `"name"`, `"email"` (must exist in data objects)|
-| `title`          | string   | Column header text                                                                         | `"User ID"`, `"Full Name"`, `"Email Address"` |
-| `type`           | string   | Column renderer type                                                                       | `"plain"` (default), `"index"` (row number), `"group"` (avatar+text), `"chip"` (badge), `"date"`, `"avatar"`, `"menu_actions"` |
-| `imageKey`       | string   | Image property for avatar/group types                                                      | `"profileImage"`, `"avatarUrl"` (path to image in data object)  |
-| `titleKey`       | string   | Title property for group/avatar types                                                      | `"name"`, `"fullName"` (property key in data object)  |
-| `subtitleKey`    | string   | Subtitle property for group/avatar types                                                   | `"email"`, `"department"` (property key in data object)  |
-| `onClickDetails` | boolean  | Clicking cell opens view details modal                                                     | `true`, `false` (default: `false`)  |
-| `variant`        | string   | Chip styling variant                                                                       | `"contained"`, `"outline"`, `"soft"` (used with `type: "chip"`)  |
-| `chipOptions`    | array    | Map values to chip labels and colors; array of `{ value: string\|number\|boolean, label: string, color?: string }` | `[{ value: "active", label: "Active", color: "green" }, { value: "inactive", label: "Inactive", color: "red" }]` |
-| `defaultColor`   | string   | Default color for chips (if no match in chipOptions)                                       | `"green"`, `"red"`, `"blue"`, `"yellow"`, `"purple"`, `"gray"`, etc. |
-| `className`      | string   | Custom CSS class for cell content                                                          | Tailwind classes: `"font-bold text-sm text-gray-600"`  |
-| `format`         | string   | Date format pattern                                                                        | `"DD MMM YYYY"`, `"YYYY-MM-DD"`, `"DD/MM/YYYY HH:mm"` (uses date-fns patterns)  |
-| `render`         | function | Custom cell renderer (overrides built-in logic)                                            | `(row: object, rowIndex: number) => ReactNode`; e.g., `(row) => <span>{row.name.toUpperCase()}</span>` |
-| `menuList`       | array    | Action menu items; array of `{ title: string, type: string, variant?: string, icon?: ReactNode }` | `[{ title: "Edit", type: "edit", icon: <EditIcon /> }, { title: "Delete", type: "delete", icon: <TrashIcon /> }]` |
+| Key              | Type     | Description                                                                                                        | Accepted Values / Example                                                                                                      |
+| ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `key`            | string   | Property name in row objects                                                                                       | `"id"`, `"name"`, `"email"` (must exist in data objects)                                                                       |
+| `title`          | string   | Column header text                                                                                                 | `"User ID"`, `"Full Name"`, `"Email Address"`                                                                                  |
+| `type`           | string   | Column renderer type                                                                                               | `"plain"` (default), `"index"` (row number), `"group"` (avatar+text), `"chip"` (badge), `"date"`, `"avatar"`, `"menu_actions"` |
+| `imageKey`       | string   | Image property for avatar/group types                                                                              | `"profileImage"`, `"avatarUrl"` (path to image in data object)                                                                 |
+| `titleKey`       | string   | Title property for group/avatar types                                                                              | `"name"`, `"fullName"` (property key in data object)                                                                           |
+| `subtitleKey`    | string   | Subtitle property for group/avatar types                                                                           | `"email"`, `"department"` (property key in data object)                                                                        |
+| `onClickDetails` | boolean  | Clicking cell opens view details modal                                                                             | `true`, `false` (default: `false`)                                                                                             |
+| `variant`        | string   | Chip styling variant                                                                                               | `"contained"`, `"outline"`, `"soft"` (used with `type: "chip"`)                                                                |
+| `chipOptions`    | array    | Map values to chip labels and colors; array of `{ value: string\|number\|boolean, label: string, color?: string }` | `[{ value: "active", label: "Active", color: "green" }, { value: "inactive", label: "Inactive", color: "red" }]`               |
+| `defaultColor`   | string   | Default color for chips (if no match in chipOptions)                                                               | `"green"`, `"red"`, `"blue"`, `"yellow"`, `"purple"`, `"gray"`, etc.                                                           |
+| `className`      | string   | Custom CSS class for cell content                                                                                  | Tailwind classes: `"font-bold text-sm text-gray-600"`                                                                          |
+| `format`         | string   | Date format pattern                                                                                                | `"DD MMM YYYY"`, `"YYYY-MM-DD"`, `"DD/MM/YYYY HH:mm"` (uses date-fns patterns)                                                 |
+| `menuList`       | array    | Action menu items; array of `{ title: string, type: string, variant?: string, icon?: ReactNode }`                  | `[{ title: "Edit", type: "edit", icon: <EditIcon /> }, { title: "Delete", type: "delete", icon: <TrashIcon /> }]`              |
+| `render`         | function | Custom cell renderer (overrides built-in logic)                                                                    | `(row: object, rowIndex: number) => ReactNode`; e.g., `(row) => <span>{row.name.toUpperCase()}</span>`                         |
 
 ---
 
@@ -114,41 +108,40 @@ Below is a complete reference of the public props accepted by this package (type
 
 #### Add & Edit Modal (`addModal`, `editModal`)
 
-| Property        | Type     | Required | Description                                                                                                                                            | Accepted Values / Example |
-| --------------- | -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------ |
-| `title`         | string   | Yes      | Modal title                                                                                                                                            | `"Add New User"`, `"Edit User Profile"` |
-| `icon`          | ReactNode | No      | Icon element displayed in modal header                                                                                                                 | `<PlusIcon />`, `<EditIcon />` |
-| `size`          | string   | No       | Modal width                                                                                                                                            | `"sm"`, `"md"` (default), `"lg"`, `"xl"`, `"full"` |
-| `formClass`     | string   | No       | Custom CSS class for form wrapper                                                                                                                      | Tailwind classes: `"grid grid-cols-12 gap-4"` |
-| `formFields`    | array    | Yes      | Form field objects                                                                                                                                     | Array of form field objects (see [Form Field Schema](#form-field-schema)) |
-| `handleSubmit`  | function | Yes      | Async callback on form submission                                                                                                                     | `async (formData) => Promise<{ newObject, message?: string }>` (add), `async (formData, item) => Promise<{ newObject, targetObject, message?: string }>` (edit) |
-| `actionButtons` | array    | No       | Custom action buttons                                                                                                                                 | `[{ type: "submit", label: "Save", color: "primary", variant: "contained", onClick?: (e, item) => void, disabled?: boolean }]` |
+| Property        | Type      | Required | Description                            | Accepted Values / Example                                                                                                                                       |
+| --------------- | --------- | -------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `title`         | string    | Yes      | Modal title                            | `"Add New User"`, `"Edit User Profile"`                                                                                                                         |
+| `icon`          | ReactNode | No       | Icon element displayed in modal header | `<PlusIcon />`, `<EditIcon />`                                                                                                                                  |
+| `size`          | string    | No       | Modal width                            | `"sm"`, `"md"` (default), `"lg"`, `"xl"`, `"full"`                                                                                                              |
+| `formClass`     | string    | No       | Custom CSS class for form wrapper      | Tailwind classes: `"grid grid-cols-12 gap-4"`                                                                                                                   |
+| `formFields`    | array     | Yes      | Form field objects                     | Array of form field objects (see [Form Field Schema](#form-field-schema))                                                                                       |
+| `handleSubmit`  | function  | Yes      | Async callback on form submission      | `async (formData) => Promise<{ newObject, message?: string }>` (add), `async (formData, item) => Promise<{ newObject, targetObject, message?: string }>` (edit) |
+| `actionButtons` | array     | No       | Custom action buttons                  | `[{ type: "submit", label: "Save", color: "primary", variant: "contained", onClick?: (e, item) => void, disabled?: boolean }]`                                  |
 
 #### Delete Modal (`deleteModal`)
 
-| Property        | Type     | Required | Description                                                                                  | Accepted Values / Example |
-| --------------- | -------- | -------- | -------------------------------- | ---------------------- |
-| `title`         | string   | No       | Modal title                                                                                  | `"Delete User"`, `"Confirm Delete"` |
-| `icon`          | ReactNode | No      | Icon element displayed in modal header                                                       | `<TrashIcon />`, `<WarningIcon />` |
-| `size`          | string   | No       | Modal width                                                                                  | `"sm"` (default), `"md"`, `"lg"`, `"xl"`, `"full"` |
-| `confirmText`   | string   | No       | Confirmation message text                                                                   | `"Are you sure you want to delete this user?"`, `"This action cannot be undone."` |
-| `referenceKey`  | string   | No       | Property key to display as confirmation reference                                           | `"name"`, `"email"` (shows the value from selected item) |
-| `action`        | function | Yes      | Async callback to delete item                                                                | `async (selectedItem) => Promise<{ targetObject }>` (returns the deleted row) |
-| `actionButtons` | array    | No       | Custom action buttons                                                                       | `[{ type: "submit", label: "Delete", color: "error", variant: "contained" }]` |
+| Property        | Type      | Required | Description                                       | Accepted Values / Example                                                                                                                              |
+| --------------- | --------- | -------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `title`         | string    | No       | Modal title                                       | `"Delete User"`, `"Confirm Delete"`                                                                                                                    |
+| `icon`          | ReactNode | No       | Icon element displayed in modal header            | `<TrashIcon />`, `<WarningIcon />`                                                                                                                     |
+| `size`          | string    | No       | Modal width                                       | `"sm"` (default), `"md"`, `"lg"`, `"xl"`, `"full"`                                                                                                     |
+| `confirmText`   | string    | No       | Confirmation message text                         | `"Are you sure you want to delete this user?"`, `"This action cannot be undone."`                                                                      |
+| `referenceKey`  | string    | No       | Property key to display as confirmation reference | `"name"`, `"email"` (shows the value from selected item)                                                                                               |
+| `actionButtons` | array     | No       | Custom action buttons                             | `[{ type: "button", label: "Delete", color: "error", variant: "contained", onClick: async (event  , selectedItem) => Promise<{ targetObject }>},... ]` |
 
 #### View Modal (`viewModal`)
 
-| Property    | Type            | Required | Description                                                    | Accepted Values / Example |
-| ----------- | --------------- | -------- | -------------------- | -------------------- |
-| `title`     | string          | Yes      | Modal title                                                    | `"User Details"`, `"View Profile"` |
-| `icon`      | ReactNode       | No       | Icon element displayed in modal header                         | `<EyeIcon />`, `<InfoIcon />` |
-| `size`      | string          | No       | Modal width                                                    | `"sm"`, `"md"` (default), `"lg"`, `"xl"`, `"full"` |
-| `component` | React component | No       | Custom component to render (receives `data` prop)             | `(props) => <CustomViewComponent data={props.data} />` |
-| `variant`   | string          | No       | View layout style                                              | `"default"`, `"card"`, `"split"` |
-| `fields`    | array           | No       | View field objects (if not using custom component)             | Array of field objects (see [View Field Schema](#view-field-schema)) |
-| `styles`    | object          | No       | Custom CSS classes for various view elements                   | `{ containerClass: "...", rowClass: "...", labelClass: "...", valueClass: "...", ... }` |
-| `modalClassNames` | object    | No       | Custom classes for modal structure                             | `{ overlay: "...", container: "...", header: "...", body: "...", footer: "...", closeButton: "..." }` |
-| `footer`    | object          | No       | Footer configuration                                           | `{ cancelButton: true, cancelText: "Close" }` |
+| Property          | Type            | Required | Description                                        | Accepted Values / Example                                                                             |
+| ----------------- | --------------- | -------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `title`           | string          | Yes      | Modal title                                        | `"User Details"`, `"View Profile"`                                                                    |
+| `icon`            | ReactNode       | No       | Icon element displayed in modal header             | `<EyeIcon />`, `<InfoIcon />`                                                                         |
+| `size`            | string          | No       | Modal width                                        | `"sm"`, `"md"` (default), `"lg"`, `"xl"`, `"full"`                                                    |
+| `component`       | React component | No       | Custom component to render (receives `data` prop)  | `(props) => <CustomViewComponent data={props.data} />`                                                |
+| `variant`         | string          | No       | View layout style                                  | `"default"`, `"card"`, `"split"`                                                                      |
+| `fields`          | array           | No       | View field objects (if not using custom component) | Array of field objects (see [View Field Schema](#view-field-schema))                                  |
+| `styles`          | object          | No       | Custom CSS classes for various view elements       | `{ containerClass: "...", rowClass: "...", labelClass: "...", valueClass: "...", ... }`               |
+| `modalClassNames` | object          | No       | Custom classes for modal structure                 | `{ overlay: "...", container: "...", header: "...", body: "...", footer: "...", closeButton: "..." }` |
+| `footer`          | object          | No       | Footer configuration                               | `{ cancelButton: true, cancelText: "Close" }`                                                         |
 
 ---
 
@@ -158,136 +151,116 @@ Used by `modalConfig.*.formFields`, `filterConfig.fields`, and `viewModal.fields
 
 #### Common Field Properties (All Types)
 
-| Key               | Type      | Required | Description                                          | Accepted Values / Example |
-| ---------------- | -------- | --- | ----------------------- | -------------------- |
-| `key`             | string    | Yes      | Property name/identifier for form data               | `"username"`, `"email"`, `"birth_date"` |
-| `label`           | string    | No       | Human-readable label for the field                   | `"User Name"`, `"Email Address"`, `"Date of Birth"` |
-| `type`            | string    | Yes      | Field type determining the input/renderer            | `"text"`, `"number"`, `"email"`, `"password"`, `"select"`, `"checkbox"`, `"radio"`, `"switch"`, `"phone"`, `"textarea"`, `"image"`, `"video"`, `"audio"`, `"tinyEditor"`, `"group"`, `"cardGroup"` |
-| `required`        | boolean   | No       | Field must have a value for form submission          | `true`, `false` (default: `false`) |
-| `minLength`       | number    | No       | Minimum character length (for text fields)           | `5`, `10`, `50` |
-| `placeholder`     | string    | No       | Placeholder text shown in empty field                | `"Enter your name"`, `"user@example.com"` |
-| `disabled`        | boolean   | No       | Field is disabled and read-only                      | `true`, `false` (default: `false`) |
-| `parentClass`     | string    | No       | Custom CSS classes for field wrapper (grid)          | Tailwind classes: `"col-span-6"`, `"col-span-12"` |
-| `defaultValue`    | any       | No       | Initial value for the field                          | Depends on field type; e.g., `"John"`, `25`, `true`, `["option1", "option2"]` |
-| `renderCondition` | function  | No       | Show field based on form data                        | `(formData: Record<string, any>) => boolean`; e.g., `(data) => data.userType === 'admin'` |
-| `customValidation`| function  | No       | Custom validation logic                              | `(value: any) => boolean \| string`; return `false` for invalid, error message string, or `true` for valid |
-| `pattern`         | string    | No       | Regex pattern for validation (HTML5)                 | Regex: `"^[a-zA-Z0-9]*$"`, `"^[0-9]{10}$"` |
-| `className`       | string    | No       | Custom CSS class for input element                   | Tailwind classes: `"bg-gray-100 rounded-lg"` |
+| Key                | Type     | Required | Description                                 | Accepted Values / Example                                                                                                                                                           |
+| ------------------ | -------- | -------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `key`              | string   | Yes      | Property name/identifier for form data      | `"username"`, `"email"`, `"birth_date"`                                                                                                                                             |
+| `label`            | string   | No       | Human-readable label for the field          | `"User Name"`, `"Email Address"`, `"Date of Birth"`                                                                                                                                 |
+| `type`             | string   | Yes      | Field type determining the input/renderer   | `"text"`, `"number"`, `"email"`, `"password"`, `"select"`, `"checkbox"`, `"radio"`, `"switch"`, `"phone"`, `"textarea"`, `"image"`, `"video"`, `"audio"`, `"tinyEditor"`, `"group"` |
+| `required`         | boolean  | No       | Field must have a value for form submission | `true`, `false` (default: `false`)                                                                                                                                                  |
+| `minLength`        | number   | No       | Minimum character length (for text fields)  | `5`, `10`, `50`                                                                                                                                                                     |
+| `placeholder`      | string   | No       | Placeholder text shown in empty field       | `"Enter your name"`, `"user@example.com"`                                                                                                                                           |
+| `disabled`         | boolean  | No       | Field is disabled and read-only             | `true`, `false` (default: `false`)                                                                                                                                                  |
+| `parentClass`      | string   | No       | Custom CSS classes for field wrapper (grid) | Tailwind classes: `"col-span-6"`, `"col-span-12"`                                                                                                                                   |
+| `renderCondition`  | function | No       | Show field based on form data               | `(formData: Record<string, any>) => boolean`; e.g., `(data) => data.userType === 'admin'`                                                                                           |
+| `customValidation` | function | No       | Custom validation logic                     | `(value: any) => boolean \| string`; return `false` for invalid, error message string, or `true` for valid                                                                          |
+| `className`        | string   | No       | Custom CSS class for input element          | Tailwind classes: `"bg-gray-100 rounded-lg"`                                                                                                                                        |
 
 #### Type-Specific Properties
 
 ##### `"text"` Field
 
-| Property  | Type    | Description                      | Example |
-| ---- | --- | -------------------- | --- |
-| `minLength` | number  | Minimum character length         | `5` |
-| `placeholder` | string | Placeholder text                 | `"Enter your name"` |
-| `pattern` | string | Regex validation pattern         | `"^[a-zA-Z ]*$"` (letters and spaces only) |
-| `mask` | string | Input mask pattern               | `"(99) 99999-9999"` (format: 9=digit, A=letter, X=alphanumeric, *=any char) |
-| `maskApplyOnValue` | boolean | Apply mask to initial value      | `true`, `false` (default: `true`) |
+| Property           | Type    | Description               | Example                                                                      |
+| ------------------ | ------- | ------------------------- | ---------------------------------------------------------------------------- |
+| `pattern`          | string  | Regex validation pattern  | `"^[a-zA-Z ]*$"` (letters and spaces only)                                   |
+| `mask`             | string  | Input mask pattern        | `"(99) 99999-9999"` (format: 9=digit, A=letter, X=alphanumeric, \*=any char) |
+| `maskApplyOnValue` | boolean | Apply mask formData value | `true`, `false` (default: `true`)                                            |
 
 ##### `"number"` Field
 
-| Property  | Type    | Description                      | Example |
-| --- | --- | ------------- | --- |
-| `negativeNumberAllow` | boolean | Allow negative numbers           | `true`, `false` (default: `false`) |
-
-##### `"email"` Field
-
-| Property  | Type    | Description                      | Example |
-| ------ | ------- | -------------------- | --- |
-| `placeholder` | string | Placeholder text                 | `"user@example.com"` |
-
-##### `"password"` Field
-
-| Property  | Type    | Description                      | Example |
-| --- | --- | -- | -- |
-| `minLength` | number  | Minimum character length         | `8` |
+| Property              | Type    | Description            | Example                            |
+| --------------------- | ------- | ---------------------- | ---------------------------------- |
+| `negativeNumberAllow` | boolean | Allow negative numbers | `true`, `false` (default: `false`) |
 
 ##### `"select"` Field
 
-| Property        | Type    | Description                                 | Accepted Values / Example |
-| ----- | --- | -------------------- | -- |
-| `options`       | array   | Select options; `{ value, label, color? }[]` | `[{ value: "active", label: "Active", color: "green" }, { value: "inactive", label: "Inactive", color: "red" }]` |
-| `multiple`      | boolean | Allow selecting multiple options             | `true`, `false` (default: `false`) |
-| `search`        | boolean | Enable searchable dropdown                   | `true`, `false` (default: `false`) |
-| `dropdownMaxHeight` | number | Max height of dropdown in pixels             | `300`, `400` |
+| Property            | Type    | Description                                  | Accepted Values / Example                                                                                        |
+| ------------------- | ------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `options`           | array   | Select options; `{ value, label, color? }[]` | `[{ value: "active", label: "Active", color: "green" }, { value: "inactive", label: "Inactive", color: "red" }]` |
+| `countriesList`     | boolean | Country selector dropdown                    | `true`, `false` (default: `false`)                                                                               |
+| `multiple`          | boolean | Allow selecting multiple options             | `true`, `false` (default: `false`)                                                                               |
+| `search`            | boolean | Enable searchable dropdown                   | `true`, `false` (default: `false`)                                                                               |
+| `dropdownMaxHeight` | number  | Max height of dropdown in pixels             | `300`, `400`                                                                                                     |
+| `defaultValue`      | any     | Initial value for the field                  | `"John"`, `25`, `true`, `["option1", "option2"]`                                                                 |
 
 ##### `"checkbox"` Field
 
-| Property  | Type    | Description                                  | Accepted Values / Example |
-| -- | --- | -------------------- | -- |
-| `options`  | array   | Checkbox options; `{ value, label }[]`       | `[{ value: "read", label: "Can Read" }, { value: "write", label: "Can Write" }]` |
-| `multiple` | boolean | Allow selecting multiple values              | `true` (default: `true`); affects how data is stored |
+| Property   | Type    | Description                            | Accepted Values / Example                                                        |
+| ---------- | ------- | -------------------------------------- | -------------------------------------------------------------------------------- |
+| `options`  | array   | Checkbox options; `{ value, label }[]` | `[{ value: "read", label: "Can Read" }, { value: "write", label: "Can Write" }]` |
+| `multiple` | boolean | Allow selecting multiple values        | `true` (default: `true`); affects how data is stored                             |
 
 ##### `"radio"` Field
 
-| Property  | Type    | Description                                  | Accepted Values / Example |
-| -- | -- | -------------------- | -- |
-| `options`  | array   | Radio button options; `{ value, label }[]`   | `[{ value: "male", label: "Male" }, { value: "female", label: "Female" }, { value: "other", label: "Other" }]` |
+| Property  | Type  | Description                                | Accepted Values / Example                                                                                      |
+| --------- | ----- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `options` | array | Radio button options; `{ value, label }[]` | `[{ value: "male", label: "Male" }, { value: "female", label: "Female" }, { value: "other", label: "Other" }]` |
 
 ##### `"switch"` Field
 
-| Property  | Type    | Description                                  | Accepted Values / Example |
-| -- | -- | --------- | -- |
-| `text`    | string  | Description/label shown next to switch       | `"Enable notifications"`, `"Is admin"` |
-| `options` | array   | Optional radio-like options (radio fallback) | `[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }]` |
+| Property  | Type   | Description                                  | Accepted Values / Example                                        |
+| --------- | ------ | -------------------------------------------- | ---------------------------------------------------------------- |
+| `text`    | string | Description/label shown next to switch       | `"Enable notifications"`, `"Is admin"`                           |
+| `options` | array  | Optional radio-like options (radio fallback) | `[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }]` |
 
 ##### `"phone"` Field
 
-| Property        | Type    | Description                                 | Accepted Values / Example |
-| ---- | -- | --------- | - |
-| `countriesList` | boolean | Show country selector dropdown              | `true`, `false` (default: `false`) |
-| `defaultCountry` | string | Default country ISO code                    | `"US"`, `"GB"`, `"IN"`, `"CA"`, `"AU"` |
-| `search`        | boolean | Enable searching countries in selector      | `true`, `false` (default: `false`) |
-| `placeholder`   | string  | Placeholder text                            | `"+1 (555) 000-0000"` |
+| Property         | Type    | Description                            | Accepted Values / Example              |
+| ---------------- | ------- | -------------------------------------- | -------------------------------------- |
+| `countriesList`  | boolean | Show country selector dropdown         | `true`, `false` (default: `false`)     |
+| `defaultCountry` | string  | Default country ISO code               | `"US"`, `"GB"`, `"IN"`, `"CA"`, `"AU"` |
+| `search`         | boolean | Enable searching countries in selector | `true`, `false` (default: `false`)     |
+| `placeholder`    | string  | Placeholder text                       | `"+1 (555) 000-0000"`                  |
 
 ##### `"textarea"` Field
 
-| Property  | Type    | Description                                  | Accepted Values / Example |
-| - | -- | -- | - |
-| `rows`    | number  | Number of visible rows                       | `3`, `5`, `10` |
+| Property | Type   | Description            | Accepted Values / Example |
+| -------- | ------ | ---------------------- | ------------------------- |
+| `rows`   | number | Number of visible rows | `3`, `5`, `10`            |
 
 ##### `"image"` Field
 
-| Property  | Type    | Description                                  | Accepted Values / Example |
-| - | -- | -- | - |
-| `accept`  | string  | MIME type filter                             | `"image/*"` (default), `"image/jpeg,image/png"` |
-| `dragDrop` | boolean | Enable drag-and-drop upload                  | `true`, `false` (default: `false`) |
-| `cropImage` | boolean | Enable image cropping modal                  | `true`, `false` (default: `false`) |
-| `aspectRatio` | number | Crop aspect ratio (width:height)             | `1` (1:1 square), `16/9`, `4/3`, `1.5` |
+| Property      | Type    | Description                      | Accepted Values / Example                       |
+| ------------- | ------- | -------------------------------- | ----------------------------------------------- |
+| `accept`      | string  | MIME type filter                 | `"image/*"` (default), `"image/jpeg,image/png"` |
+| `dragDrop`    | boolean | Enable drag-and-drop upload      | `true`, `false` (default: `false`)              |
+| `cropImage`   | boolean | Enable image cropping modal      | `true`, `false` (default: `false`)              |
+| `aspectRatio` | number  | Crop aspect ratio (width:height) | `1` (1:1 square), `16/9`, `4/3`, `1.5`          |
+| `multiple`    | boolean | Allow selecting images           | `true`, `false` (default: `false`)              |
+| `maxImages`   | number  | Limit the multiple select images | `8`, `4`                                        |
 
 ##### `"video"` Field
 
-| Property  | Type    | Description                                  | Accepted Values / Example |
-| - | -- | -- | - |
-| `accept`  | string  | MIME type filter                             | `"video/*"` (default), `"video/mp4,video/webm"` |
-| `dragDrop` | boolean | Enable drag-and-drop upload                  | `true`, `false` (default: `false`) |
-| `maxSize` | number  | Maximum file size in bytes                   | `5242880` (5MB), `10485760` (10MB) |
+| Property   | Type    | Description                 | Accepted Values / Example                       |
+| ---------- | ------- | --------------------------- | ----------------------------------------------- |
+| `accept`   | string  | MIME type filter            | `"video/*"` (default), `"video/mp4,video/webm"` |
+| `dragDrop` | boolean | Enable drag-and-drop upload | `true`, `false` (default: `false`)              |
+| `maxSize`  | number  | Maximum file size in bytes  | `5242880` (5MB), `10485760` (10MB)              |
 
 ##### `"audio"` Field
 
-| Property  | Type    | Description                                  | Accepted Values / Example |
-| - | -- | -- | - |
-| `accept`  | string  | MIME type filter                             | `"audio/*"` (default), `"audio/mpeg,audio/wav"` |
-| `dragDrop` | boolean | Enable drag-and-drop upload                  | `true`, `false` (default: `false`) |
-| `maxSize` | number  | Maximum file size in bytes                   | `5242880` (5MB), `10485760` (10MB) |
+| Property   | Type    | Description                 | Accepted Values / Example                       |
+| ---------- | ------- | --------------------------- | ----------------------------------------------- |
+| `accept`   | string  | MIME type filter            | `"audio/*"` (default), `"audio/mpeg,audio/wav"` |
+| `dragDrop` | boolean | Enable drag-and-drop upload | `true`, `false` (default: `false`)              |
+| `maxSize`  | number  | Maximum file size in bytes  | `5242880` (5MB), `10485760` (10MB)              |
 
 ##### `"tinyEditor"` Field
 
-| Property           | Type     | Description                                  | Accepted Values / Example |
-| --------- | ------ | ------------ | - |
-| `editorKey`        | string   | TinyMCE API key (required)                   | Get from `import.meta.env.VITE_EDITOR_KEY` or pass directly |
-| `fontFamily`       | string   | Default font family in editor                | `"Arial"`, `"Georgia"`, `"Courier New"` |
-| `height`           | number   | Editor height in pixels                      | `300`, `500` |
-| `imageUploadHandler` | function | Async image upload handler                   | `async (blobInfo) => Promise<string>` (returns image URL) |
-
-##### `"group"` & `"cardGroup"` Fields
-
-| Property  | Type    | Description                                  | Accepted Values / Example |
-| -- | -- | -- | - |
-| `renderType` | string | Rendering type for grouped fields            | `"default"`, `"card"`, or custom layout type |
-| (nested fields) | array | Child form fields within group               | Array of FormField objects |
+| Property     | Type   | Description                   | Accepted Values / Example                                   |
+| ------------ | ------ | ----------------------------- | ----------------------------------------------------------- |
+| `editorKey`  | string | TinyMCE API key (required)    | Get from `import.meta.env.VITE_EDITOR_KEY` or pass directly |
+| `fontFamily` | string | Default font family in editor | `"Arial"`, `"Georgia"`, `"Courier New"`                     |
+| `height`     | number | Editor height in pixels       | `300`, `500`                                                |
 
 ---
 
@@ -295,173 +268,22 @@ Used by `modalConfig.*.formFields`, `filterConfig.fields`, and `viewModal.fields
 
 Used by `viewModal.fields` to display data in view/details modals.
 
-| Key              | Type    | Description                                  | Accepted Values / Example |
-| ----- | -- | - | - |
-| `key`            | string  | Property name to display                     | `"username"`, `"email"`, `"birth_date"` |
-| `label`          | string  | Display label for the field                  | `"User Name"`, `"Email Address"` |
-| `type`           | string  | Display type (similar to form field types)   | `"text"`, `"date"`, `"chip"`, `"image"`, `"avatar"`, `"group"`, `"cardGroup"` |
-| `format`         | string  | Date format pattern                          | `"DD MMM YYYY"`, `"YYYY-MM-DD"`, `"DD/MM/YYYY HH:mm"` |
-| `imageKey`       | string  | Image property for avatar types              | `"profileImage"`, `"avatarUrl"` |
-| `titleKey`       | string  | Title property for group/avatar types        | `"name"`, `"fullName"` |
-| `subtitleKey`    | string  | Subtitle property for group/avatar types     | `"email"`, `"department"` |
-| `variant`        | string  | Chip display variant                         | `"contained"`, `"outline"`, `"soft"` |
-| `chipOptions`    | array   | Map values to chip labels and colors         | `[{ value: "active", label: "Active", color: "green" }]` |
-| `defaultColor`   | string  | Default chip color                           | `"green"`, `"red"`, `"blue"`, `"yellow"`, `"purple"`, `"gray"` |
-| `className`      | string  | Custom CSS class for display element         | Tailwind classes |
-| `blockClass`     | string  | Custom CSS class for field block/wrapper     | Tailwind classes |
-| `icon`           | ReactNode | Icon element to display with field           | `<UserIcon />`, `<MailIcon />` |
-| `renderCondition` | function | Show field based on data                     | `(data: Record<string, any>) => boolean` |
-
----
-
-### Standalone UI Components
-
-In addition to the main CRUD component, the library exports reusable UI components that can be used independently:
-
-#### Button Component
-
-```jsx
-import { Button } from 'react-admin-crud-manager';
-
-// Basic button
-<Button onClick={() => console.log('Clicked')}>Click Me</Button>
-
-// Variants
-<Button variant="contained" color="primary">Primary</Button>
-<Button variant="outlined" color="success">Success</Button>
-<Button variant="text" color="error">Error</Button>
-
-// Sizes
-<Button size="sm">Small</Button>
-<Button size="md">Medium</Button>
-<Button size="lg">Large</Button>
-
-// States
-<Button disabled>Disabled</Button>
-<Button fullWidth>Full Width</Button>
-
-// Submit button
-<Button type="submit">Submit Form</Button>
-```
-
-| Prop        | Type     | Default     | Description                                     | Accepted Values |
-| ----------- | -------- | ----------- | ----------------------------------------------- | ----------- |
-| `variant`   | string   | `contained` | Style variant                                   | `"contained"`, `"outlined"`, `"text"` |
-| `color`     | string   | `primary`   | Button color theme                              | `"primary"`, `"success"`, `"error"`, `"warning"`, `"default"` |
-| `size`      | string   | `md`        | Button size                                     | `"sm"`, `"md"`, `"lg"`, `"xl"` |
-| `fullWidth` | boolean  | `false`     | Stretch to full width                           | `true`, `false` |
-| `className` | string   | —           | Additional CSS classes                          | Tailwind classes |
-| `onClick`   | function | —           | Click handler (can be async)                    | `(e) => void \| Promise<any>` |
-| `type`      | string   | `button`    | HTML button type                                | `"button"`, `"submit"`, `"reset"` |
-| `disabled`  | boolean  | `false`     | Disable interaction                             | `true`, `false` |
-
-#### Chip Component
-
-```jsx
-import { Chip } from 'react-admin-crud-manager';
-
-// Basic chip
-<Chip label="Active" />
-
-// Variants with colors
-<Chip label="Active" color="green" variant="contained" />
-<Chip label="Pending" color="yellow" variant="outline" />
-<Chip label="Inactive" color="red" variant="soft" />
-
-// All available colors
-<Chip label="Blue" color="blue" />
-<Chip label="Teal" color="teal" />
-<Chip label="Purple" color="purple" />
-<Chip label="Green" color="green" />
-<Chip label="Red" color="red" />
-<Chip label="Yellow" color="yellow" />
-<Chip label="Gray" color="gray" />
-```
-
-| Prop      | Type   | Default     | Description                           | Accepted Values |
-| --------- | ------ | ----------- | ------------------------------------- | --------- |
-| `label`   | string | Required    | Badge text content                    | Any string |
-| `variant` | string | `contained` | Display style                         | `"contained"`, `"outline"`, `"soft"` |
-| `color`   | string | `blue`      | Color scheme                          | `"blue"`, `"teal"`, `"purple"`, `"green"`, `"red"`, `"yellow"`, `"gray"` |
-
-#### Modal Component
-
-```jsx
-import { Modal } from 'react-admin-crud-manager';
-import { AlertIcon } from 'lucide-react';
-
-// Basic modal
-<Modal
-  isOpen={isOpen}
-  onClose={() => setIsOpen(false)}
-  title="Confirm Action"
-  icon={<AlertIcon />}
-  actionButtons={[
-    { type: "submit", label: "Confirm", color: "primary" },
-    { type: "cancel", label: "Cancel", color: "default" }
-  ]}
->
-  <p>Are you sure you want to continue?</p>
-</Modal>
-
-// Modal sizes
-<Modal isOpen={true} size="sm" title="Small Modal" />
-<Modal isOpen={true} size="md" title="Medium Modal" />
-<Modal isOpen={true} size="lg" title="Large Modal" />
-<Modal isOpen={true} size="xl" title="Extra Large Modal" />
-<Modal isOpen={true} size="full" title="Full Screen Modal" />
-```
-
-| Prop            | Type       | Description                                  | Accepted Values |
-| --------------- | ---------- | -------------------------------------------- | --------- --– |
-| `isOpen`        | boolean    | Show/hide modal                              | `true`, `false` |
-| `onClose`       | function   | Callback when modal closes                   | `() => void` |
-| `icon`          | ReactNode  | Icon displayed in header                     | Any React component or JSX element |
-| `title`         | string     | Modal title text                             | Any string |
-| `size`          | string     | Modal width                                  | `"sm"`, `"md"`, `"lg"`, `"xl"`, `"full"` |
-| `actionButtons` | array      | Footer action buttons                        | Array of `{ type, label, color, variant, onClick, disabled }` |
-| `loadingBtn`    | boolean    | Show loading spinner on action button        | `true`, `false` |
-| `children`      | ReactNode  | Modal content                                | Any React components |
-
-#### FilterDrawer Component
-
-```jsx
-import { FilterDrawer } from 'react-admin-crud-manager';
-
-<FilterDrawer
-  isOpen={isOpen}
-  onClose={() => setIsOpen(false)}
-  config={{
-    fields: [
-      {
-        key: "status",
-        label: "Status",
-        type: "select",
-        options: [
-          { value: "active", label: "Active" },
-          { value: "inactive", label: "Inactive" }
-        ]
-      },
-      {
-        key: "dateFrom",
-        label: "From Date",
-        type: "date"
-      }
-    ]
-  }}
-  onApply={(filters) => {
-    console.log("Applied filters:", filters);
-    setIsOpen(false);
-  }}
-/>
-```
-
-| Prop      | Type     | Description                          | Accepted Values |
-| --------- | -------- | ---------------- | --|
-| `isOpen`  | boolean  | Show/hide filter drawer              | `true`, `false` |
-| `onClose` | function | Callback when drawer closes          | `() => void` |
-| `config`  | object   | Filter field configuration           | `{ fields: [...] }` (uses Form Field Schema) |
-| `onApply` | function | Callback with applied filter values  | `(filters: object) => void` |
+| Key               | Type      | Description                                | Accepted Values / Example                                                     |
+| ----------------- | --------- | ------------------------------------------ | ----------------------------------------------------------------------------- |
+| `key`             | string    | Property name to display                   | `"username"`, `"email"`, `"birth_date"`                                       |
+| `label`           | string    | Display label for the field                | `"User Name"`, `"Email Address"`                                              |
+| `type`            | string    | Display type (similar to form field types) | `"text"`, `"date"`, `"chip"`, `"image"`, `"avatar"`, `"group"`, `"cardGroup"` |
+| `format`          | string    | Date format pattern                        | `"DD MMM YYYY"`, `"YYYY-MM-DD"`, `"DD/MM/YYYY HH:mm"`                         |
+| `imageKey`        | string    | Image property for avatar types            | `"profileImage"`, `"avatarUrl"`                                               |
+| `titleKey`        | string    | Title property for group/avatar types      | `"name"`, `"fullName"`                                                        |
+| `subtitleKey`     | string    | Subtitle property for group/avatar types   | `"email"`, `"department"`                                                     |
+| `variant`         | string    | Chip display variant                       | `"contained"`, `"outline"`, `"soft"`                                          |
+| `chipOptions`     | array     | Map values to chip labels and colors       | `[{ value: "active", label: "Active", color: "green" }]`                      |
+| `defaultColor`    | string    | Default chip color                         | `"green"`, `"red"`, `"blue"`, `"yellow"`, `"purple"`, `"gray"`                |
+| `className`       | string    | Custom CSS class for display element       | Tailwind classes                                                              |
+| `blockClass`      | string    | Custom CSS class for field block/wrapper   | Tailwind classes                                                              |
+| `icon`            | ReactNode | Icon element to display with field         | `<UserIcon />`, `<MailIcon />`                                                |
+| `renderCondition` | function  | Show field based on data                   | `(data: Record<string, any>) => boolean`                                      |
 
 ---
 
@@ -503,8 +325,8 @@ const formFields = [
     type: "select",
     options: [
       { value: "admin", label: "Administrator" },
-      { value: "user", label: "Regular User" }
-    ]
+      { value: "user", label: "Regular User" },
+    ],
   },
   {
     key: "adminLevel",
@@ -513,15 +335,15 @@ const formFields = [
     renderCondition: (formData) => formData.userType === "admin", // Only show if userType is admin
     options: [
       { value: "superadmin", label: "Super Admin" },
-      { value: "moderator", label: "Moderator" }
-    ]
+      { value: "moderator", label: "Moderator" },
+    ],
   },
   {
     key: "department",
     label: "Department",
     type: "text",
     renderCondition: (formData) => formData.userType === "user", // Only show if userType is user
-  }
+  },
 ];
 ```
 
@@ -541,7 +363,7 @@ const formFields = [
         return "Email must be a company email"; // Error message
       }
       return true; // Valid
-    }
+    },
   },
   {
     key: "age",
@@ -551,8 +373,8 @@ const formFields = [
       if (value < 18) return "Must be 18 or older";
       if (value > 120) return "Please enter a valid age";
       return true;
-    }
-  }
+    },
+  },
 ];
 ```
 
@@ -648,8 +470,8 @@ Use a fully custom component for the view modal:
 const CustomUserView = ({ data }) => (
   <div className="space-y-4">
     <div className="flex items-center gap-4">
-      <img 
-        src={data.avatarUrl} 
+      <img
+        src={data.avatarUrl}
         alt={data.name}
         className="w-16 h-16 rounded-full"
       />
@@ -675,9 +497,9 @@ const config = {
   modalConfig: {
     viewModal: {
       title: "User Details",
-      component: CustomUserView // Use custom component
-    }
-  }
+      component: CustomUserView, // Use custom component
+    },
+  },
 };
 ```
 
@@ -686,6 +508,7 @@ const config = {
 Handle clicks on table rows:
 
 ```js
+// For a custom function
 const config = {
   tableConfig: {
     table_head: [...],
@@ -696,6 +519,16 @@ const config = {
     }
   }
 };
+
+// For open details on row click
+const config = {
+  tableConfig: {
+    table_head: [...],
+    data: [...],
+    rowClick: true,
+  }
+};
+
 ```
 
 ### 8. Server-Side Filtering
@@ -707,7 +540,7 @@ const config = {
   tableConfig: {
     filter: {
       enabled: true,
-      useServerSideFilters: true // Enable server-side filtering
+      useServerSideFilters: true, // Enable server-side filtering
     },
     filterConfig: {
       fields: [
@@ -717,25 +550,21 @@ const config = {
           type: "select",
           options: [
             { value: "active", label: "Active" },
-            { value: "inactive", label: "Inactive" }
-          ]
+            { value: "inactive", label: "Inactive" },
+          ],
         },
         {
           key: "createdFrom",
           label: "Created From",
-          type: "date"
+          type: "date",
         },
         {
           key: "createdTo",
           label: "Created To",
-          type: "date"
-        }
-      ]
+          type: "date",
+        },
+      ],
     },
-    onFilterApply: (filters) => {
-      console.log("Filters applied:", filters);
-      // Filters will be passed to fetchData as additional params
-    }
   },
   fetchData: async ({
     search,
@@ -752,11 +581,11 @@ const config = {
         page: current_page,
         sort_by,
         sort_order,
-        ...filters // Include filters in API call
-      }
+        ...filters, // Include filters in API call
+      },
     });
     return { data: resp.items, pagination: resp.pagination };
-  }
+  },
 };
 ```
 
@@ -772,26 +601,27 @@ const formFields = [
     type: "text",
     mask: "(99) 99999-9999", // Mask pattern
     maskApplyOnValue: true, // Apply mask to default value
-    placeholder: "(00) 00000-0000"
+    placeholder: "(00) 00000-0000",
   },
   {
     key: "zipCode",
     label: "ZIP Code",
     type: "text",
     mask: "99999-999", // Pattern: 9 = digit, A = letter, X = alphanumeric, * = any
-    placeholder: "00000-000"
+    placeholder: "00000-000",
   },
   {
     key: "creditCard",
     label: "Credit Card",
     type: "text",
     mask: "9999 9999 9999 9999",
-    placeholder: "0000 0000 0000 0000"
-  }
+    placeholder: "0000 0000 0000 0000",
+  },
 ];
 ```
 
 **Mask Pattern Reference:**
+
 - `9` — Digit (0-9)
 - `A` — Letter (a-zA-Z)
 - `X` — Alphanumeric (a-zA-Z0-9)
@@ -810,7 +640,7 @@ const formFields = [
     type: "image",
     cropImage: true, // Enable cropping modal
     aspectRatio: 1, // 1:1 square ratio
-    dragDrop: true
+    dragDrop: true,
   },
   {
     key: "bannerImage",
@@ -818,40 +648,12 @@ const formFields = [
     type: "image",
     cropImage: true,
     aspectRatio: 16 / 9, // 16:9 widescreen ratio
-    dragDrop: true
-  }
+    dragDrop: true,
+  },
 ];
 ```
 
-### 11. Notifications/Snackbar
-
-Display success/error messages automatically:
-
-Notifications are handled internally by the library using the `notistack` library. Success and error messages are shown automatically:
-
-- **Success messages**: Shown when add/edit/delete operations complete successfully
-- **Error messages**: Shown when operations fail
-- **Custom messages**: Handlers can return `{ newObject, message: "Custom message" }`
-
-```js
-const config = {
-  modalConfig: {
-    addModal: {
-      title: "Add User",
-      formFields: [...],
-      handleSubmit: async (formData) => {
-        const resp = await api.post("/users", formData);
-        return {
-          newObject: resp.user,
-          message: "User created successfully!" // Custom success message
-        };
-      }
-    }
-  }
-};
-```
-
-### 12. Sortable Columns
+### 11. Sortable Columns
 
 Configure sorting with custom options and auto-generation:
 
@@ -868,14 +670,14 @@ const config = {
       onChange: (payload) => {
         console.log("Sort changed:", payload);
         // payload contains: { value, option, key, order, type }
-      }
+      },
     },
     table_head: [
       { key: "name", title: "Name" },
       { key: "email", title: "Email" },
-      { key: "createdAt", title: "Created Date" }
-    ]
-  }
+      { key: "createdAt", title: "Created Date" },
+    ],
+  },
 };
 ```
 
@@ -884,11 +686,11 @@ const config = {
 #### Example 1: Minimal Client-Side CRUD
 
 ```js
-import Crud from 'react-admin-crud-manager';
+import Crud from "react-admin-crud-manager";
 
 const users = [
   { id: 1, name: "John Doe", email: "john@example.com", status: "active" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", status: "inactive" }
+  { id: 2, name: "Jane Smith", email: "jane@example.com", status: "inactive" },
 ];
 
 function App() {
@@ -901,13 +703,18 @@ function App() {
         { key: "id", title: "ID", type: "index" },
         { key: "name", title: "Name" },
         { key: "email", title: "Email" },
-        { key: "status", title: "Status", type: "chip", chipOptions: [
-          { value: "active", label: "Active", color: "green" },
-          { value: "inactive", label: "Inactive", color: "red" }
-        ]}
+        {
+          key: "status",
+          title: "Status",
+          type: "chip",
+          chipOptions: [
+            { value: "active", label: "Active", color: "green" },
+            { value: "inactive", label: "Inactive", color: "red" },
+          ],
+        },
       ],
-      search: { enabled: true },
-      pagination: { enabled: true, rows_per_page: 10 }
+      search: { enabled: true, searchKeys: ["name", "email"] },
+      pagination: { enabled: true },
     },
     modalConfig: {
       addModal: {
@@ -921,15 +728,18 @@ function App() {
             type: "select",
             options: [
               { value: "active", label: "Active" },
-              { value: "inactive", label: "Inactive" }
-            ]
-          }
+              { value: "inactive", label: "Inactive" },
+            ],
+          },
         ],
         handleSubmit: async (formData) => ({
-          newObject: { ...formData, id: Math.max(...users.map(u => u.id)) + 1 }
-        })
-      }
-    }
+          newObject: {
+            ...formData,
+            id: Math.max(...users.map((u) => u.id)) + 1,
+          },
+        }),
+      },
+    },
   };
 
   return <Crud config={config} />;
@@ -941,12 +751,12 @@ export default App;
 #### Example 2: Server-Side CRUD with Advanced Features
 
 ```js
-import Crud from 'react-admin-crud-manager';
-import axios from 'axios';
-import { PlusIcon, EditIcon, TrashIcon } from 'lucide-react';
+import Crud from "react-admin-crud-manager";
+import axios from "axios";
+import { PlusIcon, EditIcon, TrashIcon } from "lucide-react";
 
 function App() {
-  const api = axios.create({ baseURL: 'https://api.example.com' });
+  const api = axios.create({ baseURL: "https://api.example.com" });
 
   const config = {
     title: "Products",
@@ -960,7 +770,7 @@ function App() {
       sort_order,
       category,
       minPrice,
-      maxPrice
+      maxPrice,
     }) => {
       const resp = await api.get("/products", {
         params: {
@@ -971,8 +781,8 @@ function App() {
           sort_order,
           category,
           minPrice,
-          maxPrice
-        }
+          maxPrice,
+        },
       });
       return {
         data: resp.data.items,
@@ -980,16 +790,26 @@ function App() {
           current_page: resp.data.page,
           rows_per_page: resp.data.limit,
           total_pages: resp.data.totalPages,
-          total_records: resp.data.total
-        }
+          total_records: resp.data.total,
+        },
       };
     },
     tableConfig: {
       table_head: [
         { key: "id", title: "ID", type: "index" },
-        { key: "image", title: "Image", type: "avatar", imageKey: "image", titleKey: "name" },
+        {
+          key: "image",
+          title: "Image",
+          type: "avatar",
+          imageKey: "image",
+          titleKey: "name",
+        },
         { key: "name", title: "Product Name" },
-        { key: "price", title: "Price", render: (row) => `$${row.price.toFixed(2)}` },
+        {
+          key: "price",
+          title: "Price",
+          render: (row) => `$${row.price.toFixed(2)}`,
+        },
         {
           key: "category",
           title: "Category",
@@ -997,11 +817,14 @@ function App() {
           variant: "soft",
           chipOptions: [
             { value: "electronics", label: "Electronics", color: "blue" },
-            { value: "clothing", label: "Clothing", color: "purple" }
-          ]
-        }
+            { value: "clothing", label: "Clothing", color: "purple" },
+          ],
+        },
       ],
-      search: { enabled: true, useServerSideSearch: true, searchKeys: ["name", "sku"] },
+      search: {
+        enabled: true,
+        useServerSideSearch: true,
+      },
       filter: { enabled: true, useServerSideFilters: true },
       pagination: { enabled: true, useServerSidePagination: true },
       sort: { enabled: true, useServerSideSorting: true, autoGenerate: true },
@@ -1011,8 +834,8 @@ function App() {
         fields: [
           { label: "ID", key: "id" },
           { label: "Name", key: "name" },
-          { label: "Price", key: "price" }
-        ]
+          { label: "Price", key: "price" },
+        ],
       },
       filterConfig: {
         fields: [
@@ -1022,13 +845,13 @@ function App() {
             type: "select",
             options: [
               { value: "electronics", label: "Electronics" },
-              { value: "clothing", label: "Clothing" }
-            ]
+              { value: "clothing", label: "Clothing" },
+            ],
           },
           { key: "minPrice", label: "Min Price", type: "number" },
-          { key: "maxPrice", label: "Max Price", type: "number" }
-        ]
-      }
+          { key: "maxPrice", label: "Max Price", type: "number" },
+        ],
+      },
     },
     modalConfig: {
       addModal: {
@@ -1036,8 +859,20 @@ function App() {
         size: "lg",
         icon: <PlusIcon />,
         formFields: [
-          { key: "name", label: "Product Name", type: "text", required: true, parentClass: "col-span-12" },
-          { key: "price", label: "Price", type: "number", required: true, parentClass: "col-span-6" },
+          {
+            key: "name",
+            label: "Product Name",
+            type: "text",
+            required: true,
+            parentClass: "col-span-12",
+          },
+          {
+            key: "price",
+            label: "Price",
+            type: "number",
+            required: true,
+            parentClass: "col-span-6",
+          },
           {
             key: "category",
             label: "Category",
@@ -1046,11 +881,23 @@ function App() {
             parentClass: "col-span-6",
             options: [
               { value: "electronics", label: "Electronics" },
-              { value: "clothing", label: "Clothing" }
-            ]
+              { value: "clothing", label: "Clothing" },
+            ],
           },
-          { key: "stock", label: "Stock", type: "number", required: true, parentClass: "col-span-6" },
-          { key: "description", label: "Description", type: "textarea", rows: 4, parentClass: "col-span-12" },
+          {
+            key: "stock",
+            label: "Stock",
+            type: "number",
+            required: true,
+            parentClass: "col-span-6",
+          },
+          {
+            key: "description",
+            label: "Description",
+            type: "textarea",
+            rows: 4,
+            parentClass: "col-span-12",
+          },
           {
             key: "image",
             label: "Product Image",
@@ -1058,37 +905,67 @@ function App() {
             cropImage: true,
             aspectRatio: 1,
             dragDrop: true,
-            parentClass: "col-span-12"
-          }
+            parentClass: "col-span-12",
+          },
         ],
         handleSubmit: async (formData) => {
           const resp = await api.post("/products", formData);
-          return { newObject: resp.data, message: "Product added successfully!" };
-        }
+          return {
+            newObject: resp.data,
+            message: "Product added successfully!",
+          };
+        },
       },
       editModal: {
         title: "Edit Product",
         size: "lg",
         icon: <EditIcon />,
         formFields: [
-          { key: "name", label: "Product Name", type: "text", required: true, parentClass: "col-span-12" },
-          { key: "price", label: "Price", type: "number", required: true, parentClass: "col-span-6" },
-          { key: "stock", label: "Stock", type: "number", required: true, parentClass: "col-span-6" }
+          {
+            key: "name",
+            label: "Product Name",
+            type: "text",
+            required: true,
+            parentClass: "col-span-12",
+          },
+          {
+            key: "price",
+            label: "Price",
+            type: "number",
+            required: true,
+            parentClass: "col-span-6",
+          },
+          {
+            key: "stock",
+            label: "Stock",
+            type: "number",
+            required: true,
+            parentClass: "col-span-6",
+          },
         ],
         handleSubmit: async (formData, item) => {
           const resp = await api.put(`/products/${item.id}`, formData);
           return { newObject: resp.data, targetObject: item };
-        }
+        },
       },
       deleteModal: {
         title: "Delete Product",
         icon: <TrashIcon />,
         confirmText: "Are you sure you want to delete this product?",
         referenceKey: "name",
-        action: async (item) => {
-          await api.delete(`/products/${item.id}`);
-          return { targetObject: item };
-        }
+        actionButtons: [
+          {
+            type: "button",
+            label: "Delete",
+            color: "error",
+            variant: "contained",
+            onClick: async (event, item) => {
+              event.preventDefault();
+              await api.delete(`/products/${item.id}`);
+              return { targetObject: item };
+            },
+          },
+        ],
       },
       viewModal: {
         title: "Product Details",
@@ -1098,10 +975,10 @@ function App() {
           { key: "name", label: "Product Name" },
           { key: "price", label: "Price" },
           { key: "stock", label: "Stock" },
-          { key: "category", label: "Category", type: "chip" }
-        ]
-      }
-    }
+          { key: "category", label: "Category", type: "chip" },
+        ],
+      },
+    },
   };
 
   return <Crud config={config} />;
@@ -1120,8 +997,8 @@ const config = {
       { key: "id", title: "ID", type: "index" },
       { key: "name", title: "Full Name" },
       { key: "email", title: "Email" },
-      { key: "userType", title: "Type", type: "chip" }
-    ]
+      { key: "userType", title: "Type", type: "chip" },
+    ],
   },
   modalConfig: {
     addModal: {
@@ -1138,7 +1015,7 @@ const config = {
               return "Please enter your full name";
             }
             return true;
-          }
+          },
         },
         {
           key: "email",
@@ -1151,7 +1028,7 @@ const config = {
               return "Must use company email";
             }
             return true;
-          }
+          },
         },
         {
           key: "phone",
@@ -1159,7 +1036,7 @@ const config = {
           type: "phone",
           countriesList: true,
           mask: "(99) 99999-9999",
-          parentClass: "col-span-12"
+          parentClass: "col-span-12",
         },
         {
           key: "userType",
@@ -1169,8 +1046,8 @@ const config = {
           parentClass: "col-span-6",
           options: [
             { value: "admin", label: "Administrator" },
-            { value: "user", label: "Regular User" }
-          ]
+            { value: "user", label: "Regular User" },
+          ],
         },
         {
           key: "adminLevel",
@@ -1180,8 +1057,8 @@ const config = {
           renderCondition: (data) => data.userType === "admin",
           options: [
             { value: "superadmin", label: "Super Admin" },
-            { value: "moderator", label: "Moderator" }
-          ]
+            { value: "moderator", label: "Moderator" },
+          ],
         },
         {
           key: "permissions",
@@ -1193,19 +1070,19 @@ const config = {
           options: [
             { value: "read", label: "Can Read" },
             { value: "write", label: "Can Write" },
-            { value: "delete", label: "Can Delete" }
-          ]
-        }
+            { value: "delete", label: "Can Delete" },
+          ],
+        },
       ],
       handleSubmit: async (formData) => {
         const resp = await api.post("/users", formData);
         return {
           newObject: resp.data,
-          message: `User ${formData.name} created successfully!`
+          message: `User ${formData.name} created successfully!`,
         };
-      }
-    }
-  }
+      },
+    },
+  },
 };
 ```
 
@@ -1229,16 +1106,16 @@ const config = {
         const newUser = { ...formData, id: Date.now() };
         setUsers([...users, newUser]);
         return { newObject: newUser };
-      }
+      },
     },
     editModal: {
       handleSubmit: async (formData, item) => {
         const updated = { ...item, ...formData };
-        setUsers(users.map(u => u.id === item.id ? updated : u));
+        setUsers(users.map((u) => (u.id === item.id ? updated : u)));
         return { newObject: updated, targetObject: item };
-      }
-    }
-  }
+      },
+    },
+  },
 };
 ```
 
@@ -1254,8 +1131,8 @@ const fetchData = async (params) => {
       current_page: resp.data.meta.currentPage,
       rows_per_page: resp.data.meta.perPage,
       total_pages: resp.data.meta.totalPages,
-      total_records: resp.data.meta.total
-    }
+      total_records: resp.data.meta.total,
+    },
   };
 };
 ```
@@ -1268,7 +1145,7 @@ const handleSubmit = async (formData) => {
     const resp = await api.post("/items", formData);
     return {
       newObject: resp.data,
-      message: "Item created successfully!" // Optional success message
+      message: "Item created successfully!", // Optional success message
     };
   } catch (error) {
     // Throw error to trigger snackbar error notification
@@ -1288,21 +1165,20 @@ const formFields = [
     type: "select",
     options: [
       { value: "personal", label: "Personal" },
-      { value: "business", label: "Business" }
-    ]
+      { value: "business", label: "Business" },
+    ],
   },
   {
     key: "companyName",
     label: "Company Name",
     type: "text",
     renderCondition: (data) => data.type === "business",
-    required: (data) => data.type === "business"
   },
   {
     key: "phone",
     type: "phone",
-    renderCondition: (data) => data.type === "personal"
-  }
+    renderCondition: (data) => data.type === "personal",
+  },
 ];
 ```
 
@@ -1322,7 +1198,7 @@ const tableConfig = {
             <p className="text-xs text-gray-500">{row.email}</p>
           </div>
         </div>
-      )
+      ),
     },
     {
       key: "metrics",
@@ -1333,9 +1209,9 @@ const tableConfig = {
             {row.completed}%
           </span>
         </div>
-      )
-    }
-  ]
+      ),
+    },
+  ],
 };
 ```
 
@@ -1346,12 +1222,12 @@ const formFields = [
   {
     key: "email",
     type: "email",
-    customValidation: async (value) => {
+    customValidation: (value) => {
       // Async validation example
-      const exists = await checkEmailExists(value);
+      const exists = checkEmailExists(value);
       if (exists) return "Email already in use";
       return true;
-    }
+    },
   },
   {
     key: "password",
@@ -1361,8 +1237,8 @@ const formFields = [
       if (!/[A-Z]/.test(value)) return "Must contain uppercase letter";
       if (!/[0-9]/.test(value)) return "Must contain a number";
       return true;
-    }
-  }
+    },
+  },
 ];
 ```
 
@@ -1385,20 +1261,20 @@ const config = {
           type: "image",
           dragDrop: true,
           cropImage: true,
-          aspectRatio: 1
-        }
+          aspectRatio: 1,
+        },
       ],
       handleSubmit: async (formData) => {
         // Image data includes base64 or file data
         const imageUrl = await handleImageUpload(formData.image);
         const resp = await api.post("/items", {
           ...formData,
-          image: imageUrl
+          image: imageUrl,
         });
         return { newObject: resp.data };
-      }
-    }
-  }
+      },
+    },
+  },
 };
 ```
 
@@ -1414,15 +1290,15 @@ const viewModal = {
       renderCondition: (data) => data.status !== null,
       chipOptions: [
         { value: "active", label: "Active", color: "green" },
-        { value: "suspended", label: "Suspended", color: "red" }
-      ]
+        { value: "suspended", label: "Suspended", color: "red" },
+      ],
     },
     {
       key: "suspendReason",
       label: "Suspension Reason",
-      renderCondition: (data) => data.status === "suspended" // Only show if suspended
-    }
-  ]
+      renderCondition: (data) => data.status === "suspended", // Only show if suspended
+    },
+  ],
 };
 ```
 
@@ -1434,16 +1310,21 @@ const tableConfig = {
     enabled: true,
     useServerSideSorting: true,
     options: [
-      { value: "recent", label: "Most Recent", key: "createdAt", order: "desc" },
+      {
+        value: "recent",
+        label: "Most Recent",
+        key: "createdAt",
+        order: "desc",
+      },
       { value: "oldest", label: "Oldest", key: "createdAt", order: "asc" },
       { value: "name-asc", label: "Name (A-Z)", key: "name", order: "asc" },
       { value: "name-desc", label: "Name (Z-A)", key: "name", order: "desc" },
-      { value: "popular", label: "Most Popular", key: "views", order: "desc" }
+      { value: "popular", label: "Most Popular", key: "views", order: "desc" },
     ],
     onChange: (payload) => {
       console.log(`Sorted by: ${payload.option?.label}`);
-    }
-  }
+    },
+  },
 };
 ```
 
