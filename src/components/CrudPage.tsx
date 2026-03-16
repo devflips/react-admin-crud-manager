@@ -244,57 +244,63 @@ const CrudPage: React.FC<CrudPageProps> = ({ config }) => {
         }}
       />
 
-      <Modal
-        isOpen={showAdd}
-        onClose={() => {
-          if (!formLoading) {
-            setShowAdd(false);
+      {showAdd && (
+        <Modal
+          isOpen={showAdd}
+          onClose={() => {
+            if (!formLoading) {
+              setShowAdd(false);
+            }
+          }}
+          icon={modalConfig?.addModal?.icon}
+          title={modalConfig?.addModal?.title || "Add New"}
+          size={modalConfig?.addModal?.size || "md"}
+          onFormSubmit={() =>
+            document.querySelector<HTMLFormElement>("#addForm")?.requestSubmit()
           }
-        }}
-        icon={modalConfig?.addModal?.icon}
-        title={modalConfig?.addModal?.title || "Add New"}
-        size={modalConfig?.addModal?.size || "md"}
-        onFormSubmit={() =>
-          document.querySelector<HTMLFormElement>("#addForm")?.requestSubmit()
-        }
-        loadingBtn={formLoading}
-        actionButtons={modalConfig?.addModal?.actionButtons || []}
-      >
-        <Form
-          config={modalConfig?.addModal || {}}
-          onSubmit={handleAddFormSubmit}
-          initialData={{}}
-          type="add"
-          loading={formLoading}
-        />
-      </Modal>
+          loadingBtn={formLoading}
+          actionButtons={modalConfig?.addModal?.actionButtons || []}
+        >
+          <Form
+            config={modalConfig?.addModal || {}}
+            onSubmit={handleAddFormSubmit}
+            initialData={{}}
+            type="add"
+            loading={formLoading}
+          />
+        </Modal>
+      )}
 
       {/* Edit Modal */}
-      <Modal
-        isOpen={showEdit}
-        onClose={() => {
-          if (!formLoading) {
-            setShowEdit(false);
+      {showEdit && (
+        <Modal
+          isOpen={showEdit}
+          onClose={() => {
+            if (!formLoading) {
+              setShowEdit(false);
+            }
+          }}
+          icon={modalConfig?.editModal?.icon}
+          title={modalConfig?.editModal?.title || "Edit"}
+          size={modalConfig?.editModal?.size || "md"}
+          onFormSubmit={() =>
+            document
+              .querySelector<HTMLFormElement>("#editForm")
+              ?.requestSubmit()
           }
-        }}
-        icon={modalConfig?.editModal?.icon}
-        title={modalConfig?.editModal?.title || "Edit"}
-        size={modalConfig?.editModal?.size || "md"}
-        onFormSubmit={() =>
-          document.querySelector<HTMLFormElement>("#editForm")?.requestSubmit()
-        }
-        actionButtons={modalConfig?.editModal?.actionButtons || []}
-        loadingBtn={formLoading}
-      >
-        <Form
-          config={modalConfig?.editModal || {}}
-          onSubmit={handleEditFormSubmit}
-          initialData={selectedItem}
-          type="edit"
-          loading={formLoading}
-          fetchRowDetails={fetchRowDetails}
-        />
-      </Modal>
+          actionButtons={modalConfig?.editModal?.actionButtons || []}
+          loadingBtn={formLoading}
+        >
+          <Form
+            config={modalConfig?.editModal || {}}
+            onSubmit={handleEditFormSubmit}
+            initialData={selectedItem}
+            type="edit"
+            loading={formLoading}
+            fetchRowDetails={fetchRowDetails}
+          />
+        </Modal>
+      )}
 
       {/* Delete Modal */}
       {showDelete && (

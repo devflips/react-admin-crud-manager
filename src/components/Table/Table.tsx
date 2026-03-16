@@ -967,7 +967,7 @@ const Table = ({
           document.body,
         )}
 
-      {filterConfig && (
+      {filterConfig && showFilters && (
         <FilterDrawer
           isOpen={showFilters}
           onClose={() => setShowFilters(false)}

@@ -55,7 +55,7 @@ const FilterDrawer = ({
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none",
         )}
-        onClick={onClose}
+        // onClick={onClose}
       />
 
       <div

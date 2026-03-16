@@ -71,7 +71,7 @@ const Modal = ({
           "fixed inset-0 bg-gray-500 opacity-75",
           classNames?.overlay,
         )}
-        onClick={() => onClose()}
+        // onClick={() => onClose()}
       ></div>
 
       <div
