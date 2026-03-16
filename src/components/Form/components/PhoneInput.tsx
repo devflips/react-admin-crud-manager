@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { countries } from "../../../data/countries";
 import { ChevronDown, Search } from "lucide-react";
+import { createPortal } from "react-dom";
 import InputLabel from "./InputLabel";
 import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
@@ -50,6 +51,18 @@ export default function PhoneInput({
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const optionsPanelRef = useRef<HTMLDivElement | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
+
+  const dropdownPortalTarget =
+    typeof document !== "undefined"
+      ? (dropdownRef.current?.closest(".racm-root") as HTMLElement | null) ||
+        document.body
+      : null;
 
   useEffect(() => {
     if (typeof value === "string" && value.startsWith("+")) {
@@ -84,13 +97,38 @@ export default function PhoneInput({
     const handleClickOutside = (e: MouseEvent) => {
       if (
         dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
+        !dropdownRef.current.contains(e.target as Node) &&
+        !optionsPanelRef.current?.contains(e.target as Node)
       )
         setOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!open || !dropdownRef.current) return;
+
+    const updateDropdownPosition = () => {
+      if (!dropdownRef.current) return;
+
+      const rect = dropdownRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+      });
+    };
+
+    updateDropdownPosition();
+    window.addEventListener("resize", updateDropdownPosition);
+    window.addEventListener("scroll", updateDropdownPosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updateDropdownPosition);
+      window.removeEventListener("scroll", updateDropdownPosition, true);
+    };
+  }, [open]);
 
   const filteredCountries = (countries as Country[]).filter(
     (c) =>
@@ -211,42 +249,53 @@ export default function PhoneInput({
             />
           </div>
 
-          {open && (
-            <div className="absolute top-full left-0 w-full mt-1 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 shadow-lg z-50 max-h-60 overflow-y-auto">
-              {search && (
-                <div className="p-2 border-b border-gray-200 dark:border-gray-700">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
-                      type="text"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      placeholder="Search country..."
-                      className="w-full pl-9 pr-3 py-2 text-sm border rounded-md bg-white dark:bg-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none "
-                    />
+          {open &&
+            dropdownPortalTarget &&
+            createPortal(
+              <div
+                ref={optionsPanelRef}
+                className="fixed border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 shadow-lg z-50 max-h-60 overflow-y-auto"
+                style={{
+                  top: dropdownPosition.top,
+                  left: dropdownPosition.left,
+                  width: dropdownPosition.width,
+                }}
+              >
+                {search && (
+                  <div className="p-2 border-b border-gray-200 dark:border-gray-700">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Search country..."
+                        className="w-full pl-9 pr-3 py-2 text-sm border rounded-md bg-white dark:bg-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none "
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {filteredCountries.map((c) => (
-                <button
-                  key={c.code}
-                  type="button"
-                  onClick={() => handleCountrySelect(c)}
-                  className="w-full flex items-center gap-2 px-2 py-1 text-sm hover:bg-blue-50 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100"
-                >
-                  <img
-                    src={`https://flagcdn.com/w20/${c.code.toLowerCase()}.png`}
-                    alt={c.code}
-                    className="w-5 h-3 object-cover"
-                  />
-                  <span>
-                    {c.label} (+{c.phone})
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
+                {filteredCountries.map((c) => (
+                  <button
+                    key={c.code}
+                    type="button"
+                    onClick={() => handleCountrySelect(c)}
+                    className="w-full flex items-center gap-2 px-2 py-1 text-sm hover:bg-blue-50 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100"
+                  >
+                    <img
+                      src={`https://flagcdn.com/w20/${c.code.toLowerCase()}.png`}
+                      alt={c.code}
+                      className="w-5 h-3 object-cover"
+                    />
+                    <span>
+                      {c.label} (+{c.phone})
+                    </span>
+                  </button>
+                ))}
+              </div>,
+              dropdownPortalTarget,
+            )}
         </div>
         {errorMessage && (
           <span

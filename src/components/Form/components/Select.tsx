@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown, Search, Check } from "lucide-react";
+import { createPortal } from "react-dom";
 import InputLabel from "./InputLabel";
 import { countries } from "../../../data/countries";
 import { crudClasses, joinClasses } from "../../../lib/crudClasses";
@@ -59,10 +60,22 @@ const Select = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [showAboveState, setShowAboveState] = useState(true);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const optionsPanelRef = useRef<HTMLDivElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const [normalizedOptions, setNormalizedOptions] = useState<SelectOption[]>(
     [],
   );
+  const [dropdownPosition, setDropdownPosition] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
+
+  const dropdownPortalTarget =
+    typeof document !== "undefined"
+      ? (dropdownRef.current?.closest(".racm-root") as HTMLElement | null) ||
+        document.body
+      : null;
 
   const initialVal = value || value === false ? value : defaultValue;
 
@@ -118,7 +131,8 @@ const Select = ({
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
+        !dropdownRef.current.contains(event.target as Node) &&
+        !optionsPanelRef.current?.contains(event.target as Node)
       ) {
         setOpen(false);
         setSearchTerm("");
@@ -129,13 +143,34 @@ const Select = ({
   }, []);
 
   useEffect(() => {
-    if (open && dropdownRef.current) {
+    if (!open || !dropdownRef.current) return;
+
+    const updateDropdownPosition = () => {
+      if (!dropdownRef.current) return;
+
       const rect = dropdownRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
       const spaceBelow = viewportHeight - rect.bottom;
-      const dropdownHeight = 200;
-      setShowAboveState(spaceBelow < dropdownHeight);
-    }
+      const maxDropdownHeight =
+        typeof dropdownMaxHeight === "number" ? dropdownMaxHeight : 200;
+      const shouldShowAbove = spaceBelow < maxDropdownHeight;
+
+      setShowAboveState(shouldShowAbove);
+      setDropdownPosition({
+        top: shouldShowAbove ? rect.top - 4 : rect.bottom + 4,
+        left: rect.left,
+        width: rect.width,
+      });
+    };
+
+    updateDropdownPosition();
+    window.addEventListener("resize", updateDropdownPosition);
+    window.addEventListener("scroll", updateDropdownPosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updateDropdownPosition);
+      window.removeEventListener("scroll", updateDropdownPosition, true);
+    };
   }, [open]);
 
   useEffect(() => {
@@ -236,70 +271,79 @@ const Select = ({
           />
         </button>
 
-        {open && (
-          <div
-            className={`absolute z-50 w-full border rounded-md bg-white dark:bg-gray-700 shadow-lg 
-            ${showAboveState ? "bottom-full mb-1" : "top-full mt-1"}`}
-          >
-            {search && (
-              <div className="p-2 border-b border-gray-200 dark:border-gray-600">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    ref={searchInputRef}
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search..."
-                    className="w-full pl-9 pr-3 py-2 text-sm border rounded-md bg-white dark:bg-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none"
-                  />
-                </div>
-              </div>
-            )}
-
+        {open &&
+          dropdownPortalTarget &&
+          createPortal(
             <div
-              className="max-h-40 overflow-y-auto"
+              ref={optionsPanelRef}
+              className="fixed z-50 border rounded-md bg-white dark:bg-gray-700 shadow-lg"
               style={{
-                maxHeight: dropdownMaxHeight || "",
+                top: dropdownPosition.top,
+                left: dropdownPosition.left,
+                width: dropdownPosition.width,
+                transform: showAboveState ? "translateY(-100%)" : undefined,
               }}
             >
-              {filteredOptions.length > 0 ? (
-                filteredOptions.map((option) => (
-                  <button
-                    key={String(option.value)}
-                    type="button"
-                    onClick={() => handleOptionClick(String(option.value))}
-                    className={`w-full px-3 py-2 text-left text-sm flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-600 
+              {search && (
+                <div className="p-2 border-b border-gray-200 dark:border-gray-600">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Search..."
+                      className="w-full pl-9 pr-3 py-2 text-sm border rounded-md bg-white dark:bg-gray-800 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div
+                className="max-h-40 overflow-y-auto"
+                style={{
+                  maxHeight: dropdownMaxHeight || "",
+                }}
+              >
+                {filteredOptions.length > 0 ? (
+                  filteredOptions.map((option) => (
+                    <button
+                      key={String(option.value)}
+                      type="button"
+                      onClick={() => handleOptionClick(String(option.value))}
+                      className={`w-full px-3 py-2 text-left text-sm flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-600 
                     ${
                       isSelected(option.value)
                         ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
                         : ""
                     }`}
-                  >
-                    <div className="flex gap-2 items-center">
-                      {countriesList && option?.code && (
-                        <img
-                          src={`https://flagcdn.com/w20/${option?.code.toLowerCase()}.png`}
-                          alt={option.code}
-                          className="w-5 h-3 object-cover"
-                        />
-                      )}
-                      <span>{option.label}</span>
-                    </div>
+                    >
+                      <div className="flex gap-2 items-center">
+                        {countriesList && option?.code && (
+                          <img
+                            src={`https://flagcdn.com/w20/${option?.code.toLowerCase()}.png`}
+                            alt={option.code}
+                            className="w-5 h-3 object-cover"
+                          />
+                        )}
+                        <span>{option.label}</span>
+                      </div>
 
-                    {multiple && isSelected(option.value) && (
-                      <Check className="w-4 h-4" />
-                    )}
-                  </button>
-                ))
-              ) : (
-                <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
-                  No options found
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+                      {multiple && isSelected(option.value) && (
+                        <Check className="w-4 h-4" />
+                      )}
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
+                    No options found
+                  </div>
+                )}
+              </div>
+            </div>,
+            dropdownPortalTarget,
+          )}
       </div>
       {errorMessage && (
         <span

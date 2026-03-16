@@ -138,8 +138,15 @@ const Table = ({
   }, [sortedData, currentPage, pageSize, pagination.useServerSidePagination]);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const tableScopeRef = useRef<HTMLDivElement | null>(null);
   const buttonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const menuPortalTarget =
+    typeof document !== "undefined"
+      ? (tableScopeRef.current?.closest(".racm-root") as HTMLElement | null) ||
+        document.body
+      : null;
 
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
@@ -651,7 +658,7 @@ const Table = ({
   ]);
 
   return (
-    <>
+    <div ref={tableScopeRef}>
       {loading ? (
         <TableSkeleton rows={6} columns={6} />
       ) : (
@@ -925,6 +932,7 @@ const Table = ({
       )}
 
       {activeMenu &&
+        menuPortalTarget &&
         createPortal(
           <div
             ref={menuRef}
@@ -964,7 +972,7 @@ const Table = ({
               </button>
             ))}
           </div>,
-          document.body,
+          menuPortalTarget,
         )}
 
       {filterConfig && showFilters && (
@@ -987,7 +995,7 @@ const Table = ({
           setIsOpen={setIsOpen}
         />
       )}
-    </>
+    </div>
   );
 };
 
