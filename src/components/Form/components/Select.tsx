@@ -86,7 +86,7 @@ const Select = ({
 
   const getCountrieslist = () => {
     const list = countries.map((obj) => ({
-      value: obj.code,
+      value: obj.label,
       label: obj.label,
       code: obj.code,
     }));
@@ -238,16 +238,30 @@ const Select = ({
       >
         <select
           name="hidden_select_for_validation"
-          value={selectedLabels || ""}
+          value={
+            multiple
+              ? selectedLabels
+                ? selectedLabels.split(", ")
+                : []
+              : selectedLabels || ""
+          }
           required={required}
           multiple={multiple}
           id={`field-${name}`}
           className="absolute opacity-0 right-1/2 top-[80%] -translate-x-1/2 -translate-y-1/2 pointer-events-none h-[10px]"
           onChange={() => {}}
         >
-          <option hidden value={selectedLabels}>
-            {selectedLabels}
-          </option>
+          {multiple ? (
+            selectedLabels?.split(", ").map((label) => (
+              <option key={label} value={label}>
+                {label}
+              </option>
+            ))
+          ) : (
+            <option hidden value={selectedLabels}>
+              {selectedLabels}
+            </option>
+          )}
         </select>
         <button
           type="button"

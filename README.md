@@ -71,15 +71,15 @@ Below is a complete reference of the public props accepted by this package (type
 
 #### Table Configuration Keys
 
-| Key          | Type                    | Description                 | Accepted Values / Example                                                                                                                       |
-| ------------ | ----------------------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `table_head` | array of column objects | Column definitions          | Array of table column objects (see [Table column object](#table-column-object-table_head))                                                      |
-| `search`     | object                  | Search functionality config | `{ enabled: true, useServerSideSearch?: false, searchKeys?: ["name", "email"] }`                                                                |
-| `filter`     | object                  | Filter drawer config        | `{ enabled: true, useServerSideFilters?: false }`                                                                                               |
-| `pagination` | object                  | Pagination controls         | `{ enabled: true, useServerSidePagination?: false }`                                                                                            |
-| `sort`       | object                  | Sorting configuration       | `{ enabled: true, useServerSideSorting?: false, autoGenerate: true, onChange?: (payload) => void, options?: [...], clearLabel?: "Clear Sort" }` |
-| `exportCSV`  | object                  | Export data as CSV          | `{ enabled: true, fileName: "users.csv", fields: [{ label: "Name", key: "name" }, ...] }`                                                       |
-| `rowClick`   | function or boolean     | Callback on table row click | `(row: object, rowIndex: number) => void` or `true` (setting true will open details)                                                            |
+| Key          | Type                    | Description                 | Accepted Values / Example                                                                                     |
+| ------------ | ----------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `table_head` | array of column objects | Column definitions          | Array of table column objects (see [Table column object](#table-column-object-table_head))                    |
+| `search`     | object                  | Search functionality config | `{ enabled: true, useServerSideSearch?: false, searchKeys?: ["name", "email"] }`                              |
+| `filter`     | object                  | Filter drawer config        | `{ enabled: true, useServerSideFilters?: false }`                                                             |
+| `pagination` | object                  | Pagination controls         | `{ enabled: true, useServerSidePagination?: false }`                                                          |
+| `sort`       | object                  | Sorting configuration       | Enables and controls sorting behavior for the data table. (see [Table Sorting Config](#table-sorting-config)) |
+| `exportCSV`  | object                  | Export data as CSV          | `{ enabled: true, fileName: "users.csv", fields: [{ label: "Name", key: "name" }, ...] }`                     |
+| `rowClick`   | function or boolean     | Callback on table row click | `(row: object, rowIndex: number) => void` or `true` (setting true will open details)                          |
 
 <br>
 
@@ -101,6 +101,23 @@ Below is a complete reference of the public props accepted by this package (type
 | `format`         | string   | Date format pattern                                                                                                | `"DD MMM YYYY"`, `"YYYY-MM-DD"`, `"DD/MM/YYYY HH:mm"` (uses date-fns patterns)                                                 |
 | `menuList`       | array    | Action menu items; array of `{ title: string, type: string, variant?: string, icon?: ReactNode }`                  | `[{ title: "Edit", type: "edit", icon: <EditIcon /> }, { title: "Delete", type: "delete", icon: <TrashIcon /> }]`              |
 | `render`         | function | Custom cell renderer (overrides built-in logic)                                                                    | `(row: object, rowIndex: number) => ReactNode`; e.g., `(row) => <span>{row.name.toUpperCase()}</span>`                         |
+
+---
+
+### Table Sorting Config
+
+The `sort` property enables and controls sorting behavior for the data table. It supports both client-side and server-side sorting, along with customizable sorting options.
+
+| Property               | Type     | Required | Description                                                                                                 |
+| ---------------------- | -------- | -------- | ----------------------------------------------------------------------------------------------------------- |
+| `enabled`              | boolean  | No       | Enables or disables sorting functionality. Default is `true`.                                               |
+| `useServerSideSorting` | boolean  | No       | If set to `true`, sorting will be handled on the server instead of the client.                              |
+| `fields`               | string[] | No       | List of field keys that are sortable. Optional if `options` are provided.                                   |
+| `autoGenerate`         | boolean  | No       | Auto-generate sort options from table headers.                                                              |
+| `defaultValue`         | string   | No       | Sets the default selected sorting option on initial load (e.g., `"createdAt_desc"`).                        |
+| `clearLabel`           | string   | No       | Label displayed for the "clear sorting" option.                                                             |
+| `onChange`             | function | No       | Callback triggered when sorting changes. Receives an object containing `value`, `key`, `order`, and `type`. |
+| `options`              | array    | No       | Custom sorting options. If not provided, options will be auto-generated from sortable table columns.        |
 
 ---
 
@@ -671,6 +688,22 @@ const config = {
         console.log("Sort changed:", payload);
         // payload contains: { value, option, key, order, type }
       },
+      options: [
+        {
+          value: "name_asc",
+          label: "Name (A-Z)",
+          key: "name",
+          order: "asc",
+          type: "string",
+        },
+        {
+          value: "name_desc",
+          label: "Name (Z-A)",
+          key: "name",
+          order: "desc",
+          type: "string",
+        },
+      ],
     },
     table_head: [
       { key: "name", title: "Name" },
@@ -681,7 +714,108 @@ const config = {
 };
 ```
 
-### Examples
+### Primary Color Customization
+
+You can override the default primary color used across the UI by defining CSS variables in your global `:root`.
+
+Simply add the following variables to your main CSS file (e.g., `root.css`, `global.css`):
+
+````css
+:root {
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-200: #bfdbfe;
+  --primary-300: #93c5fd;
+  --primary-400: #60a5fa;
+  --primary-500: #3b82f6;
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
+  --primary-800: #1e40af;
+  --primary-900: #1e3a8a;
+}
+````
+### CSS Class Customization
+
+The following table lists all available CSS classes that can be overridden to customize the UI.
+
+---
+
+#### Class Reference
+
+| Component          | Key                | Class Name                      | Description                 |
+| ------------------ | ------------------ | ------------------------------- | --------------------------- |
+| **Crud Page**      | `root`             | `crud_page`                     | Main container of CRUD page |
+|                    | `deleteContent`    | `crud_page_delete_content`      | Delete confirmation content |
+| **Button**         | `root`             | `crud_button`                   | Default button styling      |
+| **Chip**           | `root`             | `crud_chip`                     | Chip/tag element            |
+| **Spinner**        | `root`             | `crud_spinner`                  | Loading spinner             |
+| **Modal**          | `root`             | `crud_modal`                    | Modal root                  |
+|                    | `overlay`          | `crud_modal_overlay`            | Modal overlay               |
+|                    | `container`        | `crud_modal_container`          | Modal container             |
+|                    | `header`           | `crud_modal_header`             | Modal header                |
+|                    | `title`            | `crud_modal_title`              | Modal title                 |
+|                    | `closeButton`      | `crud_modal_close_button`       | Close button                |
+|                    | `body`             | `crud_modal_body`               | Modal body                  |
+|                    | `footer`           | `crud_modal_footer`             | Modal footer                |
+|                    | `actionButton`     | `crud_modal_action_button`      | Modal action button         |
+|                    | `loadingIndicator` | `crud_modal_loading_indicator`  | Modal loading state         |
+| **Table**          | `root`             | `crud_table`                    | Table wrapper               |
+|                    | `toolbar`          | `crud_table_toolbar`            | Table toolbar               |
+|                    | `searchField`      | `crud_table_search_field`       | Search field wrapper        |
+|                    | `searchInput`      | `crud_table_search_input`       | Search input                |
+|                    | `container`        | `crud_table_container`          | Table container             |
+|                    | `element`          | `crud_table_element`            | Table element               |
+|                    | `head`             | `crud_table_head`               | Table head                  |
+|                    | `headRow`          | `crud_table_head_row`           | Header row                  |
+|                    | `headCell`         | `crud_table_head_cell`          | Header cell                 |
+|                    | `body`             | `crud_table_body`               | Table body                  |
+|                    | `row`              | `crud_table_row`                | Table row                   |
+|                    | `cell`             | `crud_table_cell`               | Table cell                  |
+|                    | `noData`           | `crud_table_no_data`            | No data state               |
+|                    | `actionButton`     | `crud_table_action_button`      | Row action button           |
+|                    | `menu`             | `crud_table_menu`               | Action menu                 |
+|                    | `menuItem`         | `crud_table_menu_item`          | Menu item                   |
+|                    | `pagination`       | `crud_table_pagination`         | Pagination wrapper          |
+| **Table Skeleton** | `root`             | `crud_table_skeleton`           | Skeleton loader wrapper     |
+|                    | `table`            | `crud_table_skeleton_table`     | Skeleton table              |
+| **Sort Dropdown**  | `root`             | `crud_sort_dropdown`            | Sort dropdown root          |
+|                    | `trigger`          | `crud_sort_dropdown_trigger`    | Dropdown trigger            |
+|                    | `menu`             | `crud_sort_dropdown_menu`       | Dropdown menu               |
+|                    | `item`             | `crud_sort_dropdown_item`       | Dropdown item               |
+| **Image Preview**  | `root`             | `crud_image_preview`            | Image preview root          |
+|                    | `container`        | `crud_image_preview_container`  | Image container             |
+|                    | `image`            | `crud_image_preview_image`      | Image element               |
+| **Filter Drawer**  | `overlay`          | `crud_filter_overlay`           | Drawer overlay              |
+|                    | `panel`            | `crud_filter_panel`             | Drawer panel                |
+|                    | `header`           | `crud_filter_header`            | Drawer header               |
+|                    | `body`             | `crud_filter_body`              | Drawer body                 |
+|                    | `footer`           | `crud_filter_footer`            | Drawer footer               |
+| **Form**           | `root`             | `crud_form`                     | Form wrapper                |
+|                    | `loading`          | `crud_form_loading`             | Form loading state          |
+| **Field**          | `wrapper`          | `crud_field_wrapper`            | Field wrapper               |
+|                    | `label`            | `crud_field_label`              | Field label                 |
+|                    | `input`            | `crud_field_input`              | Input field                 |
+|                    | `error`            | `crud_field_error`              | Error message               |
+| **Media Picker**   | `image`            | `crud_media_image_picker`       | Image picker                |
+|                    | `multiImage`       | `crud_media_multi_image_picker` | Multi-image picker          |
+|                    | `audio`            | `crud_media_audio_picker`       | Audio picker                |
+|                    | `video`            | `crud_media_video_picker`       | Video picker                |
+|                    | `dropzone`         | `crud_media_dropzone`           | File dropzone               |
+|                    | `cropModal`        | `crud_media_crop_modal`         | Crop modal                  |
+| **Details**        | `root`             | `crud_details`                  | Details root                |
+|                    | `container`        | `crud_details_container`        | Details container           |
+|                    | `row`              | `crud_details_row`              | Details row                 |
+
+---
+
+#### Notes
+
+- All class names are prefixed with `crud_` to prevent conflicts.
+- You can override these classes in your own stylesheet.
+- Works with CSS, SCSS, Tailwind (`@apply`), or CSS-in-JS.
+- No manual assignment required — classes are already applied internally.
+
+### CRUD Examples
 
 #### Example 1: Minimal Client-Side CRUD
 
@@ -746,7 +880,7 @@ function App() {
 }
 
 export default App;
-```
+````
 
 #### Example 2: Server-Side CRUD with Advanced Features
 
