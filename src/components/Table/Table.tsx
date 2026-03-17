@@ -975,7 +975,7 @@ const Table = ({
           menuPortalTarget,
         )}
 
-      {filterConfig && showFilters && (
+      {filterConfig && (
         <FilterDrawer
           isOpen={showFilters}
           onClose={() => setShowFilters(false)}

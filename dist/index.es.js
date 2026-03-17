@@ -5692,7 +5692,8 @@ const ea = ({
           y.filterDrawer.overlay,
           "fixed inset-0 bg-black/50 z-40 transition-opacity duration-300",
           a ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        )
+        ),
+        onClick: n
       }
     ),
     /* @__PURE__ */ h(
@@ -5700,8 +5701,8 @@ const ea = ({
       {
         className: x(
           y.filterDrawer.panel,
-          "fixed top-0 right-0 h-full w-[28rem] bg-white dark:bg-gray-900 shadow-2xl z-50 flex flex-col border-l border-gray-200 dark:border-gray-700 transform transition-transform duration-300 ease-in-out",
-          a ? "translate-x-0" : "translate-x-full"
+          "fixed top-0 right-0 h-full w-[28rem] bg-white dark:bg-gray-900 shadow-2xl z-50 flex flex-col border-l border-gray-200 dark:border-gray-700 transform transition-all duration-300 ease-in-out",
+          a ? "opacity-100 translate-x-0" : "opacity-0 translate-x-full"
         ),
         children: [
           /* @__PURE__ */ h(
@@ -6638,7 +6639,7 @@ const ea = ({
       ),
       ze
     ),
-    S && V && /* @__PURE__ */ t(
+    S && /* @__PURE__ */ t(
       ca,
       {
         isOpen: V,
