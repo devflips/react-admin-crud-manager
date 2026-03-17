@@ -78,6 +78,19 @@ const DetailRow = ({
         />
       );
     }
+    if (type === "video") {
+      return value ? (
+        <video
+          key={value instanceof File ? URL.createObjectURL(value) : value}
+          controls
+          src={value instanceof File ? URL.createObjectURL(value) : value}
+          onClick={(e) => e.stopPropagation()}
+          className="shadow-sm mt-1 w-full max-w-xs max-h-[250px] rounded-md "
+        />
+      ) : (
+        <p className="text-sm text-gray-400">N/A</p>
+      );
+    }
     if (type === "audio") {
       return value ? (
         <audio

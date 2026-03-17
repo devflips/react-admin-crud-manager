@@ -1,15 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { countries } from "../../../data/countries";
+import { countries, CountryInterface } from "../../../data/countries";
 import { ChevronDown, Search } from "lucide-react";
 import { createPortal } from "react-dom";
 import InputLabel from "./InputLabel";
 import { crudClasses, joinClasses } from "../../../lib/crudClasses";
-
-interface Country {
-  label: string;
-  code: string;
-  phone: string;
-}
 
 interface PhoneInputProps {
   label?: string;
@@ -41,13 +35,17 @@ export default function PhoneInput({
   errorMessage = "",
 }: PhoneInputProps) {
   const find_country_with_code = (countryCode: string) => {
-    return (countries as Country[]).find((obj) => obj.code == countryCode);
+    return (countries as CountryInterface[]).find(
+      (obj) => obj.code == countryCode,
+    );
   };
 
-  const [selectedCountry, setSelectedCountry] = useState<Country | undefined>(
-    find_country_with_code(defaultCountry) || (countries as Country[])[0],
+  const [selectedCountry, setSelectedCountry] = useState<CountryInterface>(
+    find_country_with_code(defaultCountry) ||
+      (countries as CountryInterface[])[0],
   );
   const [fullNumber, setFullNumber] = useState("");
+  const [localValue, setLocalValue] = useState("");
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -64,31 +62,68 @@ export default function PhoneInput({
         document.body
       : null;
 
+  // Apply mask to phone number
+  const applyMask = (digits: string, mask: string): string => {
+    let result = "";
+    let digitIndex = 0;
+
+    for (let i = 0; i < mask.length && digitIndex < digits.length; i++) {
+      if (mask[i] === "#") {
+        result += digits[digitIndex];
+        digitIndex++;
+      } else {
+        result += mask[i];
+      }
+    }
+    return result;
+  };
+
+  // Handle input change
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value;
+    const digits = rawValue.replace(/\D/g, "");
+
+    if (countriesList && selectedCountry?.mask) {
+      // Apply mask
+      const maskedValue = applyMask(digits, selectedCountry.mask);
+      setLocalValue(maskedValue);
+      onChange?.("+" + selectedCountry.phone + " " + maskedValue);
+
+      // Update parent with unmasked value
+      const unmaskedValue = maskedValue.replace(/\D/g, "");
+      setFullNumber(unmaskedValue);
+    } else {
+      // No mask, just update with digits
+      setLocalValue(digits);
+      setFullNumber(digits);
+      if (selectedCountry && onChange) {
+        onChange("+" + selectedCountry.phone + " " + digits);
+      } else {
+        onChange?.(digits);
+      }
+    }
+  };
+
   useEffect(() => {
     if (typeof value === "string" && value.startsWith("+")) {
-      const match = (countries as Country[])
+      const match = (countries as CountryInterface[])
         .filter((c) => value.startsWith("+" + c.phone))
         .sort((a, b) => b.phone.length - a.phone.length)[0];
       if (match) {
         setSelectedCountry(match);
-        setFullNumber(value.replace("+" + match.phone, ""));
+        let rawValue = value.replace("+" + match.phone, "").replaceAll(" ", "");
+        setFullNumber(rawValue);
+        setLocalValue(applyMask(rawValue, match.mask));
         return;
       }
     }
     setFullNumber(value || "");
-  }, [value]);
+    setLocalValue(value || "");
+  }, []);
 
-  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value.replace(/\D/g, "");
-    setFullNumber(input);
-    if (selectedCountry && onChange) {
-      onChange("+" + selectedCountry.phone + input);
-    }
-  };
-
-  const handleCountrySelect = (country: Country) => {
+  const handleCountrySelect = (country: CountryInterface) => {
     setSelectedCountry(country);
-    if (onChange) onChange("+" + country.phone + fullNumber);
+    if (onChange) onChange("+" + country.phone + " " + fullNumber);
     setOpen(false);
     setSearchTerm("");
   };
@@ -130,7 +165,7 @@ export default function PhoneInput({
     };
   }, [open]);
 
-  const filteredCountries = (countries as Country[]).filter(
+  const filteredCountries = (countries as CountryInterface[]).filter(
     (c) =>
       c.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
       c.phone.includes(searchTerm),
@@ -220,13 +255,18 @@ export default function PhoneInput({
 
             <input
               type="tel"
-              value={fullNumber}
+              value={localValue}
               onChange={handleNumberChange}
               required={required}
               id={`field-${name}`}
               disabled={disabled || !selectedCountry}
-              placeholder={!selectedCountry ? "Select a country" : placeholder}
-              className="flex-1 ml-2 bg-transparent outline-none text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400"
+              placeholder={
+                !selectedCountry
+                  ? "Select a country"
+                  : placeholder || "Enter phone number"
+              }
+              className={`flex-1 ml-2 bg-transparent outline-none text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400`}
+              // pattern={selectedCountry?.pattern}
             />
 
             <input

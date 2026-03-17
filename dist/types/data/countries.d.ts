@@ -1,6 +1,8 @@
-export interface Country {
+export interface CountryInterface {
     label: string;
     code: string;
     phone: string;
+    pattern: string;
+    mask: string;
 }
-export declare const countries: Country[];
+export declare const countries: CountryInterface[];

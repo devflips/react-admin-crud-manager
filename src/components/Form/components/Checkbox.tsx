@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import InputLabel from "./InputLabel";
 import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
@@ -69,6 +69,27 @@ const Checkbox = ({
       onChange(newValue, name);
     }
   };
+
+  useEffect(() => {
+    let initialVal;
+
+    if (multiple) {
+      if (multiSelect) {
+        // Ensure array for multiselect
+        initialVal = Array.isArray(value) ? value : [];
+      } else {
+        // Single select from multiple options
+        initialVal = value || "";
+      }
+    } else {
+      // Single checkbox
+      initialVal = Boolean(value);
+    }
+
+    setTimeout(() => {
+      onChange?.(initialVal, name);
+    }, 100);
+  }, []);
 
   if (multiple) {
     return (
