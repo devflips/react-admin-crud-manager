@@ -55,14 +55,20 @@ const FilterDrawer = ({
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none",
         )}
+        style={{
+          opacity: isOpen ? 1 : 0,
+        }}
         onClick={onClose}
       />
 
       <div
+        style={{
+          opacity: isOpen ? 1 : 0,
+        }}
         className={joinClasses(
           crudClasses.filterDrawer.panel,
           "fixed top-0 right-0 h-full w-[28rem] bg-white dark:bg-gray-900 shadow-2xl z-50 flex flex-col border-l border-gray-200 dark:border-gray-700 transform transition-all duration-300 ease-in-out",
-          isOpen ? "opacity-100 translate-x-0" : "opacity-0 translate-x-full",
+          isOpen ? "translate-x-0" : "translate-x-full",
         )}
       >
         <div
@@ -82,32 +88,27 @@ const FilterDrawer = ({
           </button>
         </div>
 
-        {isOpen && (
-          <div
-            className={joinClasses(
-              crudClasses.filterDrawer.body,
-              "flex-1 overflow-y-auto px-4 py-3",
-            )}
-          >
-            {DynamicComponent ? (
-              <DynamicComponent
-                filters={filters}
-                onFilterChange={handleChange}
-              />
-            ) : (
-              <div className="space-y-4">
-                {config?.fields?.map((field) => (
-                  <RenderFields
-                    key={field.key}
-                    field={field}
-                    formData={filters}
-                    handleChange={handleChange}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        <div
+          className={joinClasses(
+            crudClasses.filterDrawer.body,
+            "flex-1 overflow-y-auto px-4 py-3",
+          )}
+        >
+          {DynamicComponent ? (
+            <DynamicComponent filters={filters} onFilterChange={handleChange} />
+          ) : (
+            <div className="space-y-4">
+              {config?.fields?.map((field) => (
+                <RenderFields
+                  key={field.key}
+                  field={field}
+                  formData={filters}
+                  handleChange={handleChange}
+                />
+              ))}
+            </div>
+          )}
+        </div>
 
         <div
           className={joinClasses(

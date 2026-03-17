@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import InputLabel from "./InputLabel";
 import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
@@ -30,6 +30,13 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
     },
     ref,
   ) => {
+    useEffect(() => {
+      let initialVal;
+      initialVal = value || false;
+      setTimeout(() => {
+        onChange?.(initialVal);
+      }, 100);
+    }, []);
     return (
       <div
         className={joinClasses(

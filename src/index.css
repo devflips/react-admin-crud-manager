@@ -37,6 +37,9 @@
 .primary-hover:hover {
   background-color: var(--primary-600);
 }
+.opacity-0 {
+  opacity: 0;
+}
 
 /* --- Custom CSS variables --- */
 :root {

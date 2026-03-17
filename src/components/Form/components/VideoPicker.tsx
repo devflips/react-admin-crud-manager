@@ -193,7 +193,7 @@ const VideoPicker = ({
                 <Icon icon="mdi:video" className="text-gray-400 w-10 h-10" />
               </div>
 
-              <div className="flex flex-col items-center space-y-1">
+              <div className="space-y-1">
                 <ButtonComponent
                   type="button"
                   onClick={handleButtonClick}

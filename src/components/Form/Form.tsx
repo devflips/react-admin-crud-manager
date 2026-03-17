@@ -38,7 +38,7 @@ const Form: React.FC<FormProps> = ({
 
   const [formData, setFormData] =
     useState<Record<string, any>>(safeInitialData);
-  const [dataLoading, setDataLoading] = useState<boolean>(true);
+  const [dataLoading, setDataLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleGetDetails = async (): Promise<void> => {
@@ -56,6 +56,7 @@ const Form: React.FC<FormProps> = ({
 
   useEffect(() => {
     if (fetchRowDetails instanceof Function) {
+      setDataLoading(true);
       handleGetDetails();
     } else {
       setFormData(safeInitialData);

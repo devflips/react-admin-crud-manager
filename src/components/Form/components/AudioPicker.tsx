@@ -201,7 +201,7 @@ const AudioPicker = ({
               <div className="rounded-full bg-gray-100 dark:bg-gray-700 h-20 w-20 flex items-center justify-center">
                 <Icon icon="mdi:music" className="text-gray-400 w-10 h-10" />
               </div>
-              <div className="flex flex-col items-center space-y-1">
+              <div className="space-y-1">
                 <ButtonComponent
                   type="button"
                   onClick={handleButtonClick}

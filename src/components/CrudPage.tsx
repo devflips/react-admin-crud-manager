@@ -244,103 +244,95 @@ const CrudPage: React.FC<CrudPageProps> = ({ config }) => {
         }}
       />
 
-      {showAdd && (
-        <Modal
-          isOpen={showAdd}
-          onClose={() => {
-            if (!formLoading) {
-              setShowAdd(false);
-            }
-          }}
-          icon={modalConfig?.addModal?.icon}
-          title={modalConfig?.addModal?.title || "Add New"}
-          size={modalConfig?.addModal?.size || "md"}
-          onFormSubmit={() =>
-            document.querySelector<HTMLFormElement>("#addForm")?.requestSubmit()
+      <Modal
+        isOpen={showAdd}
+        onClose={() => {
+          if (!formLoading) {
+            setShowAdd(false);
           }
-          loadingBtn={formLoading}
-          actionButtons={modalConfig?.addModal?.actionButtons || []}
-        >
-          <Form
-            config={modalConfig?.addModal || {}}
-            onSubmit={handleAddFormSubmit}
-            initialData={{}}
-            type="add"
-            loading={formLoading}
-          />
-        </Modal>
-      )}
+        }}
+        icon={modalConfig?.addModal?.icon}
+        title={modalConfig?.addModal?.title || "Add New"}
+        size={modalConfig?.addModal?.size || "md"}
+        onFormSubmit={() =>
+          document.querySelector<HTMLFormElement>("#addForm")?.requestSubmit()
+        }
+        loadingBtn={formLoading}
+        actionButtons={modalConfig?.addModal?.actionButtons || []}
+      >
+        <Form
+          config={modalConfig?.addModal || {}}
+          onSubmit={handleAddFormSubmit}
+          initialData={{}}
+          type="add"
+          loading={formLoading}
+        />
+      </Modal>
 
       {/* Edit Modal */}
-      {showEdit && (
-        <Modal
-          isOpen={showEdit}
-          onClose={() => {
-            if (!formLoading) {
-              setShowEdit(false);
-            }
-          }}
-          icon={modalConfig?.editModal?.icon}
-          title={modalConfig?.editModal?.title || "Edit"}
-          size={modalConfig?.editModal?.size || "md"}
-          onFormSubmit={() =>
-            document
-              .querySelector<HTMLFormElement>("#editForm")
-              ?.requestSubmit()
+      <Modal
+        isOpen={showEdit}
+        onClose={() => {
+          if (!formLoading) {
+            setShowEdit(false);
           }
-          actionButtons={modalConfig?.editModal?.actionButtons || []}
-          loadingBtn={formLoading}
-        >
-          <Form
-            config={modalConfig?.editModal || {}}
-            onSubmit={handleEditFormSubmit}
-            initialData={selectedItem}
-            type="edit"
-            loading={formLoading}
-            fetchRowDetails={fetchRowDetails}
-          />
-        </Modal>
-      )}
+        }}
+        icon={modalConfig?.editModal?.icon}
+        title={modalConfig?.editModal?.title || "Edit"}
+        size={modalConfig?.editModal?.size || "md"}
+        onFormSubmit={() =>
+          document.querySelector<HTMLFormElement>("#editForm")?.requestSubmit()
+        }
+        actionButtons={modalConfig?.editModal?.actionButtons || []}
+        loadingBtn={formLoading}
+      >
+        <Form
+          config={modalConfig?.editModal || {}}
+          onSubmit={handleEditFormSubmit}
+          initialData={selectedItem}
+          type="edit"
+          loading={formLoading}
+          fetchRowDetails={fetchRowDetails}
+        />
+      </Modal>
 
       {/* Delete Modal */}
-      {showDelete && (
-        <Modal
-          isOpen={showDelete}
-          onClose={(resp) => {
-            handleDeleteResult(resp);
-          }}
-          icon={
-            modalConfig?.deleteModal?.icon || (
-              <Icon icon="ph:warning-bold" className="w-6 h-6 text-red-500" />
-            )
-          }
-          title={modalConfig?.deleteModal?.title || "Confirm Delete"}
-          size={modalConfig?.deleteModal?.size || "md"}
-          loading={formLoading}
-          actionButtons={modalConfig?.deleteModal?.actionButtons || []}
-          executeFunction={executeAction}
-          selectedItem={selectedItem}
+      <Modal
+        isOpen={showDelete}
+        onClose={(resp) => {
+          handleDeleteResult(resp);
+        }}
+        icon={
+          modalConfig?.deleteModal?.icon || (
+            <Icon icon="ph:warning-bold" className="w-6 h-6 text-red-500" />
+          )
+        }
+        title={modalConfig?.deleteModal?.title || "Confirm Delete"}
+        size={modalConfig?.deleteModal?.size || "md"}
+        loading={formLoading}
+        actionButtons={modalConfig?.deleteModal?.actionButtons || []}
+        executeFunction={executeAction}
+        selectedItem={selectedItem}
+      >
+        <div
+          className={joinClasses(
+            crudClasses.crudPage.deleteContent,
+            "flex items-center space-x-2 py-3",
+          )}
         >
-          <div
-            className={joinClasses(
-              crudClasses.crudPage.deleteContent,
-              "flex items-center space-x-2 py-3",
-            )}
-          >
-            <div>
-              <p className="text-md text-gray-700 dark:text-white">
-                {modalConfig?.deleteModal?.confirmText ||
-                  "Are you sure you want to delete this item?"}
+          <div>
+            <p className="text-md text-gray-700 dark:text-white">
+              {modalConfig?.deleteModal?.confirmText ||
+                "Are you sure you want to delete this item?"}
+            </p>
+            {modalConfig?.deleteModal?.referenceKey && (
+              <p className="text-md font-semibold text-gray-700 dark:text-white">
+                {selectedItem?.[modalConfig?.deleteModal?.referenceKey]}
               </p>
-              {modalConfig?.deleteModal?.referenceKey && (
-                <p className="text-md font-semibold text-gray-700 dark:text-white">
-                  {selectedItem?.[modalConfig?.deleteModal?.referenceKey]}
-                </p>
-              )}
-            </div>
+            )}
           </div>
-        </Modal>
-      )}
+        </div>
+      </Modal>
 
       {/* View Detail Modal */}
       {modalConfig?.viewModal && (

@@ -229,7 +229,6 @@ export interface ModalConfig {
     confirmText?: string;
     referenceKey?: string;
     actionButtons?: ActionButton[];
-    action: (item: any) => Promise<{ targetObject: any } | null>;
     icon?: ReactNode;
   };
   viewModal?: {
