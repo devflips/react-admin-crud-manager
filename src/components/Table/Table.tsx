@@ -311,6 +311,31 @@ const Table = ({
     );
   };
 
+  const renderSingleImageCell = (value: any, col: any) => {
+    const src = getImageSource(value);
+
+    if (!src) {
+      return <span className={col.className || ""}>N/A</span>;
+    }
+
+    return (
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          openPreview({ src, alt: col.title || "Image" });
+        }}
+        className="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 overflow-hidden"
+      >
+        <img
+          src={src}
+          alt={col.title || "image"}
+          className="w-full h-full object-cover"
+        />
+      </button>
+    );
+  };
+
   const renderAvatar = (
     imageSrc: any,
     imageAlt: string,
@@ -488,6 +513,8 @@ const Table = ({
       );
     } else if (col.type === "audio") {
       return <>{renderAudio(value, col.className)}</>;
+    } else if (col.type === "image") {
+      return <>{renderSingleImageCell(value, col)}</>;
     } else if (col.type === "multiImage") {
       return <>{renderMultiImageCell(value, col)}</>;
     } else {

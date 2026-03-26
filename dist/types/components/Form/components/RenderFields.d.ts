@@ -31,6 +31,7 @@ interface FieldConfig {
     mask?: string;
     maskApplyOnValue?: boolean;
     maxSize?: number;
+    editorVariant?: "tiny" | "free";
     [key: string]: any;
 }
 interface RenderFieldsProps {

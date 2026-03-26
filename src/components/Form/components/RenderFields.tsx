@@ -5,6 +5,7 @@ import { TextArea } from "./TextArea";
 import ImagePicker from "./ImagePicker";
 import { Input } from "./Input";
 import TinyEditor from "./TinyEditor";
+import FreeEditor from "./FreeEditor";
 import Checkbox from "./Checkbox";
 import AudioPicker from "./AudioPicker";
 import MultiImagePicker from "./MultiImagePicker";
@@ -47,6 +48,7 @@ interface FieldConfig {
   mask?: string;
   maskApplyOnValue?: boolean;
   maxSize?: number;
+  editorVariant?: "tiny" | "free";
   [key: string]: any;
 }
 
@@ -96,6 +98,7 @@ const RenderFields = ({
     mask,
     maskApplyOnValue,
     maxSize,
+    editorVariant,
   } = field;
 
   let value = formData?.[key];
@@ -313,7 +316,7 @@ const RenderFields = ({
         <TinyEditor
           value={value}
           name={key}
-          onChange={(newValue) => handleChange(key, newValue)}
+          onChange={(newValue: string) => handleChange(key, newValue)}
           required={required}
           placeholder={finalPlaceholder}
           label={label || ""}
@@ -321,6 +324,22 @@ const RenderFields = ({
           fontFamily={fontFamily}
           editorKey={editorKey || ""}
           disabled={disabled}
+          errorMessage={errorMessage}
+        />
+      );
+
+    case "freeEditor":
+      return (
+        <FreeEditor
+          value={value}
+          name={key}
+          onChange={(newValue: string) => handleChange(key, newValue)}
+          required={required}
+          placeholder={finalPlaceholder}
+          label={label || ""}
+          parentClass={parentClass || ""}
+          disabled={disabled}
+          height={field.height || 300}
           errorMessage={errorMessage}
         />
       );

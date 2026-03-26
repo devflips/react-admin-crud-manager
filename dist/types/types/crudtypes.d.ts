@@ -26,6 +26,7 @@ export interface TableHead {
     key: string;
     title?: string;
     type?: string;
+    render?: (row: Record<string, any>, index: number) => ReactNode;
     imageKey?: string;
     titleKey?: string;
     subtitleKey?: string;
@@ -77,6 +78,7 @@ export interface ViewField {
     key?: string;
     label?: string;
     type?: string;
+    render?: (data: Record<string, any>) => ReactNode;
     imageKey?: string;
     titleKey?: string;
     subtitleKey?: string;

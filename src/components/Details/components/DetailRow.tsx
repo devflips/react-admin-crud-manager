@@ -65,6 +65,11 @@ const DetailRow = ({
   const renderValue = (
     wrapClass = "text-sm text-gray-900 dark:text-white break-words",
   ) => {
+    if (typeof col.render === "function") {
+      const customValue = col.render(data, value);
+      return <div className={styleConfig.valueClass || ""}>{customValue}</div>;
+    }
+
     if (type === "chip") {
       return (
         <Chip label={value} variant={variant} color={color} className="mt-1" />
@@ -100,6 +105,24 @@ const DetailRow = ({
           onClick={(e) => e.stopPropagation()}
           className="shadow-sm rounded-full mt-1 w-full max-w-xs"
         />
+      ) : (
+        <p className="text-sm text-gray-400">N/A</p>
+      );
+    }
+    if (type === "image") {
+      const src = getImageSource(value);
+      return src ? (
+        <button
+          type="button"
+          onClick={() => openPreview(src, label || "Image")}
+          className="mt-1 w-16 h-16 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700"
+        >
+          <img
+            src={src}
+            alt={label || "image"}
+            className="w-full h-full object-cover"
+          />
+        </button>
       ) : (
         <p className="text-sm text-gray-400">N/A</p>
       );
