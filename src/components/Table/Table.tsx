@@ -40,6 +40,34 @@ interface CSVField {
   key: string;
 }
 
+interface CustomToolbarButton {
+  key?: string;
+  label: string;
+  icon?: React.ReactNode;
+  variant?: string;
+  color?: string;
+  className?: string;
+  disabled?: boolean;
+  show?: boolean;
+  onClick?: (
+    event: React.MouseEvent,
+    context: Record<string, any>,
+  ) => void | Promise<void>;
+}
+
+interface CustomToolbarMenuItem {
+  key?: string;
+  label: string;
+  icon?: React.ReactNode;
+  className?: string;
+  disabled?: boolean;
+  show?: boolean;
+  onClick?: (
+    event: React.MouseEvent,
+    context: Record<string, any>,
+  ) => void | Promise<void>;
+}
+
 const Table = ({
   config,
   setShowAdd,
@@ -72,6 +100,8 @@ const Table = ({
       fileName: "",
       fields: [],
     },
+    customButtons = [],
+    customMenuItems = [],
     emptyMessage = "No data available",
     onMenuAction,
     setServerSidePaginationData = () => {},
@@ -86,6 +116,7 @@ const Table = ({
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const [showFilters, setShowFilters] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
+  const [toolbarMenuOpen, setToolbarMenuOpen] = useState(false);
 
   const normalizedSortConfig = useMemo(() => normalizeSortConfig(sort), [sort]);
 
@@ -138,6 +169,7 @@ const Table = ({
   }, [sortedData, currentPage, pageSize, pagination.useServerSidePagination]);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const toolbarMenuRef = useRef<HTMLDivElement | null>(null);
   const tableScopeRef = useRef<HTMLDivElement | null>(null);
   const buttonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -596,6 +628,47 @@ const Table = ({
     URL.revokeObjectURL(url);
   };
 
+  const handleCustomButtonClick = async (
+    button: CustomToolbarButton,
+    event: React.MouseEvent,
+  ) => {
+    if (typeof button.onClick !== "function") return;
+
+    await button.onClick(event, {
+      data,
+      filteredData,
+      sortedData,
+      paginatedData,
+      searchTerm,
+      appliedFilters,
+      currentPage,
+      pageSize,
+      totalRecords,
+    });
+  };
+
+  const handleToolbarMenuItemClick = async (
+    item: CustomToolbarMenuItem,
+    event: React.MouseEvent,
+  ) => {
+    event.stopPropagation();
+    setToolbarMenuOpen(false);
+
+    if (typeof item.onClick !== "function") return;
+
+    await item.onClick(event, {
+      data,
+      filteredData,
+      sortedData,
+      paginatedData,
+      searchTerm,
+      appliedFilters,
+      currentPage,
+      pageSize,
+      totalRecords,
+    });
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       if (activeMenu) setActiveMenu(null);
@@ -611,6 +684,13 @@ const Table = ({
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setActiveMenu(null);
+      }
+
+      if (
+        toolbarMenuRef.current &&
+        !toolbarMenuRef.current.contains(e.target as Node)
+      ) {
+        setToolbarMenuOpen(false);
       }
     };
     document.addEventListener("click", handleClickOutside);
@@ -711,15 +791,94 @@ const Table = ({
               <p>{description}</p>
             </div>
             <div className="flex flex-col justify-end items-stretch lg:!items-end gap-2 w-full lg:!w-auto">
-              {showAddButton && (
-                <Button
-                  onClick={() => setShowAdd(true)}
-                  variant="contained"
-                  color="primary"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {buttonText || "Add New"}
-                </Button>
+              {(showAddButton ||
+                customButtons?.length > 0 ||
+                customMenuItems?.length > 0) && (
+                <div className="flex flex-col sm:!flex-row sm:!flex-wrap justify-end items-stretch sm:!items-center gap-2 w-full">
+                  {showAddButton && (
+                    <Button
+                      onClick={() => setShowAdd(true)}
+                      variant="contained"
+                      color="primary"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      {buttonText || "Add New"}
+                    </Button>
+                  )}
+
+                  {customButtons
+                    .filter(
+                      (button: CustomToolbarButton) => button?.show !== false,
+                    )
+                    .map((button: CustomToolbarButton, index: number) => (
+                      <Button
+                        key={button.key || `${button.label}-${index}`}
+                        onClick={(event) =>
+                          handleCustomButtonClick(button, event)
+                        }
+                        variant={button.variant || "contained"}
+                        color={button.color || "default"}
+                        className={button.className || ""}
+                        disabled={button.disabled}
+                      >
+                        {button.icon ? (
+                          <span className="mr-2">{button.icon}</span>
+                        ) : null}
+                        {button.label}
+                      </Button>
+                    ))}
+
+                  {customMenuItems.filter(
+                    (item: CustomToolbarMenuItem) => item?.show !== false,
+                  ).length > 0 && (
+                    <div className="relative" ref={toolbarMenuRef}>
+                      <Button
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setToolbarMenuOpen((prev) => !prev);
+                        }}
+                        variant="outlined"
+                        className="px-2"
+                        aria-label="More actions"
+                      >
+                        <EllipsisVertical className="w-4 h-4" />
+                      </Button>
+
+                      {toolbarMenuOpen && (
+                        <div className="absolute right-0 mt-2 w-48 z-50 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg py-1">
+                          {customMenuItems
+                            .filter(
+                              (item: CustomToolbarMenuItem) =>
+                                item?.show !== false,
+                            )
+                            .map(
+                              (item: CustomToolbarMenuItem, index: number) => (
+                                <button
+                                  key={item.key || `${item.label}-${index}`}
+                                  type="button"
+                                  onClick={(event) =>
+                                    handleToolbarMenuItemClick(item, event)
+                                  }
+                                  disabled={item.disabled}
+                                  className={joinClasses(
+                                    "w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center",
+                                    item.className || "",
+                                  )}
+                                >
+                                  {item.icon ? (
+                                    <span className="mr-2 inline-flex">
+                                      {item.icon}
+                                    </span>
+                                  ) : null}
+                                  {item.label}
+                                </button>
+                              ),
+                            )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               )}
               <div className="flex flex-col sm:!flex-row sm:!flex-wrap justify-end items-stretch sm:!items-center gap-2 w-full">
                 {search.enabled && (

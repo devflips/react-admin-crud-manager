@@ -167,6 +167,54 @@ export interface SortConfig {
   onChange?: (payload: SortChangePayload) => void;
 }
 
+export interface ToolbarButton {
+  key?: string;
+  label: string;
+  icon?: ReactNode;
+  variant?: string;
+  color?: string;
+  className?: string;
+  disabled?: boolean;
+  show?: boolean;
+  onClick?: (
+    event: React.MouseEvent,
+    context: {
+      data: any[];
+      filteredData: any[];
+      sortedData: any[];
+      paginatedData: any[];
+      searchTerm: string;
+      appliedFilters: Record<string, any>;
+      currentPage: number;
+      pageSize: number;
+      totalRecords: number;
+    },
+  ) => void | Promise<void>;
+}
+
+export interface ToolbarMenuItem {
+  key?: string;
+  label: string;
+  icon?: ReactNode;
+  className?: string;
+  disabled?: boolean;
+  show?: boolean;
+  onClick?: (
+    event: React.MouseEvent,
+    context: {
+      data: any[];
+      filteredData: any[];
+      sortedData: any[];
+      paginatedData: any[];
+      searchTerm: string;
+      appliedFilters: Record<string, any>;
+      currentPage: number;
+      pageSize: number;
+      totalRecords: number;
+    },
+  ) => void | Promise<void>;
+}
+
 export interface exportCSVConfig {
   enabled?: boolean;
   fileName?: string;
@@ -200,6 +248,8 @@ export interface TableConfig {
   filter?: FilterConfig;
   sort?: SortConfig;
   exportCSV?: exportCSVConfig;
+  customButtons?: ToolbarButton[];
+  customMenuItems?: ToolbarMenuItem[];
 }
 
 export interface ModalConfig {

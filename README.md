@@ -22,13 +22,15 @@ npm install react-admin-crud-manager
 
 ### 1. Use the component
 
-```
-import Crud from 'react-admin-crud-manager';
+```js
+import Crud from "react-admin-crud-manager";
 
 function App() {
   const config = {
-    title: 'Users',
-    fetchData: async () => { /* fetch logic */ },
+    title: "Users",
+    fetchData: async () => {
+      /* fetch logic */
+    },
     // ...other config options
   };
   return <Crud config={config} />;
@@ -81,7 +83,7 @@ Below is a complete reference of the public props accepted by this package (type
 | `exportCSV`  | object                  | Export data as CSV          | `{ enabled: true, fileName: "users.csv", fields: [{ label: "Name", key: "name" }, ...] }`                     |
 | `rowClick`   | function or boolean     | Callback on table row click | `(row: object, rowIndex: number) => void` or `true` (setting true will open details)                          |
 
-<br>
+`customButtons` can also be passed in `tableConfig` to render extra header toolbar buttons with custom click handlers. See [Custom Toolbar Buttons (Header)](#12-custom-toolbar-buttons-header).
 
 #### Table Column Object (`table_head[]`)
 
@@ -751,6 +753,84 @@ const config = {
   },
 };
 ```
+
+### 12. Custom Toolbar Buttons (Header)
+
+Add custom buttons in the table header area (same area as Add / Search / Filter / Sort / Export), with your own click handlers.
+
+```js
+import { Upload, RefreshCw } from "lucide-react";
+
+const config = {
+  tableConfig: {
+    table_head: [...],
+    search: { enabled: true },
+    filter: { enabled: true },
+    sort: { enabled: true },
+    customButtons: [
+      {
+        key: "import",
+        label: "Import",
+        icon: <Upload className="w-4 h-4" />,
+        color: "primary",
+        variant: "contained",
+        onClick: (event, ctx) => {
+          // ctx has: data, filteredData, sortedData, paginatedData,
+          // searchTerm, appliedFilters, currentPage, pageSize, totalRecords
+          console.log("Import clicked", ctx.totalRecords);
+        },
+      },
+      {
+        key: "refresh",
+        label: "Refresh",
+        icon: <RefreshCw className="w-4 h-4" />,
+        variant: "outlined",
+        onClick: async () => {
+          // your custom logic
+        },
+      },
+    ],
+    customMenuItems: [
+      {
+        key: "bulk-actions",
+        label: "Bulk Action",
+        onClick: (event, ctx) => {
+          console.log("bulk action", ctx.filteredData.length);
+        },
+      },
+      {
+        key: "archive-all",
+        label: "Archive Filtered",
+        onClick: async (event, ctx) => {
+          // run async logic using current filtered records
+        },
+      },
+    ],
+  },
+};
+```
+
+Supported button properties:
+
+- `key` (optional): unique key
+- `label` (required): button text
+- `icon` (optional): React node shown before label
+- `variant` (optional): `contained`, `outlined`, `text`
+- `color` (optional): `primary`, `success`, `error`, `default`
+- `className` (optional): custom Tailwind/class string
+- `disabled` (optional): disable button
+- `show` (optional): set `false` to hide a button
+- `onClick` (optional): `(event, context) => void | Promise<void>`
+
+`customMenuItems` opens in a 3-dot menu button in the same header toolbar. Supported fields:
+
+- `key` (optional): unique key
+- `label` (required): menu item text
+- `icon` (optional): React node before label
+- `className` (optional): custom class string
+- `disabled` (optional): disable item
+- `show` (optional): set `false` to hide item
+- `onClick` (optional): `(event, context) => void | Promise<void>`
 
 ### Primary Color Customization
 
