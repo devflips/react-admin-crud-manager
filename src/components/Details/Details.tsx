@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import DetailRow from "./components/DetailRow";
 import CardGroup from "./components/CardGroup";
 import GroupRow from "./components/GroupRow";
-import { enqueueSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
 import { crudClasses, joinClasses } from "../../lib/crudClasses";
 
 interface DetailsProps {
@@ -32,6 +32,7 @@ export default function Details({
   config,
   fetchRowDetails,
 }: DetailsProps) {
+  const { enqueueSnackbar } = useSnackbar();
   const {
     fields = [],
     containerClass,

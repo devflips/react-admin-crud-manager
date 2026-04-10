@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import RenderFields from "./components/RenderFields";
-import { enqueueSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
 import { crudClasses, joinClasses } from "../../lib/crudClasses";
 
 interface FormField {
@@ -31,6 +31,7 @@ const Form: React.FC<FormProps> = ({
   fetchRowDetails,
   type,
 }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const safeInitialData = initialData || {};
 
   const { formClass = "grid grid-cols-12 gap-4", formFields = [] } =

@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react";
 import React, { useState, useEffect, useRef } from "react";
 import InputLabel from "./InputLabel";
 import Button from "../../Button/Button";
-import { enqueueSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
 import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
 const ButtonComponent = Button as React.ComponentType<any>;
@@ -36,6 +36,7 @@ const VideoPicker = ({
   maxSize = 0,
   errorMessage = "",
 }: VideoPickerProps) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [video, setVideo] = useState<{ file?: File; preview?: string } | null>(
     null,
   );

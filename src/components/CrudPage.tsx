@@ -3,7 +3,7 @@ import Table from "./Table/Table";
 import Modal from "./Modal/Modal";
 import Form from "./Form/Form";
 import { Icon } from "@iconify/react";
-import { enqueueSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
 import Details from "./Details/Details";
 import type {
   CrudPageProps,
@@ -12,6 +12,7 @@ import type {
 import { crudClasses, joinClasses } from "../lib/crudClasses";
 
 const CrudPage: React.FC<CrudPageProps> = ({ config }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const {
     title,
     fetchData,

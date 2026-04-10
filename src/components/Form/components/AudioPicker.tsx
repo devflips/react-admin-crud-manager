@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react";
 import React, { useState, useEffect, useRef } from "react";
 import InputLabel from "./InputLabel";
 import Button from "../../Button/Button";
-import { enqueueSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
 import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
 const ButtonComponent = Button as React.ComponentType<any>;
@@ -36,6 +36,7 @@ const AudioPicker = ({
   errorMessage = "",
   maxSize = 0,
 }: AudioPickerProps) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [audio, setAudio] = useState<{ file?: File; preview?: string } | null>(
     null,
   );
