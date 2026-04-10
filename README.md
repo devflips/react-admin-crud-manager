@@ -85,22 +85,22 @@ Below is a complete reference of the public props accepted by this package (type
 
 #### Table Column Object (`table_head[]`)
 
-| Key              | Type     | Description                                                                                                        | Accepted Values / Example                                                                                                      |
-| ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| `key`            | string   | Property name in row objects                                                                                       | `"id"`, `"name"`, `"email"` (must exist in data objects)                                                                       |
-| `title`          | string   | Column header text                                                                                                 | `"User ID"`, `"Full Name"`, `"Email Address"`                                                                                  |
-| `type`           | string   | Column renderer type                                                                                               | `"plain"` (default), `"index"` (row number), `"group"` (avatar+text), `"chip"` (badge), `"date"`, `"avatar"`, `"menu_actions"` |
-| `imageKey`       | string   | Image property for avatar/group types                                                                              | `"profileImage"`, `"avatarUrl"` (path to image in data object)                                                                 |
-| `titleKey`       | string   | Title property for group/avatar types                                                                              | `"name"`, `"fullName"` (property key in data object)                                                                           |
-| `subtitleKey`    | string   | Subtitle property for group/avatar types                                                                           | `"email"`, `"department"` (property key in data object)                                                                        |
-| `onClickDetails` | boolean  | Clicking cell opens view details modal                                                                             | `true`, `false` (default: `false`)                                                                                             |
-| `variant`        | string   | Chip styling variant                                                                                               | `"contained"`, `"outline"`, `"soft"` (used with `type: "chip"`)                                                                |
-| `chipOptions`    | array    | Map values to chip labels and colors; array of `{ value: string\|number\|boolean, label: string, color?: string }` | `[{ value: "active", label: "Active", color: "green" }, { value: "inactive", label: "Inactive", color: "red" }]`               |
-| `defaultColor`   | string   | Default color for chips (if no match in chipOptions)                                                               | `"green"`, `"red"`, `"blue"`, `"yellow"`, `"purple"`, `"gray"`, etc.                                                           |
-| `className`      | string   | Custom CSS class for cell content                                                                                  | Tailwind classes: `"font-bold text-sm text-gray-600"`                                                                          |
-| `format`         | string   | Date format pattern                                                                                                | `"DD MMM YYYY"`, `"YYYY-MM-DD"`, `"DD/MM/YYYY HH:mm"` (uses date-fns patterns)                                                 |
-| `menuList`       | array    | Action menu items; array of `{ title: string, type: string, variant?: string, icon?: ReactNode }`                  | `[{ title: "Edit", type: "edit", icon: <EditIcon /> }, { title: "Delete", type: "delete", icon: <TrashIcon /> }]`              |
-| `render`         | function | Custom cell renderer (overrides built-in logic)                                                                    | `(row: object, rowIndex: number) => ReactNode`; e.g., `(row) => <span>{row.name.toUpperCase()}</span>`                         |
+| Key              | Type     | Description                                                                                                           | Accepted Values / Example                                                                                                               |
+| ---------------- | -------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `key`            | string   | Property name in row objects                                                                                          | `"id"`, `"name"`, `"email"` (must exist in data objects)                                                                                |
+| `title`          | string   | Column header text                                                                                                    | `"User ID"`, `"Full Name"`, `"Email Address"`                                                                                           |
+| `type`           | string   | Column renderer type                                                                                                  | `"plain"` (default), `"index"` (row number), `"group"` (avatar+text), `"chip"` (badge), `"date"`, `"avatar"`, `"menu_actions"`          |
+| `imageKey`       | string   | Image property for avatar/group types                                                                                 | `"profileImage"`, `"avatarUrl"` (path to image in data object)                                                                          |
+| `titleKey`       | string   | Title property for group/avatar types                                                                                 | `"name"`, `"fullName"` (property key in data object)                                                                                    |
+| `subtitleKey`    | string   | Subtitle property for group/avatar types                                                                              | `"email"`, `"department"` (property key in data object)                                                                                 |
+| `onClickDetails` | boolean  | Clicking cell opens view details modal                                                                                | `true`, `false` (default: `false`)                                                                                                      |
+| `variant`        | string   | Chip styling variant                                                                                                  | `"contained"`, `"outline"`, `"soft"` (used with `type: "chip"`)                                                                         |
+| `chipOptions`    | array    | Map values to chip labels and colors; array of `{ value: string\|number\|boolean, label: string, color?: string }`    | `[{ value: "active", label: "Active", color: "green" }, { value: "inactive", label: "Inactive", color: "red" }]`                        |
+| `defaultColor`   | string   | Default color for chips (if no match in chipOptions)                                                                  | `"green"`, `"red"`, `"blue"`, `"yellow"`, `"purple"`, `"gray"`, etc.                                                                    |
+| `className`      | string   | Custom CSS class for cell content                                                                                     | Tailwind classes: `"font-bold text-sm text-gray-600"`                                                                                   |
+| `format`         | string   | Date format pattern                                                                                                   | `"DD MMM YYYY"`, `"YYYY-MM-DD"`, `"DD/MM/YYYY HH:mm"` (uses date-fns patterns)                                                          |
+| `menuList`       | array    | Action menu items; array of `{ title: string, type: string, variant?: string, icon?: ReactNode, onClick?: Function }` | `[{ title: "Edit", type: "edit", icon: <EditIcon /> }, { title: "Open", type: "custom", onClick: (event, row) => setShowModal(true) }]` |
+| `render`         | function | Custom cell renderer (overrides built-in logic)                                                                       | `(row: object, rowIndex: number) => ReactNode`; e.g., `(row) => <span>{row.name.toUpperCase()}</span>`                                  |
 
 ---
 
@@ -720,7 +720,7 @@ You can override the default primary color used across the UI by defining CSS va
 
 Simply add the following variables to your main CSS file (e.g., `root.css`, `global.css`):
 
-````css
+```css
 :root {
   --primary-50: #eff6ff;
   --primary-100: #dbeafe;
@@ -733,7 +733,8 @@ Simply add the following variables to your main CSS file (e.g., `root.css`, `glo
   --primary-800: #1e40af;
   --primary-900: #1e3a8a;
 }
-````
+```
+
 ### CSS Class Customization
 
 The following table lists all available CSS classes that can be overridden to customize the UI.
@@ -880,7 +881,7 @@ function App() {
 }
 
 export default App;
-````
+```
 
 #### Example 2: Server-Side CRUD with Advanced Features
 

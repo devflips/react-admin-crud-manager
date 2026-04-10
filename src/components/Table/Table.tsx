@@ -186,9 +186,19 @@ const Table = ({
     }
   };
 
-  const handleActionClick = (action: any, item: any, e: React.MouseEvent) => {
+  const handleActionClick = async (
+    action: any,
+    item: any,
+    e: React.MouseEvent,
+  ) => {
     e.stopPropagation();
     setActiveMenu(null);
+
+    if (typeof action?.onClick === "function") {
+      await action.onClick(e, item);
+      return;
+    }
+
     onMenuAction?.(action.type, item);
   };
 

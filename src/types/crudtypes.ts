@@ -25,6 +25,7 @@ export interface MenuAction {
   type: string;
   variant?: string;
   icon?: ReactNode;
+  onClick?: (event: React.MouseEvent, item: any) => void | Promise<any>;
 }
 
 export interface TableHead {
