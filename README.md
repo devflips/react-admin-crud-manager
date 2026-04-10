@@ -10,7 +10,7 @@ A reusable React CRUD admin template with modular components for rapid admin das
 - Tailwind CSS for styling
 - Server-side and client-side data handling
 - Sorting, filtering, searching, and pagination support
-- Rich form fields including text, select, image upload, rich text editor, and more
+- Rich form fields including text, select, image upload, file upload, rich text editor, and more
 
 ## Installation
 
@@ -168,19 +168,19 @@ Used by `modalConfig.*.formFields`, `filterConfig.fields`, and `viewModal.fields
 
 #### Common Field Properties (All Types)
 
-| Key                | Type     | Required | Description                                 | Accepted Values / Example                                                                                                                                                           |
-| ------------------ | -------- | -------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `key`              | string   | Yes      | Property name/identifier for form data      | `"username"`, `"email"`, `"birth_date"`                                                                                                                                             |
-| `label`            | string   | No       | Human-readable label for the field          | `"User Name"`, `"Email Address"`, `"Date of Birth"`                                                                                                                                 |
-| `type`             | string   | Yes      | Field type determining the input/renderer   | `"text"`, `"number"`, `"email"`, `"password"`, `"select"`, `"checkbox"`, `"radio"`, `"switch"`, `"phone"`, `"textarea"`, `"image"`, `"video"`, `"audio"`, `"tinyEditor"`, `"group"` |
-| `required`         | boolean  | No       | Field must have a value for form submission | `true`, `false` (default: `false`)                                                                                                                                                  |
-| `minLength`        | number   | No       | Minimum character length (for text fields)  | `5`, `10`, `50`                                                                                                                                                                     |
-| `placeholder`      | string   | No       | Placeholder text shown in empty field       | `"Enter your name"`, `"user@example.com"`                                                                                                                                           |
-| `disabled`         | boolean  | No       | Field is disabled and read-only             | `true`, `false` (default: `false`)                                                                                                                                                  |
-| `parentClass`      | string   | No       | Custom CSS classes for field wrapper (grid) | Tailwind classes: `"col-span-6"`, `"col-span-12"`                                                                                                                                   |
-| `renderCondition`  | function | No       | Show field based on form data               | `(formData: Record<string, any>) => boolean`; e.g., `(data) => data.userType === 'admin'`                                                                                           |
-| `customValidation` | function | No       | Custom validation logic                     | `(value: any) => boolean \| string`; return `false` for invalid, error message string, or `true` for valid                                                                          |
-| `className`        | string   | No       | Custom CSS class for input element          | Tailwind classes: `"bg-gray-100 rounded-lg"`                                                                                                                                        |
+| Key                | Type     | Required | Description                                 | Accepted Values / Example                                                                                                                                                                     |
+| ------------------ | -------- | -------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `key`              | string   | Yes      | Property name/identifier for form data      | `"username"`, `"email"`, `"birth_date"`                                                                                                                                                       |
+| `label`            | string   | No       | Human-readable label for the field          | `"User Name"`, `"Email Address"`, `"Date of Birth"`                                                                                                                                           |
+| `type`             | string   | Yes      | Field type determining the input/renderer   | `"text"`, `"number"`, `"email"`, `"password"`, `"select"`, `"checkbox"`, `"radio"`, `"switch"`, `"phone"`, `"textarea"`, `"image"`, `"video"`, `"audio"`, `"file"`, `"tinyEditor"`, `"group"` |
+| `required`         | boolean  | No       | Field must have a value for form submission | `true`, `false` (default: `false`)                                                                                                                                                            |
+| `minLength`        | number   | No       | Minimum character length (for text fields)  | `5`, `10`, `50`                                                                                                                                                                               |
+| `placeholder`      | string   | No       | Placeholder text shown in empty field       | `"Enter your name"`, `"user@example.com"`                                                                                                                                                     |
+| `disabled`         | boolean  | No       | Field is disabled and read-only             | `true`, `false` (default: `false`)                                                                                                                                                            |
+| `parentClass`      | string   | No       | Custom CSS classes for field wrapper (grid) | Tailwind classes: `"col-span-6"`, `"col-span-12"`                                                                                                                                             |
+| `renderCondition`  | function | No       | Show field based on form data               | `(formData: Record<string, any>) => boolean`; e.g., `(data) => data.userType === 'admin'`                                                                                                     |
+| `customValidation` | function | No       | Custom validation logic                     | `(value: any) => boolean \| string`; return `false` for invalid, error message string, or `true` for valid                                                                                    |
+| `className`        | string   | No       | Custom CSS class for input element          | Tailwind classes: `"bg-gray-100 rounded-lg"`                                                                                                                                                  |
 
 #### Type-Specific Properties
 
@@ -261,7 +261,7 @@ Used by `modalConfig.*.formFields`, `filterConfig.fields`, and `viewModal.fields
 | ---------- | ------- | --------------------------- | ----------------------------------------------- |
 | `accept`   | string  | MIME type filter            | `"video/*"` (default), `"video/mp4,video/webm"` |
 | `dragDrop` | boolean | Enable drag-and-drop upload | `true`, `false` (default: `false`)              |
-| `maxSize`  | number  | Maximum file size in bytes  | `5242880` (5MB), `10485760` (10MB)              |
+| `maxSize`  | number  | Maximum file size in MB     | `5`, `10`, `25`                                 |
 
 ##### `"audio"` Field
 
@@ -269,7 +269,45 @@ Used by `modalConfig.*.formFields`, `filterConfig.fields`, and `viewModal.fields
 | ---------- | ------- | --------------------------- | ----------------------------------------------- |
 | `accept`   | string  | MIME type filter            | `"audio/*"` (default), `"audio/mpeg,audio/wav"` |
 | `dragDrop` | boolean | Enable drag-and-drop upload | `true`, `false` (default: `false`)              |
-| `maxSize`  | number  | Maximum file size in bytes  | `5242880` (5MB), `10485760` (10MB)              |
+| `maxSize`  | number  | Maximum file size in MB     | `5`, `10`, `25`                                 |
+
+##### `"file"` Field
+
+Upload any file type in add/edit forms, with client-side type restriction and file icon preview.
+
+| Property   | Type    | Description                                      | Accepted Values / Example                                                |
+| ---------- | ------- | ------------------------------------------------ | ------------------------------------------------------------------------ |
+| `accept`   | string  | Allowed file types (same as native input accept) | `"*/*"` (default), `".pdf,.doc,.docx"`, `"application/pdf"`, `"image/*"` |
+| `dragDrop` | boolean | Enable drag-and-drop upload                      | `true`, `false` (default: `false`)                                       |
+| `maxSize`  | number  | Maximum file size in MB                          | `5`, `10`, `25`                                                          |
+
+Behavior:
+
+- Validates selected/dropped file using `accept`
+- Shows file icon automatically based on extension (pdf/doc/xls/ppt/zip/txt/json, etc.)
+- Shows selected file name and allows replacing/removing the file
+
+Example:
+
+```js
+const formFields = [
+  {
+    key: "attachment",
+    label: "Attachment",
+    type: "file",
+    accept: ".pdf,.doc,.docx",
+    maxSize: 10, // MB
+    dragDrop: true,
+    required: true,
+  },
+  {
+    key: "contractFile",
+    label: "Contract",
+    type: "file",
+    accept: "application/pdf",
+  },
+];
+```
 
 ##### `"tinyEditor"` Field
 

@@ -14,6 +14,7 @@ import CardGroup from "../../Details/components/CardGroup";
 import DetailRow from "../../Details/components/DetailRow";
 import Radio from "./Radio";
 import VideoPicker from "./VideoPicker";
+import FilePicker from "./FilePicker";
 
 interface FieldConfig {
   key: string;
@@ -301,6 +302,23 @@ const RenderFields = ({
           onChange={(video) => handleChange(key, video)}
           required={required}
           accept={accept || "video/*"}
+          id={`file-${key}`}
+          dragDrop={dragDrop}
+          label={label || ""}
+          name={key}
+          maxSize={maxSize}
+          parentClass={parentClass || ""}
+          errorMessage={errorMessage}
+        />
+      );
+
+    case "file":
+      return (
+        <FilePicker
+          value={value}
+          onChange={(file) => handleChange(key, file)}
+          required={required}
+          accept={accept || "*/*"}
           id={`file-${key}`}
           dragDrop={dragDrop}
           label={label || ""}
