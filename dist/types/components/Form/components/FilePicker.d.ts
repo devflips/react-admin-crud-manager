@@ -1,7 +1,7 @@
 type FileValue = File | {
-    file?: File;
+    file?: File | string | Record<string, any>;
     preview?: string;
-} | string | null;
+} | Record<string, any> | string | FileValue[] | null;
 interface FilePickerProps {
     label?: string;
     value: FileValue;
