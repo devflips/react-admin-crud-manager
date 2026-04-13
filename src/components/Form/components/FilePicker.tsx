@@ -7,7 +7,13 @@ import InputLabel from "./InputLabel";
 
 const ButtonComponent = Button as React.ComponentType<any>;
 
-type FileValue = File | { file?: File; preview?: string } | string | null;
+type FileValue =
+  | File
+  | { file?: File | string | Record<string, any>; preview?: string }
+  | Record<string, any>
+  | string
+  | FileValue[]
+  | null;
 
 interface FilePickerProps {
   label?: string;
@@ -26,6 +32,49 @@ interface FilePickerProps {
 const getFileExtension = (name: string) => {
   const parts = name.split(".");
   return parts.length > 1 ? parts.pop()?.toLowerCase() || "" : "";
+};
+
+const getFileNameFromPath = (pathValue: string): string => {
+  if (!pathValue) return "";
+
+  const normalized = pathValue.split(/[?#]/)[0];
+  const parts = normalized.split(/[\\/]/);
+  const lastPart = parts[parts.length - 1] || "";
+
+  if (!lastPart) return "";
+
+  try {
+    return decodeURIComponent(lastPart);
+  } catch {
+    return lastPart;
+  }
+};
+
+const getObjectStringValue = (value: Record<string, any>): string => {
+  const knownKeys = [
+    "name",
+    "fileName",
+    "filename",
+    "originalName",
+    "originalname",
+    "url",
+    "uri",
+    "path",
+    "filePath",
+    "preview",
+    "location",
+    "src",
+    "href",
+  ];
+
+  for (const key of knownKeys) {
+    const candidate = value?.[key];
+    if (typeof candidate === "string" && candidate.trim()) {
+      return candidate;
+    }
+  }
+
+  return "";
 };
 
 const getFileIcon = (name: string) => {
@@ -69,20 +118,42 @@ const matchesAccept = (file: File, accept: string) => {
   });
 };
 
-const getFileNameFromValue = (value: FileValue) => {
+const getFileNameFromValue = (value: FileValue): string => {
   if (!value) return "";
 
   if (value instanceof File) return value.name;
   if (typeof value === "string") {
-    const parts = value.split("/");
-    return parts[parts.length - 1] || "selected-file";
+    return getFileNameFromPath(value);
   }
 
-  if (typeof value === "object" && value.file?.name) {
-    return value.file.name;
+  if (Array.isArray(value)) {
+    const firstValue = value[0] as FileValue;
+    return getFileNameFromValue(firstValue);
   }
 
-  return "selected-file";
+  if (typeof value === "object") {
+    if (value.file instanceof File) {
+      return value.file.name;
+    }
+
+    if (typeof value.file === "string") {
+      return getFileNameFromPath(value.file);
+    }
+
+    if (value.file && typeof value.file === "object") {
+      const nestedFileName: string = getFileNameFromValue(
+        value.file as FileValue,
+      );
+      if (nestedFileName) return nestedFileName;
+    }
+
+    const objectString = getObjectStringValue(value as Record<string, any>);
+    if (objectString) {
+      return getFileNameFromPath(objectString);
+    }
+  }
+
+  return "";
 };
 
 const FilePicker = ({
@@ -170,6 +241,7 @@ const FilePicker = ({
   };
 
   const fileName = getFileNameFromValue(selectedFile);
+  const hasSelectedFile = Boolean(fileName);
 
   return (
     <div
@@ -202,7 +274,7 @@ const FilePicker = ({
           type="file"
           accept={accept}
           onChange={(e) => handleFileChange(e.target.files)}
-          required={required && !selectedFile}
+          required={required && !hasSelectedFile}
           className="absolute opacity-0 pointer-events-none h-[10px]"
         />
 
@@ -211,7 +283,7 @@ const FilePicker = ({
             isDragging ? "opacity-50" : ""
           }`}
         >
-          {selectedFile ? (
+          {hasSelectedFile ? (
             <div className="flex items-center space-x-4">
               <div className="relative rounded-full bg-gray-100 dark:bg-gray-700 h-20 w-20 flex items-center justify-center">
                 {!required && (
