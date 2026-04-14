@@ -15,6 +15,11 @@ type FileValue =
   | FileValue[]
   | null;
 
+type FileInfo = {
+  name: string;
+  url: string;
+};
+
 interface FilePickerProps {
   label?: string;
   value: FileValue;
@@ -58,6 +63,8 @@ const getObjectStringValue = (value: Record<string, any>): string => {
     "originalName",
     "originalname",
     "url",
+    "downloadUrl",
+    "downloadURL",
     "uri",
     "path",
     "filePath",
@@ -65,6 +72,7 @@ const getObjectStringValue = (value: Record<string, any>): string => {
     "location",
     "src",
     "href",
+    "link",
   ];
 
   for (const key of knownKeys) {
@@ -156,6 +164,68 @@ const getFileNameFromValue = (value: FileValue): string => {
   return "";
 };
 
+const getFileInfoFromValue = (value: FileValue): FileInfo => {
+  const fileName = getFileNameFromValue(value);
+
+  if (!value) {
+    return { name: "", url: "" };
+  }
+
+  if (typeof value === "string") {
+    return {
+      name: fileName,
+      url: value,
+    };
+  }
+
+  if (value instanceof File) {
+    return {
+      name: value.name,
+      url: "",
+    };
+  }
+
+  if (Array.isArray(value)) {
+    return getFileInfoFromValue(value[0] as FileValue);
+  }
+
+  if (typeof value === "object") {
+    if (value.file instanceof File) {
+      return {
+        name: value.file.name,
+        url: "",
+      };
+    }
+
+    if (typeof value.file === "string") {
+      return {
+        name: getFileNameFromPath(value.file),
+        url: value.file,
+      };
+    }
+
+    if (value.file && typeof value.file === "object") {
+      const nestedInfo = getFileInfoFromValue(value.file as FileValue);
+      if (nestedInfo.name || nestedInfo.url) {
+        return nestedInfo;
+      }
+    }
+
+    const objectString = getObjectStringValue(value as Record<string, any>);
+    if (objectString) {
+      return {
+        name: getFileNameFromPath(objectString),
+        url: objectString,
+      };
+    }
+  }
+
+  return {
+    name: fileName,
+    url: "",
+  };
+};
+
 const FilePicker = ({
   label = "",
   value = null,
@@ -240,7 +310,9 @@ const FilePicker = ({
     inputRef.current?.click();
   };
 
-  const fileName = getFileNameFromValue(selectedFile);
+  const fileInfo = getFileInfoFromValue(selectedFile);
+  const fileName = fileInfo.name;
+  const fileUrl = fileInfo.url;
   const hasSelectedFile = Boolean(fileName);
 
   return (
@@ -303,12 +375,24 @@ const FilePicker = ({
               </div>
 
               <div className="space-y-1 max-w-[280px]">
-                <p
-                  className="text-sm text-gray-700 dark:text-gray-300 truncate"
-                  title={fileName}
-                >
-                  {fileName}
-                </p>
+                {fileUrl ? (
+                  <a
+                    href={fileUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-sm text-blue-600 dark:text-blue-400 underline decoration-dotted truncate block"
+                    title={fileName || fileUrl}
+                  >
+                    {fileName || fileUrl}
+                  </a>
+                ) : (
+                  <p
+                    className="text-sm text-gray-700 dark:text-gray-300 truncate"
+                    title={fileName}
+                  >
+                    {fileName}
+                  </p>
+                )}
                 <ButtonComponent type="button" onClick={handleButtonClick}>
                   Change File
                 </ButtonComponent>
