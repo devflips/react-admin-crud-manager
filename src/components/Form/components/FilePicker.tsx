@@ -42,17 +42,70 @@ const getFileExtension = (name: string) => {
 const getFileNameFromPath = (pathValue: string): string => {
   if (!pathValue) return "";
 
-  const normalized = pathValue.split(/[?#]/)[0];
+  const hasFileExtension = (value: string) =>
+    /\.[a-z0-9]{1,10}$/i.test(value || "");
+
+  const extractFileNameFromText = (value: string): string => {
+    if (!value) return "";
+
+    const normalizedValue = value.replace(/\\/g, "/");
+    const matches = normalizedValue.match(
+      /[^/?#]+\.[a-z0-9]{1,10}(?=($|[?#/]))/gi,
+    );
+
+    return matches?.[matches.length - 1] || "";
+  };
+
+  let normalized = pathValue.split(/[?#]/)[0];
+
+  try {
+    const url = new URL(pathValue);
+    normalized = url.pathname;
+  } catch {
+    // Ignore invalid URL parsing and continue with raw input value.
+  }
+
   const parts = normalized.split(/[\\/]/);
   const lastPart = parts[parts.length - 1] || "";
 
   if (!lastPart) return "";
 
+  const getLastSegment = (value: string) => {
+    const segmentParts = value.split("/");
+    return segmentParts[segmentParts.length - 1] || value;
+  };
+
   try {
-    return decodeURIComponent(lastPart);
+    const decoded = decodeURIComponent(lastPart);
+    const cleanName = getLastSegment(decoded);
+
+    if (hasFileExtension(cleanName)) {
+      return cleanName;
+    }
   } catch {
-    return lastPart;
+    const cleanName = getLastSegment(lastPart);
+
+    if (hasFileExtension(cleanName)) {
+      return cleanName;
+    }
   }
+
+  const possibleSources = [pathValue, normalized];
+
+  for (const source of possibleSources) {
+    const directMatch = extractFileNameFromText(source);
+    if (directMatch) return directMatch;
+
+    try {
+      const decodedSource = decodeURIComponent(source);
+      const decodedMatch = extractFileNameFromText(decodedSource);
+      if (decodedMatch) return decodedMatch;
+    } catch {
+      // Ignore malformed URI values and continue fallback search.
+    }
+  }
+
+  return getLastSegment(lastPart);
 };
 
 const getObjectStringValue = (value: Record<string, any>): string => {
@@ -368,31 +421,36 @@ const FilePicker = ({
                     <Icon icon="mdi:close" className="w-3 h-3" />
                   </button>
                 )}
-                <Icon
-                  icon={getFileIcon(fileName)}
-                  className="text-gray-500 w-10 h-10"
-                />
+                {fileUrl ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      window.open(fileUrl, "_blank", "noopener,noreferrer")
+                    }
+                    className="cursor-pointer"
+                    aria-label="Open file"
+                    title={fileName || "Open file"}
+                  >
+                    <Icon
+                      icon={getFileIcon(fileName)}
+                      className="text-gray-500 w-10 h-10"
+                    />
+                  </button>
+                ) : (
+                  <Icon
+                    icon={getFileIcon(fileName)}
+                    className="text-gray-500 w-10 h-10"
+                  />
+                )}
               </div>
 
               <div className="space-y-1 max-w-[280px]">
-                {fileUrl ? (
-                  <a
-                    href={fileUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-sm text-blue-600 dark:text-blue-400 underline decoration-dotted truncate block"
-                    title={fileName || fileUrl}
-                  >
-                    {fileName || fileUrl}
-                  </a>
-                ) : (
-                  <p
-                    className="text-sm text-gray-700 dark:text-gray-300 truncate"
-                    title={fileName}
-                  >
-                    {fileName}
-                  </p>
-                )}
+                <p
+                  className="text-sm text-gray-700 dark:text-gray-300 truncate"
+                  title={fileName || fileUrl}
+                >
+                  {fileName || fileUrl}
+                </p>
                 <ButtonComponent type="button" onClick={handleButtonClick}>
                   Change File
                 </ButtonComponent>
