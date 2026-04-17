@@ -10,7 +10,7 @@ A reusable React CRUD admin template with modular components for rapid admin das
 - Tailwind CSS for styling
 - Server-side and client-side data handling
 - Sorting, filtering, searching, and pagination support
-- Rich form fields including text, select, image upload, file upload, rich text editor, and more
+- Rich form fields including text, select, image upload, rich text editor, and more
 
 ## Installation
 
@@ -22,15 +22,13 @@ npm install react-admin-crud-manager
 
 ### 1. Use the component
 
-```js
-import Crud from "react-admin-crud-manager";
+```
+import Crud from 'react-admin-crud-manager';
 
 function App() {
   const config = {
-    title: "Users",
-    fetchData: async () => {
-      /* fetch logic */
-    },
+    title: 'Users',
+    fetchData: async () => { /* fetch logic */ },
     // ...other config options
   };
   return <Crud config={config} />;
@@ -83,26 +81,26 @@ Below is a complete reference of the public props accepted by this package (type
 | `exportCSV`  | object                  | Export data as CSV          | `{ enabled: true, fileName: "users.csv", fields: [{ label: "Name", key: "name" }, ...] }`                     |
 | `rowClick`   | function or boolean     | Callback on table row click | `(row: object, rowIndex: number) => void` or `true` (setting true will open details)                          |
 
-`customButtons` can also be passed in `tableConfig` to render extra header toolbar buttons with custom click handlers. See [Custom Toolbar Buttons (Header)](#12-custom-toolbar-buttons-header).
+<br>
 
 #### Table Column Object (`table_head[]`)
 
-| Key              | Type     | Description                                                                                                           | Accepted Values / Example                                                                                                               |
-| ---------------- | -------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `key`            | string   | Property name in row objects                                                                                          | `"id"`, `"name"`, `"email"` (must exist in data objects)                                                                                |
-| `title`          | string   | Column header text                                                                                                    | `"User ID"`, `"Full Name"`, `"Email Address"`                                                                                           |
-| `type`           | string   | Column renderer type                                                                                                  | `"plain"` (default), `"index"` (row number), `"group"` (avatar+text), `"chip"` (badge), `"date"`, `"avatar"`, `"menu_actions"`          |
-| `imageKey`       | string   | Image property for avatar/group types                                                                                 | `"profileImage"`, `"avatarUrl"` (path to image in data object)                                                                          |
-| `titleKey`       | string   | Title property for group/avatar types                                                                                 | `"name"`, `"fullName"` (property key in data object)                                                                                    |
-| `subtitleKey`    | string   | Subtitle property for group/avatar types                                                                              | `"email"`, `"department"` (property key in data object)                                                                                 |
-| `onClickDetails` | boolean  | Clicking cell opens view details modal                                                                                | `true`, `false` (default: `false`)                                                                                                      |
-| `variant`        | string   | Chip styling variant                                                                                                  | `"contained"`, `"outline"`, `"soft"` (used with `type: "chip"`)                                                                         |
-| `chipOptions`    | array    | Map values to chip labels and colors; array of `{ value: string\|number\|boolean, label: string, color?: string }`    | `[{ value: "active", label: "Active", color: "green" }, { value: "inactive", label: "Inactive", color: "red" }]`                        |
-| `defaultColor`   | string   | Default color for chips (if no match in chipOptions)                                                                  | `"green"`, `"red"`, `"blue"`, `"yellow"`, `"purple"`, `"gray"`, etc.                                                                    |
-| `className`      | string   | Custom CSS class for cell content                                                                                     | Tailwind classes: `"font-bold text-sm text-gray-600"`                                                                                   |
-| `format`         | string   | Date format pattern                                                                                                   | `"DD MMM YYYY"`, `"YYYY-MM-DD"`, `"DD/MM/YYYY HH:mm"` (uses date-fns patterns)                                                          |
-| `menuList`       | array    | Action menu items; array of `{ title: string, type: string, variant?: string, icon?: ReactNode, onClick?: Function }` | `[{ title: "Edit", type: "edit", icon: <EditIcon /> }, { title: "Open", type: "custom", onClick: (event, row) => setShowModal(true) }]` |
-| `render`         | function | Custom cell renderer (overrides built-in logic)                                                                       | `(row: object, rowIndex: number) => ReactNode`; e.g., `(row) => <span>{row.name.toUpperCase()}</span>`                                  |
+| Key              | Type     | Description                                                                                                        | Accepted Values / Example                                                                                                      |
+| ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `key`            | string   | Property name in row objects                                                                                       | `"id"`, `"name"`, `"email"` (must exist in data objects)                                                                       |
+| `title`          | string   | Column header text                                                                                                 | `"User ID"`, `"Full Name"`, `"Email Address"`                                                                                  |
+| `type`           | string   | Column renderer type                                                                                               | `"plain"` (default), `"index"` (row number), `"group"` (avatar+text), `"chip"` (badge), `"date"`, `"avatar"`, `"menu_actions"` |
+| `imageKey`       | string   | Image property for avatar/group types                                                                              | `"profileImage"`, `"avatarUrl"` (path to image in data object)                                                                 |
+| `titleKey`       | string   | Title property for group/avatar types                                                                              | `"name"`, `"fullName"` (property key in data object)                                                                           |
+| `subtitleKey`    | string   | Subtitle property for group/avatar types                                                                           | `"email"`, `"department"` (property key in data object)                                                                        |
+| `onClickDetails` | boolean  | Clicking cell opens view details modal                                                                             | `true`, `false` (default: `false`)                                                                                             |
+| `variant`        | string   | Chip styling variant                                                                                               | `"contained"`, `"outline"`, `"soft"` (used with `type: "chip"`)                                                                |
+| `chipOptions`    | array    | Map values to chip labels and colors; array of `{ value: string\|number\|boolean, label: string, color?: string }` | `[{ value: "active", label: "Active", color: "green" }, { value: "inactive", label: "Inactive", color: "red" }]`               |
+| `defaultColor`   | string   | Default color for chips (if no match in chipOptions)                                                               | `"green"`, `"red"`, `"blue"`, `"yellow"`, `"purple"`, `"gray"`, etc.                                                           |
+| `className`      | string   | Custom CSS class for cell content                                                                                  | Tailwind classes: `"font-bold text-sm text-gray-600"`                                                                          |
+| `format`         | string   | Date format pattern                                                                                                | `"DD MMM YYYY"`, `"YYYY-MM-DD"`, `"DD/MM/YYYY HH:mm"` (uses date-fns patterns)                                                 |
+| `menuList`       | array    | Action menu items; array of `{ title: string, type: string, variant?: string, icon?: ReactNode }`                  | `[{ title: "Edit", type: "edit", icon: <EditIcon /> }, { title: "Delete", type: "delete", icon: <TrashIcon /> }]`              |
+| `render`         | function | Custom cell renderer (overrides built-in logic)                                                                    | `(row: object, rowIndex: number) => ReactNode`; e.g., `(row) => <span>{row.name.toUpperCase()}</span>`                         |
 
 ---
 
@@ -170,19 +168,19 @@ Used by `modalConfig.*.formFields`, `filterConfig.fields`, and `viewModal.fields
 
 #### Common Field Properties (All Types)
 
-| Key                | Type     | Required | Description                                 | Accepted Values / Example                                                                                                                                                                     |
-| ------------------ | -------- | -------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `key`              | string   | Yes      | Property name/identifier for form data      | `"username"`, `"email"`, `"birth_date"`                                                                                                                                                       |
-| `label`            | string   | No       | Human-readable label for the field          | `"User Name"`, `"Email Address"`, `"Date of Birth"`                                                                                                                                           |
-| `type`             | string   | Yes      | Field type determining the input/renderer   | `"text"`, `"number"`, `"email"`, `"password"`, `"select"`, `"checkbox"`, `"radio"`, `"switch"`, `"phone"`, `"textarea"`, `"image"`, `"video"`, `"audio"`, `"file"`, `"tinyEditor"`, `"group"` |
-| `required`         | boolean  | No       | Field must have a value for form submission | `true`, `false` (default: `false`)                                                                                                                                                            |
-| `minLength`        | number   | No       | Minimum character length (for text fields)  | `5`, `10`, `50`                                                                                                                                                                               |
-| `placeholder`      | string   | No       | Placeholder text shown in empty field       | `"Enter your name"`, `"user@example.com"`                                                                                                                                                     |
-| `disabled`         | boolean  | No       | Field is disabled and read-only             | `true`, `false` (default: `false`)                                                                                                                                                            |
-| `parentClass`      | string   | No       | Custom CSS classes for field wrapper (grid) | Tailwind classes: `"col-span-6"`, `"col-span-12"`                                                                                                                                             |
-| `renderCondition`  | function | No       | Show field based on form data               | `(formData: Record<string, any>) => boolean`; e.g., `(data) => data.userType === 'admin'`                                                                                                     |
-| `customValidation` | function | No       | Custom validation logic                     | `(value: any) => boolean \| string`; return `false` for invalid, error message string, or `true` for valid                                                                                    |
-| `className`        | string   | No       | Custom CSS class for input element          | Tailwind classes: `"bg-gray-100 rounded-lg"`                                                                                                                                                  |
+| Key                | Type     | Required | Description                                 | Accepted Values / Example                                                                                                                                                           |
+| ------------------ | -------- | -------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `key`              | string   | Yes      | Property name/identifier for form data      | `"username"`, `"email"`, `"birth_date"`                                                                                                                                             |
+| `label`            | string   | No       | Human-readable label for the field          | `"User Name"`, `"Email Address"`, `"Date of Birth"`                                                                                                                                 |
+| `type`             | string   | Yes      | Field type determining the input/renderer   | `"text"`, `"number"`, `"email"`, `"password"`, `"select"`, `"checkbox"`, `"radio"`, `"switch"`, `"phone"`, `"textarea"`, `"image"`, `"video"`, `"audio"`, `"tinyEditor"`, `"group"` |
+| `required`         | boolean  | No       | Field must have a value for form submission | `true`, `false` (default: `false`)                                                                                                                                                  |
+| `minLength`        | number   | No       | Minimum character length (for text fields)  | `5`, `10`, `50`                                                                                                                                                                     |
+| `placeholder`      | string   | No       | Placeholder text shown in empty field       | `"Enter your name"`, `"user@example.com"`                                                                                                                                           |
+| `disabled`         | boolean  | No       | Field is disabled and read-only             | `true`, `false` (default: `false`)                                                                                                                                                  |
+| `parentClass`      | string   | No       | Custom CSS classes for field wrapper (grid) | Tailwind classes: `"col-span-6"`, `"col-span-12"`                                                                                                                                   |
+| `renderCondition`  | function | No       | Show field based on form data               | `(formData: Record<string, any>) => boolean`; e.g., `(data) => data.userType === 'admin'`                                                                                           |
+| `customValidation` | function | No       | Custom validation logic                     | `(value: any) => boolean \| string`; return `false` for invalid, error message string, or `true` for valid                                                                          |
+| `className`        | string   | No       | Custom CSS class for input element          | Tailwind classes: `"bg-gray-100 rounded-lg"`                                                                                                                                        |
 
 #### Type-Specific Properties
 
@@ -263,7 +261,7 @@ Used by `modalConfig.*.formFields`, `filterConfig.fields`, and `viewModal.fields
 | ---------- | ------- | --------------------------- | ----------------------------------------------- |
 | `accept`   | string  | MIME type filter            | `"video/*"` (default), `"video/mp4,video/webm"` |
 | `dragDrop` | boolean | Enable drag-and-drop upload | `true`, `false` (default: `false`)              |
-| `maxSize`  | number  | Maximum file size in MB     | `5`, `10`, `25`                                 |
+| `maxSize`  | number  | Maximum file size in bytes  | `5242880` (5MB), `10485760` (10MB)              |
 
 ##### `"audio"` Field
 
@@ -271,45 +269,7 @@ Used by `modalConfig.*.formFields`, `filterConfig.fields`, and `viewModal.fields
 | ---------- | ------- | --------------------------- | ----------------------------------------------- |
 | `accept`   | string  | MIME type filter            | `"audio/*"` (default), `"audio/mpeg,audio/wav"` |
 | `dragDrop` | boolean | Enable drag-and-drop upload | `true`, `false` (default: `false`)              |
-| `maxSize`  | number  | Maximum file size in MB     | `5`, `10`, `25`                                 |
-
-##### `"file"` Field
-
-Upload any file type in add/edit forms, with client-side type restriction and file icon preview.
-
-| Property   | Type    | Description                                      | Accepted Values / Example                                                |
-| ---------- | ------- | ------------------------------------------------ | ------------------------------------------------------------------------ |
-| `accept`   | string  | Allowed file types (same as native input accept) | `"*/*"` (default), `".pdf,.doc,.docx"`, `"application/pdf"`, `"image/*"` |
-| `dragDrop` | boolean | Enable drag-and-drop upload                      | `true`, `false` (default: `false`)                                       |
-| `maxSize`  | number  | Maximum file size in MB                          | `5`, `10`, `25`                                                          |
-
-Behavior:
-
-- Validates selected/dropped file using `accept`
-- Shows file icon automatically based on extension (pdf/doc/xls/ppt/zip/txt/json, etc.)
-- Shows selected file name and allows replacing/removing the file
-
-Example:
-
-```js
-const formFields = [
-  {
-    key: "attachment",
-    label: "Attachment",
-    type: "file",
-    accept: ".pdf,.doc,.docx",
-    maxSize: 10, // MB
-    dragDrop: true,
-    required: true,
-  },
-  {
-    key: "contractFile",
-    label: "Contract",
-    type: "file",
-    accept: "application/pdf",
-  },
-];
-```
+| `maxSize`  | number  | Maximum file size in bytes  | `5242880` (5MB), `10485760` (10MB)              |
 
 ##### `"tinyEditor"` Field
 
@@ -754,84 +714,6 @@ const config = {
 };
 ```
 
-### 12. Custom Toolbar Buttons (Header)
-
-Add custom buttons in the table header area (same area as Add / Search / Filter / Sort / Export), with your own click handlers.
-
-```js
-import { Upload, RefreshCw } from "lucide-react";
-
-const config = {
-  tableConfig: {
-    table_head: [...],
-    search: { enabled: true },
-    filter: { enabled: true },
-    sort: { enabled: true },
-    customButtons: [
-      {
-        key: "import",
-        label: "Import",
-        icon: <Upload className="w-4 h-4" />,
-        color: "primary",
-        variant: "contained",
-        onClick: (event, ctx) => {
-          // ctx has: data, filteredData, sortedData, paginatedData,
-          // searchTerm, appliedFilters, currentPage, pageSize, totalRecords
-          console.log("Import clicked", ctx.totalRecords);
-        },
-      },
-      {
-        key: "refresh",
-        label: "Refresh",
-        icon: <RefreshCw className="w-4 h-4" />,
-        variant: "outlined",
-        onClick: async () => {
-          // your custom logic
-        },
-      },
-    ],
-    customMenuItems: [
-      {
-        key: "bulk-actions",
-        label: "Bulk Action",
-        onClick: (event, ctx) => {
-          console.log("bulk action", ctx.filteredData.length);
-        },
-      },
-      {
-        key: "archive-all",
-        label: "Archive Filtered",
-        onClick: async (event, ctx) => {
-          // run async logic using current filtered records
-        },
-      },
-    ],
-  },
-};
-```
-
-Supported button properties:
-
-- `key` (optional): unique key
-- `label` (required): button text
-- `icon` (optional): React node shown before label
-- `variant` (optional): `contained`, `outlined`, `text`
-- `color` (optional): `primary`, `success`, `error`, `default`
-- `className` (optional): custom Tailwind/class string
-- `disabled` (optional): disable button
-- `show` (optional): set `false` to hide a button
-- `onClick` (optional): `(event, context) => void | Promise<void>`
-
-`customMenuItems` opens in a 3-dot menu button in the same header toolbar. Supported fields:
-
-- `key` (optional): unique key
-- `label` (required): menu item text
-- `icon` (optional): React node before label
-- `className` (optional): custom class string
-- `disabled` (optional): disable item
-- `show` (optional): set `false` to hide item
-- `onClick` (optional): `(event, context) => void | Promise<void>`
-
 ### Primary Color Customization
 
 You can override the default primary color used across the UI by defining CSS variables in your global `:root`.
@@ -934,7 +816,7 @@ The following table lists all available CSS classes that can be overridden to cu
 - Works with CSS, SCSS, Tailwind (`@apply`), or CSS-in-JS.
 - No manual assignment required — classes are already applied internally.
 
-### CRUD Examples
+### Examples
 
 #### Example 1: Minimal Client-Side CRUD
 
