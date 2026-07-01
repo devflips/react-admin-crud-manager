@@ -10,5 +10,5 @@ interface CardGroupProps {
         iconClass?: string;
     };
 }
-declare const CardGroup: ({ col, data, uiVariant, styleConfig, }: CardGroupProps) => import("react/jsx-runtime").JSX.Element;
+declare const CardGroup: ({ col, data, uiVariant, styleConfig, }: CardGroupProps) => import("react").JSX.Element;
 export default CardGroup;

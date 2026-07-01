@@ -1,3 +1,4 @@
+import React from "react";
 type ImageValueItem = File | {
     file?: File;
     preview?: string;
@@ -17,5 +18,5 @@ interface MultiImagePickerProps {
     maxImages?: number;
     errorMessage?: string;
 }
-declare const MultiImagePicker: ({ label, value, onChange, required, accept, aspect, id, dragDrop, cropImage, name, parentClass, maxImages, errorMessage, }: MultiImagePickerProps) => import("react/jsx-runtime").JSX.Element;
+declare const MultiImagePicker: ({ label, value, onChange, required, accept, aspect, id, dragDrop, cropImage, name, parentClass, maxImages, errorMessage, }: MultiImagePickerProps) => React.JSX.Element;
 export default MultiImagePicker;

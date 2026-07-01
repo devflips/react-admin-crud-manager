@@ -4,5 +4,5 @@ interface ImagePreviewProps {
     isOpen: boolean;
     setIsOpen: (value: boolean) => void;
 }
-declare const ImagePreview: ({ src, alt, isOpen, setIsOpen, }: ImagePreviewProps) => import("react/jsx-runtime").JSX.Element;
+declare const ImagePreview: ({ src, alt, isOpen, setIsOpen, }: ImagePreviewProps) => import("react").JSX.Element;
 export default ImagePreview;

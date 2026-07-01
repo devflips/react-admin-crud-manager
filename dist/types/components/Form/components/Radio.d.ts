@@ -14,5 +14,5 @@ interface RadioProps {
     parentClass?: string;
     errorMessage?: string;
 }
-declare const Radio: ({ value, onChange, text, options, label, required, name, disabled, parentClass, errorMessage, }: RadioProps) => import("react/jsx-runtime").JSX.Element;
+declare const Radio: ({ value, onChange, text, options, label, required, name, disabled, parentClass, errorMessage, }: RadioProps) => import("react").JSX.Element;
 export default Radio;

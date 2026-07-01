@@ -199,7 +199,7 @@ export default function PhoneInput({
             required={required}
             className="w-full h-10 px-3 text-sm border border-gray-300 dark:border-gray-600 rounded-md 
         bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none 
-        focus:ring-1 focus:ring-blue-300 dark:focus:ring-blue-200"
+        focus:ring-1 focus:ring-primary-300 dark:focus:ring-primary-200"
             inputMode="tel"
             pattern="^\+\d{1,15}$"
           />
@@ -223,7 +223,7 @@ export default function PhoneInput({
             className={`h-[40px] flex items-center border rounded-md px-2 bg-white dark:bg-gray-700 transition-all
   ${
     open
-      ? "ring-0.5 ring-blue-100 border-blue-300"
+      ? "ring-0.5 ring-primary-100 border-primary-300"
       : "border-gray-300 dark:border-gray-600"
   }
   ${disabled ? "opacity-60 cursor-not-allowed" : ""}
@@ -321,7 +321,7 @@ export default function PhoneInput({
                     key={c.code}
                     type="button"
                     onClick={() => handleCountrySelect(c)}
-                    className="w-full flex items-center gap-2 px-2 py-1 text-sm hover:bg-blue-50 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100"
+                    className="w-full flex items-center gap-2 px-2 py-1 text-sm hover:bg-primary-50 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100"
                   >
                     <img
                       src={`https://flagcdn.com/w20/${c.code.toLowerCase()}.png`}

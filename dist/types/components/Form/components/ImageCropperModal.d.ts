@@ -1,3 +1,4 @@
+import React from "react";
 interface ImageCropperModalProps {
     isOpen: boolean;
     imageSrc: string;
@@ -8,5 +9,5 @@ interface ImageCropperModalProps {
     onClose: () => void;
     onApply: (file: File) => void;
 }
-declare const ImageCropperModal: ({ isOpen, imageSrc, fileType, fileName, aspect, title, onClose, onApply, }: ImageCropperModalProps) => import("react/jsx-runtime").JSX.Element | null;
+declare const ImageCropperModal: ({ isOpen, imageSrc, fileType, fileName, aspect, title, onClose, onApply, }: ImageCropperModalProps) => React.JSX.Element | null;
 export default ImageCropperModal;

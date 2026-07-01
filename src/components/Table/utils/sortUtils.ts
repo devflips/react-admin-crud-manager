@@ -39,6 +39,8 @@ interface NormalizedSortConfig {
   defaultValue: string;
   autoGenerate: boolean;
   clearLabel: string;
+  label: string;
+  icon: string;
   onChange: ((payload: SortChangePayload) => void) | null;
 }
 
@@ -62,6 +64,8 @@ const BASE_SORT_CONFIG: NormalizedSortConfig = {
   autoGenerate: true,
   clearLabel: "",
   onChange: null,
+  label: "",
+  icon: "",
 };
 
 export const normalizeSortConfig = (

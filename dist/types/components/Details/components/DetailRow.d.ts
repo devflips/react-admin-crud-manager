@@ -10,5 +10,5 @@ interface DetailRowProps {
         mediaGridClass?: string;
     };
 }
-declare const DetailRow: ({ col, data, uiVariant, styleConfig, }: DetailRowProps) => import("react/jsx-runtime").JSX.Element;
+declare const DetailRow: ({ col, data, uiVariant, styleConfig, }: DetailRowProps) => import("react").JSX.Element;
 export default DetailRow;

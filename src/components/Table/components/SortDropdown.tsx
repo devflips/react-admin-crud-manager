@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { ArrowUpDown } from "lucide-react";
 import { crudClasses, joinClasses } from "../../../lib/crudClasses";
 
@@ -13,6 +14,8 @@ interface SortDropdownProps {
   value: string;
   onChange: (value: string, option: SortOption | null) => void;
   clearLabel?: string;
+  label?: string;
+  icon?: ReactNode | null;
 }
 
 const SortDropdown = ({
@@ -20,6 +23,8 @@ const SortDropdown = ({
   value = "",
   onChange,
   clearLabel = "",
+  label,
+  icon,
 }: SortDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const sortRef = useRef<HTMLDivElement | null>(null);
@@ -54,11 +59,18 @@ const SortDropdown = ({
         onClick={() => setIsOpen((prev) => !prev)}
         className={joinClasses(
           crudClasses.sortDropdown.trigger,
-          "relative inline-flex items-center justify-center h-[36px] w-[36px] rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition",
+          label
+            ? "relative inline-flex items-center justify-center h-[36px] px-3 gap-2 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition text-sm font-medium"
+            : "relative inline-flex items-center justify-center h-[36px] w-[36px] rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 transition",
         )}
         aria-label="Open sort options"
       >
-        <ArrowUpDown className="w-4 h-4" />
+        {icon !== undefined ? (
+          icon !== null ? icon : null
+        ) : (
+          <ArrowUpDown className="w-4 h-4" />
+        )}
+        {label && <span>{label}</span>}
         {isSortApplied && (
           <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
         )}

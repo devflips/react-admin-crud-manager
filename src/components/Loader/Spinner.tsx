@@ -9,7 +9,7 @@ interface SpinnerProps {
 const Spinner = ({
   size = "lg",
   className = "",
-  color = "border-blue-500",
+  color = "border-primary-500",
 }: SpinnerProps) => {
   const sizeClasses: Record<string, string> = {
     sm: "w-4 h-4 border-2",
@@ -22,7 +22,7 @@ const Spinner = ({
     <div
       className={joinClasses(
         crudClasses.spinner.root,
-        "rounded-full border-4 border-blue-500 border-t-gray-200 animate-spin",
+        "rounded-full border-4 border-primary-500 border-t-gray-200 animate-spin",
         sizeClasses[size] || sizeClasses.lg,
         className,
       )}

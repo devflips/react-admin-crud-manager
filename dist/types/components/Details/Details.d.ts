@@ -19,5 +19,5 @@ interface DetailsProps {
         data: Record<string, any>;
     }>;
 }
-export default function Details({ data, config, fetchRowDetails, }: DetailsProps): import("react/jsx-runtime").JSX.Element;
+export default function Details({ data, config, fetchRowDetails, }: DetailsProps): import("react").JSX.Element;
 export {};

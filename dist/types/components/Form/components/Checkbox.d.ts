@@ -1,3 +1,4 @@
+import React from "react";
 interface CheckboxOption {
     label: string;
     value: any;
@@ -16,5 +17,5 @@ interface CheckboxProps {
     multiSelect?: boolean;
     errorMessage?: string;
 }
-declare const Checkbox: ({ name, label, options, value, onChange, disabled, required, parentClass, className, errorMessage, multiSelect, }: CheckboxProps) => import("react/jsx-runtime").JSX.Element;
+declare const Checkbox: ({ name, label, options, value, onChange, disabled, required, parentClass, className, errorMessage, multiSelect, }: CheckboxProps) => React.JSX.Element;
 export default Checkbox;

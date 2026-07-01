@@ -18,5 +18,5 @@ interface TinyEditorProps {
     errorMessage?: string;
     imageUploadHandler?: (blobInfo: any) => Promise<string>;
 }
-declare const TinyEditor: ({ editorKey, value, name, onChange, label, required, placeholder, parentClass, height, inline, disabled, plugins, toolbar, menubar, fontFamily, initConfig, imageUploadHandler, errorMessage, }: TinyEditorProps) => import("react/jsx-runtime").JSX.Element;
+declare const TinyEditor: ({ editorKey, value, name, onChange, label, required, placeholder, parentClass, height, inline, disabled, plugins, toolbar, menubar, fontFamily, initConfig, imageUploadHandler, errorMessage, }: TinyEditorProps) => import("react").JSX.Element;
 export default TinyEditor;

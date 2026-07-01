@@ -25,6 +25,7 @@ import {
   sortTableData,
 } from "./utils/sortUtils";
 import { crudClasses, joinClasses } from "../../lib/crudClasses";
+import Tabs from "./components/Tabs";
 
 interface TableProps {
   config: Record<string, any>;
@@ -90,6 +91,11 @@ const Table = ({
       useServerSideFilters: false,
     },
     sort = { enabled: false },
+    tabs = {
+      enabled: false,
+      useServerSideTabs: false,
+      options: [],
+    },
     pagination = {
       enabled: false,
       rows_per_page: 10,
@@ -117,8 +123,17 @@ const Table = ({
   const [showFilters, setShowFilters] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<Record<string, any>>({});
   const [toolbarMenuOpen, setToolbarMenuOpen] = useState(false);
+  const tabOptions = tabs?.options || [];
+  const initialTabValue = tabs?.defaultValue ?? tabOptions[0]?.value ?? "all";
+  const [activeTab, setActiveTab] = useState<string | number | boolean>(
+    initialTabValue,
+  );
 
   const normalizedSortConfig = useMemo(() => normalizeSortConfig(sort), [sort]);
+
+  useEffect(() => {
+    setActiveTab(initialTabValue);
+  }, [initialTabValue]);
 
   const sortableColumns = useMemo(
     () => getSortableColumns(table_head),
@@ -139,11 +154,38 @@ const Table = ({
   } | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  const tabFilteredData = useMemo(() => {
+    if (!tabs?.enabled || tabs?.useServerSideTabs || tabOptions.length === 0) {
+      return data;
+    }
+
+    const selectedTab =
+      tabOptions.find((option: any) => option.value == activeTab) ||
+      tabOptions[0];
+
+    if (!selectedTab) return data;
+
+    const tabKey = selectedTab.filterKey || tabs?.filterKey;
+    const resolvedValue = selectedTab.serverValue ?? selectedTab.value;
+
+    if (!tabKey || resolvedValue === "all") {
+      return data;
+    }
+
+    return data.filter((item: Record<string, any>) => {
+      return String(item?.[tabKey]) === String(resolvedValue);
+    });
+  }, [data, tabs, tabOptions, activeTab]);
+
   const filteredData = useMemo(() => {
-    if (!search.enabled || !searchTerm.trim()) return data;
-    if (search.useServerSideSearch) return data;
-    return searchLocalData(data, searchTerm, search.searchKeys || []);
-  }, [data, searchTerm, search]);
+    if (!search.enabled || !searchTerm.trim()) return tabFilteredData;
+    if (search.useServerSideSearch) return tabFilteredData;
+    return searchLocalData(
+      tabFilteredData,
+      searchTerm,
+      search.searchKeys || [],
+    );
+  }, [data, tabFilteredData, searchTerm, search]);
 
   const sortedData = useMemo(() => {
     return sortTableData(
@@ -215,6 +257,32 @@ const Table = ({
 
     if (typeof normalizedSortConfig?.onChange === "function") {
       normalizedSortConfig.onChange(payload);
+    }
+  };
+
+  const handleTabChange = (option: any) => {
+    setActiveTab(option?.value);
+    setCurrentPage(1);
+
+    if (tabs?.useServerSideTabs) {
+      const serverValue = option?.serverValue ?? option?.value;
+
+      setServerSidePaginationData((prev: Record<string, any>) => ({
+        ...prev,
+        current_page: 1,
+        active_tab: option?.value,
+        active_tab_value: serverValue,
+      }));
+    }
+
+    if (typeof tabs?.onChange === "function") {
+      tabs.onChange({
+        value: option?.value,
+        option,
+        key: option?.filterKey || tabs?.filterKey || "",
+        useServerSide: !!tabs?.useServerSideTabs,
+        serverValue: option?.serverValue ?? option?.value,
+      });
     }
   };
 
@@ -508,7 +576,7 @@ const Table = ({
     const value = row[col.key];
     if (col.type === "menu_actions") {
       return (
-        <div className={`text-center ${col.className || ""}`}>
+        <div className={`text-left ${col.className || ""}`}>
           <button
             ref={(el) => {
               buttonRefs.current[row.id || row._id] = el;
@@ -789,6 +857,14 @@ const Table = ({
             <div className="table-heading">
               <h1>{title}</h1>
               <p>{description}</p>
+              {tabs?.enabled && tabOptions.length > 0 && (
+                <Tabs
+                  options={tabOptions}
+                  value={activeTab}
+                  onChange={handleTabChange}
+                  className="mt-4"
+                />
+              )}
             </div>
             <div className="flex flex-col justify-end items-stretch lg:!items-end gap-2 w-full lg:!w-auto">
               {(showAddButton ||
@@ -913,8 +989,14 @@ const Table = ({
                           variant="contained"
                           className="w-full sm:!w-auto"
                         >
-                          <Filter className="w-4 h-4 mr-2" />
-                          Filters
+                          {filter.icon !== undefined ? (
+                            filter.icon !== null ? (
+                              <span className="mr-2">{filter.icon}</span>
+                            ) : null
+                          ) : (
+                            <Filter className="w-4 h-4 mr-2" />
+                          )}
+                          {filter.label ?? "Filters"}
                         </Button>
                         {Object.keys(appliedFilters).length > 0 && (
                           <span className="red-dot"></span>
@@ -928,8 +1010,14 @@ const Table = ({
                           variant="contained"
                           className="w-full sm:!w-auto"
                         >
-                          <Download className="w-4 h-4 mr-2" />
-                          Export CSV
+                          {exportCSV.icon !== undefined ? (
+                            exportCSV.icon !== null ? (
+                              <span className="mr-2">{exportCSV.icon}</span>
+                            ) : null
+                          ) : (
+                            <Download className="w-4 h-4 mr-2" />
+                          )}
+                          {exportCSV.label ?? "Export CSV"}
                         </Button>
                       </div>
                     )}
@@ -940,6 +1028,8 @@ const Table = ({
                           value={sortBy}
                           onChange={handleSortChange}
                           clearLabel={normalizedSortConfig?.clearLabel}
+                          label={normalizedSortConfig?.label}
+                          icon={normalizedSortConfig?.icon}
                         />
                       )}
                   </div>
@@ -1010,7 +1100,11 @@ const Table = ({
                               "truncate",
                               isColumnClickable(col) ? "cursor-pointer" : "",
                             )}
-                            title={String(row[col.key] ?? "")}
+                            title={
+                              col.showTooltip
+                                ? String(row[col.key] ?? "")
+                                : undefined
+                            }
                             onClick={(e) => {
                               if (isColumnClickable(col)) {
                                 e.stopPropagation();

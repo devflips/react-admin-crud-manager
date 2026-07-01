@@ -2,9 +2,9 @@ import { crudClasses, joinClasses } from "../../lib/crudClasses";
 
 const BADGE_COLORS: Record<string, { bg: string; border: string }> = {
   blue: {
-    bg: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+    bg: "bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-300",
     border:
-      "border border-blue-300 text-blue-700 dark:border-blue-700 dark:text-blue-300",
+      "border border-primary-300 text-primary-700 dark:border-primary-700 dark:text-primary-300",
   },
   teal: {
     bg: "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300",

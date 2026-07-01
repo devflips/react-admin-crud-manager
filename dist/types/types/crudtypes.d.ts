@@ -21,12 +21,12 @@ export interface MenuAction {
     type: string;
     variant?: string;
     icon?: ReactNode;
-    onClick?: (event: React.MouseEvent, item: any) => void | Promise<any>;
 }
 export interface TableHead {
     key: string;
     title?: string;
     type?: string;
+    showTooltip?: boolean;
     render?: (row: Record<string, any>, index: number) => ReactNode;
     imageKey?: string;
     titleKey?: string;
@@ -115,6 +115,28 @@ export interface SearchConfig {
     useServerSideSearch?: boolean;
     searchKeys?: string[];
 }
+export interface TabOption {
+    value: string | number | boolean;
+    label: string;
+    count?: number;
+    className?: string;
+    filterKey?: string;
+    serverValue?: string | number | boolean;
+}
+export interface TabsConfig {
+    enabled?: boolean;
+    useServerSideTabs?: boolean;
+    filterKey?: string;
+    defaultValue?: string | number | boolean;
+    options?: TabOption[];
+    onChange?: (payload: {
+        value: string | number | boolean;
+        option: TabOption | null;
+        key: string;
+        useServerSide: boolean;
+        serverValue?: string | number | boolean;
+    }) => void;
+}
 export interface PaginationConfig {
     enabled?: boolean;
     useServerSidePagination?: boolean;
@@ -122,6 +144,8 @@ export interface PaginationConfig {
 export interface FilterConfig {
     enabled?: boolean;
     useServerSideFilters?: boolean;
+    label?: string;
+    icon?: ReactNode | null;
 }
 export interface SortChangePayload {
     value: string;
@@ -150,51 +174,15 @@ export interface SortConfig {
     defaultValue?: string;
     autoGenerate?: boolean;
     clearLabel?: string;
+    label?: string;
+    icon?: ReactNode | null;
     onChange?: (payload: SortChangePayload) => void;
-}
-export interface ToolbarButton {
-    key?: string;
-    label: string;
-    icon?: ReactNode;
-    variant?: string;
-    color?: string;
-    className?: string;
-    disabled?: boolean;
-    show?: boolean;
-    onClick?: (event: React.MouseEvent, context: {
-        data: any[];
-        filteredData: any[];
-        sortedData: any[];
-        paginatedData: any[];
-        searchTerm: string;
-        appliedFilters: Record<string, any>;
-        currentPage: number;
-        pageSize: number;
-        totalRecords: number;
-    }) => void | Promise<void>;
-}
-export interface ToolbarMenuItem {
-    key?: string;
-    label: string;
-    icon?: ReactNode;
-    className?: string;
-    disabled?: boolean;
-    show?: boolean;
-    onClick?: (event: React.MouseEvent, context: {
-        data: any[];
-        filteredData: any[];
-        sortedData: any[];
-        paginatedData: any[];
-        searchTerm: string;
-        appliedFilters: Record<string, any>;
-        currentPage: number;
-        pageSize: number;
-        totalRecords: number;
-    }) => void | Promise<void>;
 }
 export interface exportCSVConfig {
     enabled?: boolean;
     fileName?: string;
+    label?: string;
+    icon?: ReactNode | null;
     fields?: Array<{
         label: string;
         key: string;
@@ -214,6 +202,8 @@ export interface SortConfig {
     defaultValue?: string;
     autoGenerate?: boolean;
     clearLabel?: string;
+    label?: string;
+    icon?: ReactNode | null;
     onChange?: (payload: SortChangePayload) => void;
 }
 export interface TableConfig {
@@ -222,9 +212,8 @@ export interface TableConfig {
     pagination?: PaginationConfig;
     filter?: FilterConfig;
     sort?: SortConfig;
+    tabs?: TabsConfig;
     exportCSV?: exportCSVConfig;
-    customButtons?: ToolbarButton[];
-    customMenuItems?: ToolbarMenuItem[];
 }
 export interface ModalConfig {
     addModal?: {
@@ -300,6 +289,11 @@ export interface Config {
     tableConfig: TableConfig;
     modalConfig?: ModalConfig;
     filterConfig?: FilterConfigProps;
+    routes?: {
+        add?: string;
+        edit?: string;
+        view?: string;
+    };
 }
 export interface ServerSidePaginationData {
     search: string;
@@ -307,4 +301,6 @@ export interface ServerSidePaginationData {
     current_page: number;
     sort_by: string;
     sort_order: string;
+    active_tab?: string | number | boolean;
+    active_tab_value?: string | number | boolean;
 }

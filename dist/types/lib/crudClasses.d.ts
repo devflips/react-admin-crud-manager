@@ -8,6 +8,11 @@ export declare const crudClasses: {
     readonly button: {
         readonly root: "crud_button";
     };
+    readonly tabs: {
+        readonly root: "crud_tabs";
+        readonly tab: "crud_tabs_tab";
+        readonly count: "crud_tabs_count";
+    };
     readonly chip: {
         readonly root: "crud_chip";
     };

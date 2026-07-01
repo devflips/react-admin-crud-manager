@@ -24,5 +24,5 @@ interface SelectProps {
     countriesList?: boolean;
     errorMessage?: string;
 }
-declare const Select: ({ options, value, defaultValue, onChange, placeholder, className, disabled, search, label, required, name, parentClass, multiple, dropdownMaxHeight, formData, countriesList, dependencyKey, errorMessage, }: SelectProps) => import("react/jsx-runtime").JSX.Element;
+declare const Select: ({ options, value, defaultValue, onChange, placeholder, className, disabled, search, label, required, name, parentClass, multiple, dropdownMaxHeight, formData, countriesList, dependencyKey, errorMessage, }: SelectProps) => React.JSX.Element;
 export default Select;

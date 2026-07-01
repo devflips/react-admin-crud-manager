@@ -17,8 +17,8 @@ export default defineConfig({
     outDir: "dist",
     sourcemap: true,
     lib: {
-      entry: path.resolve(__dirname, 'src/index.tsx'),
-      name: 'ReactAdminCrudManager',
+      entry: path.resolve(__dirname, "src/index.tsx"),
+      name: "ReactAdminCrudManager",
       fileName: (format) => `index.${format}.js`,
       formats: ["es", "cjs"],
     },
@@ -36,8 +36,8 @@ export default defineConfig({
         "js-cookie",
         "lucide-react",
         "notistack",
-        "react-router-dom",
         "tinymce",
+        "react-router-dom",
       ],
       output: {
         globals: {

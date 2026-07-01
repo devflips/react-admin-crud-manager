@@ -189,7 +189,7 @@ const ImagePicker = ({
             crudClasses.mediaPicker.dropzone,
             "relative rounded-md p-2 transition-all",
             isDragging
-              ? "border-2 border-dashed border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+              ? "border-2 border-dashed border-primary-500 bg-primary-50 dark:bg-primary-900/20"
               : "border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800",
             errorMessage ? "border-red-500" : "",
           )}
@@ -259,8 +259,8 @@ const ImagePicker = ({
           </div>
 
           {dragDrop && isDragging && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-blue-500/10 rounded-md">
-              <span className="text-blue-600 dark:text-blue-400 font-semibold text-lg">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-primary-500/10 rounded-md">
+              <span className="text-primary-600 dark:text-primary-400 font-semibold text-lg">
                 Drop image here
               </span>
             </div>

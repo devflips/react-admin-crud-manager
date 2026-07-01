@@ -40,5 +40,5 @@ interface RenderFieldsProps {
     formData: Record<string, any>;
     handleChange: (key: string, value: any) => void;
 }
-declare const RenderFields: ({ field, formData, handleChange, errorMessage, }: RenderFieldsProps) => import("react/jsx-runtime").JSX.Element | null;
+declare const RenderFields: ({ field, formData, handleChange, errorMessage, }: RenderFieldsProps) => import("react").JSX.Element | null;
 export default RenderFields;

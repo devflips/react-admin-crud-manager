@@ -113,7 +113,7 @@ const Checkbox = ({
                   key={name}
                   className={joinClasses(
                     crudClasses.field.input,
-                    "h-4 w-4 cursor-pointer text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400",
+                    "h-4 w-4 cursor-pointer text-primary-600 border-gray-300 rounded focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400",
                     className,
                   )}
                 />
@@ -160,7 +160,7 @@ const Checkbox = ({
         onChange={handleSingleChange}
         className={joinClasses(
           crudClasses.field.input,
-          "h-4 w-4 text-blue-600 cursor-pointer border-gray-300 rounded focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400",
+          "h-4 w-4 text-primary-600 cursor-pointer border-gray-300 rounded focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400",
           className,
         )}
       />

@@ -11,6 +11,11 @@ export const crudClasses = {
   button: {
     root: "crud_button",
   },
+  tabs: {
+    root: "crud_tabs",
+    tab: "crud_tabs_tab",
+    count: "crud_tabs_count",
+  },
   chip: {
     root: "crud_chip",
   },

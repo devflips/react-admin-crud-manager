@@ -10,5 +10,5 @@ interface GroupRowProps {
         iconClass?: string;
     };
 }
-declare const GroupRow: ({ col, data, uiVariant, styleConfig, }: GroupRowProps) => import("react/jsx-runtime").JSX.Element;
+declare const GroupRow: ({ col, data, uiVariant, styleConfig, }: GroupRowProps) => import("react").JSX.Element;
 export default GroupRow;

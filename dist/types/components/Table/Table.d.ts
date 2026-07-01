@@ -1,3 +1,4 @@
+import React from "react";
 interface TableProps {
     config: Record<string, any>;
     setShowAdd: (value: boolean) => void;
@@ -6,5 +7,5 @@ interface TableProps {
     description?: string;
     showAddButton?: boolean;
 }
-declare const Table: ({ config, setShowAdd, title, buttonText, description, showAddButton, }: TableProps) => import("react/jsx-runtime").JSX.Element;
+declare const Table: ({ config, setShowAdd, title, buttonText, description, showAddButton, }: TableProps) => React.JSX.Element;
 export default Table;

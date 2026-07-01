@@ -1,3 +1,4 @@
+import React from "react";
 type MediaValue = File | {
     file?: File;
     preview?: string;
@@ -15,5 +16,5 @@ interface AudioPickerProps {
     maxSize?: number;
     errorMessage?: string;
 }
-declare const AudioPicker: ({ label, value, onChange, required, accept, id, dragDrop, name, parentClass, errorMessage, maxSize, }: AudioPickerProps) => import("react/jsx-runtime").JSX.Element;
+declare const AudioPicker: ({ label, value, onChange, required, accept, id, dragDrop, name, parentClass, errorMessage, maxSize, }: AudioPickerProps) => React.JSX.Element;
 export default AudioPicker;

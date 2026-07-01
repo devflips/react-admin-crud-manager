@@ -77,7 +77,7 @@ export default function Details({
         )}
       >
         <div
-          className="rounded-full border-4 border-blue-500 border-t-gray-200 animate-spin w-8 h-8"
+          className="rounded-full border-4 border-primary-500 border-t-gray-200 animate-spin w-8 h-8"
           style={{
             borderTopColor: "border-primary-500",
           }}

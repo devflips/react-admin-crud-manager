@@ -10,5 +10,5 @@ interface FreeEditorProps {
     disabled?: boolean;
     errorMessage?: string;
 }
-declare const FreeEditor: ({ value, name, onChange, label, required, placeholder, parentClass, height, disabled, errorMessage, }: FreeEditorProps) => import("react/jsx-runtime").JSX.Element;
+declare const FreeEditor: ({ value, name, onChange, label, required, placeholder, parentClass, height, disabled, errorMessage, }: FreeEditorProps) => import("react").JSX.Element;
 export default FreeEditor;

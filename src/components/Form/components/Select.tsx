@@ -185,17 +185,18 @@ const Select = ({
     else if (optionValue === "false") finalValue = false;
 
     if (multiple) {
-      const exists = (normalizedValue as string[]).includes(
-        normalize(optionValue),
+      const currentArray = Array.isArray(value) ? value : [];
+      const exists = currentArray.some(
+        (v) => normalize(v) === normalize(optionValue),
       );
 
       let newValues: any[];
       if (exists) {
-        newValues = (Array.isArray(value) ? value : []).filter(
+        newValues = currentArray.filter(
           (v) => normalize(v) !== normalize(optionValue),
         );
       } else {
-        newValues = [...(Array.isArray(value) ? value : []), finalValue];
+        newValues = [...currentArray, finalValue];
       }
 
       onChange?.(newValues);
@@ -215,9 +216,9 @@ const Select = ({
     : normalizedOptions.find((opt) => isSelected(opt.value))?.label;
 
   useEffect(() => {
-    if (initialVal || initialVal === false) {
+    if (defaultValue || defaultValue === false) {
       setTimeout(() => {
-        onChange?.(initialVal);
+        onChange?.(defaultValue);
       }, 100);
     }
   }, []);
@@ -325,11 +326,11 @@ const Select = ({
                     <button
                       key={String(option.value)}
                       type="button"
-                      onClick={() => handleOptionClick(String(option.value))}
+                      onClick={() => handleOptionClick(option.value)}
                       className={`w-full px-3 py-2 text-left text-sm flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-600 
                     ${
                       isSelected(option.value)
-                        ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
+                        ? "bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300"
                         : ""
                     }`}
                     >

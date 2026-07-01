@@ -13,5 +13,5 @@ interface FilterDrawerProps {
     config: FilterConfig;
     onApply: (filters: Record<string, any>) => void;
 }
-declare const FilterDrawer: ({ isOpen, onClose, config, onApply, }: FilterDrawerProps) => import("react/jsx-runtime").JSX.Element;
+declare const FilterDrawer: ({ isOpen, onClose, config, onApply, }: FilterDrawerProps) => React.JSX.Element;
 export default FilterDrawer;

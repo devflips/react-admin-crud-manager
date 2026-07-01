@@ -16,6 +16,7 @@ import Radio from "./Radio";
 import VideoPicker from "./VideoPicker";
 import FilePicker from "./FilePicker";
 
+
 interface FieldConfig {
   key: string;
   label?: string;
@@ -104,14 +105,14 @@ const RenderFields = ({
 
   let value = formData?.[key];
   if (value === undefined || value === null) {
-    value = "";
+    value = multiple ? [] : "";
   }
 
   const finalPlaceholder =
     placeholder || (type === "select" ? `Select ${label}` : `Enter ${label}`);
 
   const baseClass =
-    "w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 text-sm focus:outline-none focus:ring-1 focus:ring-blue-200 bg-white text-black dark:bg-gray-700 dark:text-white";
+    "w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 text-sm focus:outline-none focus:ring-1 focus:ring-primary-200 bg-white text-black dark:bg-gray-700 dark:text-white";
 
   if (renderCondition && typeof renderCondition === "function") {
     const shouldRender = renderCondition(formData);
@@ -315,15 +316,19 @@ const RenderFields = ({
     case "file":
       return (
         <FilePicker
-          value={value}
-          onChange={(file) => handleChange(key, file)}
+          value={multiple ? (Array.isArray(value) ? value : []) : value}
+          onChange={(file: any) => handleChange(key, file)}
           required={required}
           accept={accept || "*/*"}
           id={`file-${key}`}
           dragDrop={dragDrop}
+          multiple={multiple}
+          cropImage={cropImage}
+          aspect={aspectRatio}
           label={label || ""}
           name={key}
           maxSize={maxSize}
+          maxFiles={field.maxFiles ?? field.maxImages}
           parentClass={parentClass || ""}
           errorMessage={errorMessage}
         />
@@ -342,6 +347,7 @@ const RenderFields = ({
           fontFamily={fontFamily}
           editorKey={editorKey || ""}
           disabled={disabled}
+          height={field.height || 400}
           errorMessage={errorMessage}
         />
       );

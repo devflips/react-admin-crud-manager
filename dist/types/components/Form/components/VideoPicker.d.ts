@@ -1,3 +1,4 @@
+import React from "react";
 type MediaValue = File | {
     file?: File;
     preview?: string;
@@ -15,5 +16,5 @@ interface VideoPickerProps {
     maxSize?: number;
     errorMessage?: string;
 }
-declare const VideoPicker: ({ label, value, onChange, required, accept, id, dragDrop, name, parentClass, maxSize, errorMessage, }: VideoPickerProps) => import("react/jsx-runtime").JSX.Element;
+declare const VideoPicker: ({ label, value, onChange, required, accept, id, dragDrop, name, parentClass, maxSize, errorMessage, }: VideoPickerProps) => React.JSX.Element;
 export default VideoPicker;

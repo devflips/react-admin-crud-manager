@@ -105,6 +105,9 @@ const MultiImagePicker = ({
   const cropSourceUrlRef = useRef("");
   const imagesRef = useRef<GalleryItem[]>([]);
 
+  // Track whether images have been initialized from value prop
+  const initializedRef = useRef(false);
+
   useEffect(() => {
     imagesRef.current = images;
   }, [images]);
@@ -125,6 +128,11 @@ const MultiImagePicker = ({
   useEffect(() => {
     if (!Array.isArray(value)) {
       setImages([]);
+      initializedRef.current = true;
+      return;
+    }
+
+    if (initializedRef.current && value.length === 0) {
       return;
     }
 
@@ -140,6 +148,8 @@ const MultiImagePicker = ({
       });
       return nextItems;
     });
+
+    initializedRef.current = true;
   }, [value]);
 
   const remainingSlots =
@@ -368,7 +378,7 @@ const MultiImagePicker = ({
             crudClasses.mediaPicker.dropzone,
             "relative rounded-md p-2 transition-all",
             isDragging
-              ? "border-2 border-dashed border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+              ? "border-2 border-dashed border-primary-500 bg-primary-50 dark:bg-primary-900/20"
               : "border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800",
             errorMessage ? "border-red-500" : "",
           )}
@@ -489,8 +499,8 @@ const MultiImagePicker = ({
           )}
 
           {dragDrop && isDragging && images.length === 0 && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-blue-500/10 rounded-lg">
-              <span className="text-blue-600 dark:text-blue-400 font-semibold text-lg bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow-lg">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-primary-500/10 rounded-lg">
+              <span className="text-primary-600 dark:text-primary-400 font-semibold text-lg bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow-lg">
                 Drop images here
               </span>
             </div>

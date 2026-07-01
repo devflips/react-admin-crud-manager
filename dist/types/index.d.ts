@@ -1,2 +1,3 @@
+import React from "react";
 import { type CrudPageProps } from "./types/crudtypes";
-export default function Crud({ config }: CrudPageProps): import("react/jsx-runtime").JSX.Element;
+export default function Crud({ config }: CrudPageProps): React.JSX.Element;

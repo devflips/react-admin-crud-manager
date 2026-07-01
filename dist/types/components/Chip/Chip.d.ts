@@ -4,5 +4,5 @@ interface ChipProps {
     color?: string;
     className?: string;
 }
-declare const Chip: ({ label, variant, color, className, }: ChipProps) => import("react/jsx-runtime").JSX.Element;
+declare const Chip: ({ label, variant, color, className, }: ChipProps) => import("react").JSX.Element;
 export default Chip;

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 interface SortOption {
     value: string;
     label: string;
@@ -8,6 +9,8 @@ interface SortDropdownProps {
     value: string;
     onChange: (value: string, option: SortOption | null) => void;
     clearLabel?: string;
+    label?: string;
+    icon?: ReactNode | null;
 }
-declare const SortDropdown: ({ options, value, onChange, clearLabel, }: SortDropdownProps) => import("react/jsx-runtime").JSX.Element | null;
+declare const SortDropdown: ({ options, value, onChange, clearLabel, label, icon, }: SortDropdownProps) => import("react").JSX.Element | null;
 export default SortDropdown;

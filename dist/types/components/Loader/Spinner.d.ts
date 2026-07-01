@@ -3,5 +3,5 @@ interface SpinnerProps {
     className?: string;
     color?: string;
 }
-declare const Spinner: ({ size, className, color, }: SpinnerProps) => import("react/jsx-runtime").JSX.Element;
+declare const Spinner: ({ size, className, color, }: SpinnerProps) => import("react").JSX.Element;
 export default Spinner;

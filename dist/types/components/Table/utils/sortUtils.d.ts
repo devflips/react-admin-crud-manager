@@ -35,6 +35,8 @@ interface NormalizedSortConfig {
     defaultValue: string;
     autoGenerate: boolean;
     clearLabel: string;
+    label: string;
+    icon: string;
     onChange: ((payload: SortChangePayload) => void) | null;
 }
 interface TableColumn {

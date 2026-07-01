@@ -25,5 +25,5 @@ interface ModalProps {
         closeButton?: string;
     };
 }
-declare const Modal: ({ isOpen, onClose, icon, title, children, size, actionButtons, onFormSubmit, loadingBtn, executeFunction, selectedItem, footerConfig, classNames, }: ModalProps) => import("react/jsx-runtime").JSX.Element | null;
+declare const Modal: ({ isOpen, onClose, icon, title, children, size, actionButtons, onFormSubmit, loadingBtn, executeFunction, selectedItem, footerConfig, classNames, }: ModalProps) => React.JSX.Element | null;
 export default Modal;
